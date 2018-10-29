@@ -42,10 +42,10 @@ for(int i = 0; i < spaces; i++)
   }
 
   else if (expr->kind == E_BOOL) 
-    printf ("BOOL %d\n", expr->atr_bool.value); 
+    printf ("BOOL %d\n", expr->attr_bool.value); 
 
   else if (expr->kind == E_RELOP) {
-    switch (expr->atr_bool.relop.operator) {
+    switch (expr->attr_bool.relop.operator) {
       case EQU:
         printf("==:\n");
         break;
@@ -65,8 +65,8 @@ for(int i = 0; i < spaces; i++)
         printf(">=:\n");
         break;
     }
-    printExpr(expr->atr_bool.relop.left, spaces+1);
-    printExpr(expr->atr_bool.relop.right, spaces+1);
+    printExpr(expr->attr_bool.relop.left, spaces+1);
+    printExpr(expr->attr_bool.relop.right, spaces+1);
   }
 }
 

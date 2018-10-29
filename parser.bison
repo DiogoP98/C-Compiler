@@ -6,6 +6,9 @@
   SUB
   MUL
   DIV
+  OR
+  AND
+  NOT
   EQU
   DIF
   LES
@@ -25,6 +28,7 @@
 // Types/values in association to grammar symbols.
 %union {
   int intValue;
+  int bool;
   Expr* exprValue;
   ExprList* exprList; 
   BoolExpr* boolExpr;
@@ -33,7 +37,8 @@
 %type <intValue> INT
 %type <exprValue> expr
 %type <exprList> expr_list
-%type <boolExpr> bool_expr
+%type <boolExpr> bexpr
+%type <bool> comp
 
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
@@ -61,10 +66,6 @@ expr_list:
     expr expr_list {
       $$ = ast_exprlist($1, $2);
     }
-    |
-    bool_expr expr_list {
-	  $$ = ast_boolExprlist($1,$2);
-    }
 
 expr: 
   INT { 
@@ -91,33 +92,42 @@ expr:
     $$ = ast_operation(MOD, $1, $3);
   }
   
-bool_expr:
-  expr {
+bexpr:
+  bexpr OR bexpr{
+    $$ = ast_boolOperation(OR, $1, $3);
+  }
+  |
+  bexpr AND bexpr {
+    $$ = ast_boolOperation(AND, $1, $3);
+  }
+  |
+  NOT bexpr {
+    $$ = ast_boolOperation(NOT, $2)
+  }
+  |
+  comp {
     $$ = ast_bool($1);
   }
-  |
-  expr EQU expr {
-    $$ = ast_boolOperation(EQU, $1, $3);
-  }
-  |
+
+comp:
   expr DIF expr {
-    $$ = ast_boolOperation(DIF, $1, $3);
+    $$ = ast_boolOperation2(DIF, $1, $3);
   }
   |
   expr LES expr {
-    $$ = ast_boolOperation(LES, $1, $3);
+    $$ = ast_boolOperation2(LES, $1, $3);
   }
   |
   expr LOQ expr {
-    $$ = ast_boolOperation(LOQ, $1, $3);
+    $$ = ast_boolOperation2(LOQ, $1, $3);
   }
   |
   expr GRE expr {
-    $$ = ast_boolOperation(GRE, $1, $3);
+    $$ = ast_boolOperation2(GRE, $1, $3);
   }
   |
   expr GOQ expr {
-    $$ = ast_boolOperation(GOQ, $1, $3);
+    $$ = ast_boolOperation2(GOQ, $1, $3);
   }
   ;
 %%

@@ -35,8 +35,10 @@ struct _BoolExpr {
       int operator;
       struct _Expr* left;
       struct _Expr* right;
+      struct _BoolExpr* bleft;
+      struct _BoolExpr* bright;
     } relop; // for binary expressions
-  } atr_bool;
+  } attr_bool;
 };
 
 struct _BoolExprList {
@@ -54,8 +56,9 @@ Expr* ast_integer(int v);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
 ExprList* ast_exprlist(Expr* expr, ExprList* next);
 BoolExprList* ast_boolExprlist(BoolExpr* expr, BoolExprList* next);
-BoolExpr* ast_bool(Expr* v);
+BoolExpr* ast_bool(int v);
 BoolExpr* ast_boolOperation(int operator, BoolExpr* left, BoolExpr* right);
+BoolExpr* ast_boolOperation2(int operator, Expr* left, Expr* right);
 
 
 #endif

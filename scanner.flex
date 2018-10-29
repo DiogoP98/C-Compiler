@@ -34,6 +34,9 @@ int yyline = 1;
 "*"  { return MUL;  }
 "/"  { return DIV;  }
 "%"  { return MOD;  }
+"||" { return OR;   }
+"&&" { return AND;  }
+"!"  { return NOT;  }
 "==" { return EQU;  }
 "!=" { return DIF;  }
 "<"  { return LES;	}
