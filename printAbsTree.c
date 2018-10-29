@@ -81,7 +81,8 @@ int main(int argc, char** argv) {
   } //  yyin = stdin
   if (yyparse() == 0) {
     while(root != NULL) {
-      printExpr(root->expr, 0);
+      if(root->expr != NULL) printBool(root->bexpr, 0);
+      else printExpr(root->expr, 0);
       printf("\n\n\n\n\n\n\n\n\n");
       root = root->next;
     }

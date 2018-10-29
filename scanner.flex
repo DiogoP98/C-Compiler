@@ -19,16 +19,27 @@ int yyline = 1;
    return INT;
 }
 
-"true" {
-	yylval.intValue = 1;
-	return BOOL;
+[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+) {
+	yylval.floatValue = atof(yytext);
+	return FLOAT;
 }
 
-"false" {
-	yylval.intValue = 0;
-	return BOOL;
+"if" {
+	return IF;
 }
 
+"else" {
+	return ELSE;
+}
+
+"int" {
+	return INTD;
+}
+
+"float" {
+	return FLOATD;
+}
+ 
 "+"  { return PLUS; }
 "-"  { return SUB;  }
 "*"  { return MUL;  }

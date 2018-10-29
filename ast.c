@@ -22,6 +22,15 @@ Expr* ast_operation(int operator, Expr* left, Expr* right) {
 ExprList* ast_exprlist(Expr* expr, ExprList* next) {
   ExprList* node = (ExprList*) malloc(sizeof(ExprList));
   node->expr = expr;
+  node->bexpr = NULL;
+  node->next = next;
+  return node;
+}
+
+ExprList* ast_exprlist2(BoolExpr* bexpr, ExprList* next) {
+  ExprList* node = (ExprList*) malloc(sizeof(ExprList));
+  node->bexpr = bexpr;
+  node->expr = NULL;
   node->next = next;
   return node;
 }
@@ -33,8 +42,16 @@ BoolExpr* ast_bool(int v) {
   return node;
 }
 
+BoolExpr* ast_boolNot(int operator, BoolExpr* bexpr) {
+  BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
+  node->kind = E_BOOL;
+  node->attr_bool.relop.operator = operator;
+  node->attr_bool.relop.bleft = bexpr;
+  return node;
+}
+
 BoolExpr* ast_boolOperation(int operator, BoolExpr* bleft, BoolExpr* bright) {
-  BoolExpr* node = (Expr*) malloc(sizeof(BoolExpr));
+  BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
   node->kind = E_RELOP;
   node->attr_bool.relop.operator = operator;
   node->attr_bool.relop.bleft = bleft;
@@ -43,11 +60,17 @@ BoolExpr* ast_boolOperation(int operator, BoolExpr* bleft, BoolExpr* bright) {
 }
 
 BoolExpr* ast_boolOperation2(int operator, Expr* left, Expr* right) {
-  BoolExpr* node = (Expr*) malloc(sizeof(BoolExpr));
+  BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
   node->kind = E_RELOP;
   node->attr_bool.relop.operator = operator;
   node->attr_bool.relop.left = left;
   node->attr_bool.relop.right = right;
+  return node;
+}
+
+BoolExpr* ast_singleExpr(Expr* expr) {
+  BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
+  node->attr_bool.relop.left = expr;
   return node;
 }
 

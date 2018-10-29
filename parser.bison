@@ -1,7 +1,7 @@
 // Tokens
 %token
   INT
-  BOOL
+  FLOAT
   PLUS
   SUB
   MUL
@@ -20,7 +20,8 @@
 %left EQU DIF LES LOQ GRE GOQ
 %left PLUS SUB
 %left MUL DIV MOD
-%left INT BOOL
+%left INT FLOAT
+%left AND OR
 
 // Root-level grammar symbol
 %start program;
@@ -28,7 +29,6 @@
 // Types/values in association to grammar symbols.
 %union {
   int intValue;
-  int bool;
   Expr* exprValue;
   ExprList* exprList; 
   BoolExpr* boolExpr;
@@ -38,7 +38,6 @@
 %type <exprValue> expr
 %type <exprList> expr_list
 %type <boolExpr> bexpr
-%type <bool> comp
 
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
@@ -52,11 +51,24 @@ extern int yyline;
 extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
-ExprList* root;
+ExprList* cmd;
 }
 
 %%
-program: expr_list {root = $1;}
+program: 'int main() {' cmd '}' {root = $1;}
+
+cmd: 
+  {
+    $$ = NULL;  
+  }
+  |
+  ';' cmd{
+
+  }
+  |
+  ';' {
+
+  }
 
 expr_list:
     { 
@@ -65,6 +77,10 @@ expr_list:
     |
     expr expr_list {
       $$ = ast_exprlist($1, $2);
+    }
+    |
+    bexpr expr_list {
+      $$ = ast_exprlist2($1, $2);
     }
 
 expr: 
@@ -93,7 +109,7 @@ expr:
   }
   
 bexpr:
-  bexpr OR bexpr{
+  bexpr OR bexpr {
     $$ = ast_boolOperation(OR, $1, $3);
   }
   |
@@ -102,14 +118,13 @@ bexpr:
   }
   |
   NOT bexpr {
-    $$ = ast_boolOperation(NOT, $2)
+    $$ = ast_boolNot(NOT,$2);
   }
   |
-  comp {
-    $$ = ast_bool($1);
+  expr {
+    $$ = ast_singleExpr($1);
   }
-
-comp:
+  |
   expr DIF expr {
     $$ = ast_boolOperation2(DIF, $1, $3);
   }
