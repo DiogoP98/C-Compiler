@@ -34,7 +34,7 @@ BoolExpr* ast_bool(int v) {
 }
 
 BoolExpr* ast_boolOperation(int operator, BoolExpr* bleft, BoolExpr* bright) {
-  BoolExpr* node = (Expr*) malloc(sizeof(Expr));
+  BoolExpr* node = (Expr*) malloc(sizeof(BoolExpr));
   node->kind = E_RELOP;
   node->attr_bool.relop.operator = operator;
   node->attr_bool.relop.bleft = bleft;
