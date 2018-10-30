@@ -29,14 +29,15 @@
 // Types/values in association to grammar symbols.
 %union {
   int intValue;
+  CommandList* commandlist;
   Expr* exprValue;
   ExprList* exprList; 
   BoolExpr* boolExpr;
 }
 
 %type <intValue> INT
+%type <commandlist> list
 %type <exprValue> expr
-%type <exprList> expr_list
 %type <boolExpr> bexpr
 
 // Use "%code requires" to make declarations go
@@ -51,24 +52,33 @@ extern int yyline;
 extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
-ExprList* cmd;
+CommandList* list;
 }
 
 %%
-program: 'int main() {' cmd '}' {root = $1;}
+program: 'int main() {' list '}' {root = $1;};
 
-cmd: 
+list:
   {
-    $$ = NULL;  
+    $$ = NULL;
   }
   |
-  ';' cmd{
+  cmd list{
+
+  };
+cmd:
+  if_expr {
 
   }
   |
-  ';' {
+  while_expr {
 
   }
+  |
+  decl ';' {
+
+  }
+  ;
 
 expr_list:
     { 
@@ -81,7 +91,7 @@ expr_list:
     |
     bexpr expr_list {
       $$ = ast_exprlist2($1, $2);
-    }
+    };
 
 expr: 
   INT { 
@@ -106,7 +116,7 @@ expr:
   |
   expr MOD expr {
     $$ = ast_operation(MOD, $1, $3);
-  }
+  };
   
 bexpr:
   bexpr OR bexpr {

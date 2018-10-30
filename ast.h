@@ -19,10 +19,13 @@ struct _Expr {
   } attr;
 };
 
-struct _ExprList {
-    struct _Expr* expr;
-    struct _BoolExpr* bexpr;
-    struct _ExprList* next;
+struct _CommandList {
+    struct _Command* expr;
+    struct _CommandList* next;
+};
+
+struct _Command {
+
 };
 
 struct _BoolExpr {
@@ -42,16 +45,17 @@ struct _BoolExpr {
   } attr_bool;
 };
 
+
+typedef struct _CommandList CommandList;
+typedef struct _Command Command;
 typedef struct _Expr Expr; // Convenience typedef
-typedef struct _ExprList ExprList;
 typedef struct _BoolExpr BoolExpr;
 typedef struct _BoolExprList BoolExprList;
 
 // Constructor functions (see implementation in ast.c)
 Expr* ast_integer(int v);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
-ExprList* ast_exprlist(Expr* expr, ExprList* next);
-ExprList* ast_exprlist2(BoolExpr* expr, ExprList* next);
+CommandList* ast_commandList(Command* cmd, CommandList* next);
 BoolExprList* ast_boolExprlist(BoolExpr* expr, BoolExprList* next);
 BoolExpr* ast_bool(int v);
 BoolExpr* ast_boolNot(int operator, BoolExpr* bexpr);

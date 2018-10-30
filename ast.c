@@ -19,18 +19,9 @@ Expr* ast_operation(int operator, Expr* left, Expr* right) {
   return node;
 }
 
-ExprList* ast_exprlist(Expr* expr, ExprList* next) {
-  ExprList* node = (ExprList*) malloc(sizeof(ExprList));
-  node->expr = expr;
-  node->bexpr = NULL;
-  node->next = next;
-  return node;
-}
-
-ExprList* ast_exprlist2(BoolExpr* bexpr, ExprList* next) {
-  ExprList* node = (ExprList*) malloc(sizeof(ExprList));
-  node->bexpr = bexpr;
-  node->expr = NULL;
+CommandList* ast_commandList(Command* cmd, CommandList* next) {
+  CommandList* node = (CommandList*) malloc(sizeof(CommandList));
+  node->expr = cmd;
   node->next = next;
   return node;
 }
