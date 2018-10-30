@@ -127,26 +127,43 @@ while_expr:
   ;
 
 decl: 
+ INTD list_var{
+
+ }
+ |
+ FLOAT list_var{
+
+ }
+ ;
+
+list_var:
+  VAR {
+
+  }
+  |
+  VAR ',' list_var{
+
+  }
+  |
+  VAR '=' expr ',' list_var{
+
+  }
+  |
+  VAR'[' num ']' ',' list_var{
+
+  }
+  ;
+
+print_expr:
  {}
  ;
- 
-expr_list:
-    { 
-      $$ = NULL; 
-    }
-    |
-    expr expr_list {
-      $$ = ast_exprlist($1, $2);
-    }
-    |
-    bexpr expr_list {
-      $$ = ast_exprlist2($1, $2);
-    };
+
+scan_expr: 
+  {}
+  ;
 
 expr: 
-  INT { 
-    $$ = ast_integer($1); 
-  }
+  num 
   | 
   expr PLUS expr { 
     $$ = ast_operation(PLUS, $1, $3); 
@@ -205,6 +222,15 @@ bexpr:
     $$ = ast_boolOperation2(GOQ, $1, $3);
   }
   ;
+
+num: 
+  INT {
+
+  }
+  |
+  FLOAT {
+
+  }
 %%
 
 void yyerror(const char* err) {

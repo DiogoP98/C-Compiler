@@ -28,9 +28,9 @@ int yyline = 1;
 
 "else" { return ELSE; }
 
-"int" { return INT; }
+"int" { return INTD; }
 
-"float" { return FLOAT; }
+"float" { return FLOATD; }
 
 "printf" { return PRINT; }
 
