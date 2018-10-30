@@ -24,22 +24,20 @@ int yyline = 1;
 	return FLOAT;
 }
 
-"if" {
-	return IF;
-}
+"if" { return IF; }
 
-"else" {
-	return ELSE;
-}
+"else" { return ELSE; }
 
-"int" {
-	return INTD;
-}
+"int" { return INT; }
 
-"float" {
-	return FLOATD;
-}
- 
+"float" { return FLOAT; }
+
+"printf" { return PRINT; }
+
+"scanf" { return SCAN; }
+
+"while" { return WHILE; } 
+
 "+"  { return PLUS; }
 "-"  { return SUB;  }
 "*"  { return MUL;  }

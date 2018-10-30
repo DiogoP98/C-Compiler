@@ -78,8 +78,58 @@ cmd:
   decl ';' {
 
   }
+  |
+  PRINT '(' print_expr ')' ';' {
+
+  }
+  |
+  SCAN '(' scan_expr ')' ';' {
+  }
+  |
+  atr ';' {
+
+  }
   ;
 
+if_expr:
+  IF '(' bexpr ')' cmd {
+
+  }
+  |
+  IF '(' bexpr ')' cmd ELSE cmd {
+
+  }
+  |
+  IF '(' bexpr ') {' cmd '}' {
+
+  }
+  IF '(' bexpr ') {' cmd '}' ELSE cmd {
+
+  }
+  |
+  IF '(' bexpr ') {' cmd '}' ELSE '{' cmd '}' {
+
+  }
+  |
+  IF '(' bexpr ')' cmd ELSE '{' cmd '}' {
+
+  }
+  ;
+
+while_expr: 
+  WHILE'(' bexpr ')' {
+
+  }
+  |
+  WHILE '(' bexpr ') {' '}' {
+
+  } 
+  ;
+
+decl: 
+ {}
+ ;
+ 
 expr_list:
     { 
       $$ = NULL; 
