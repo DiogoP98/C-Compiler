@@ -54,7 +54,7 @@ typedef struct _BoolExprList BoolExprList;
 
 // Constructor functions (see implementation in ast.c)
 Expr* ast_integer(int v);
-Expr* ast_float(float v)
+Expr* ast_float(float v);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
 CommandList* ast_commandList(Command* cmd, CommandList* next);
 BoolExprList* ast_boolExprlist(BoolExpr* expr, BoolExprList* next);
