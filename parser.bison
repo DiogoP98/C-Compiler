@@ -74,7 +74,7 @@ CommandList* list;
 }
 
 %%
-program: "int main() {" list '}' { root = $1; }
+program: list { root = $1; }
 
 list:
   {
@@ -92,15 +92,15 @@ list:
 
 cmd:
   if_expr {
-    $$ = if_command($1)
+    $$ = $1;
   }
   |
   while_expr {
-
+    $$ = $1;
   }
   |
   decl ';' {
-
+    $$ = $1;
   }
   |
   PRINT '(' print_expr ')' ';' {
@@ -137,6 +137,13 @@ if_expr:
   |
   IF '(' bexpr ')' cmd ELSE '{' cmd '}' {
 
+  }
+  ;
+
+atr:
+  VAR '=' expr
+  {
+    $$ = atribution_command($1, $3);
   }
   ;
 

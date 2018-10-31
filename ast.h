@@ -115,5 +115,8 @@ BoolExpr* ast_singleExpr(Expr* expr);
 // The expression can be int or float
 Expr* ast_number(Expr* expr);
 Command* if_command(BoolExpr* bexpr);
+Command* else_command(BoolExpr* bexpr);
+Command* while_command(BoolExpr* bexpr);
+Command* atribution_command(char *name, Expr* expr);
 
 #endif
