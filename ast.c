@@ -10,6 +10,14 @@ Expr* ast_integer(int v) {
   return node;
 }
 
+Expr* ast_float(float v) {
+  Expr* node = (Expr*) malloc(sizeof(Expr));
+  node->kind = E_FLOAT;
+  node->attr.value = v;
+  return node;
+}
+
+
 Expr* ast_operation(int operator, Expr* left, Expr* right) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
   node->kind = E_OPERATION;

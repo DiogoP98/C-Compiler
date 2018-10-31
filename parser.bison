@@ -64,7 +64,7 @@ list:
   }
   |
   cmd list{
-
+    $$ = commandlist(cmd, list);
   };
 cmd:
   if_expr {
