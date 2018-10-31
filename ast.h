@@ -34,16 +34,23 @@ struct _Command {
     E_PRINT,
     E_SCAN
   }kind;
-  struct _IFexpression expression_if;
+  struct _IFexpression if_expression;
   struct _WHILEexpression while_expr; 
 };
 
 struct _IFexpression {
+  struct _BoolExpr* bexpr;
+  struct _Command* cmd;
+  struct _ELSEexpression* else_expr;
+};
 
+struct _ELSEexpression {
+  struct _Command* cmd;
 };
 
 struct _WHILEexpression {
-
+  struct _BoolExpr* bexpr;
+  struct _Command* cmd;
 };
 
 struct _ATR {
@@ -83,6 +90,7 @@ struct _BoolExpr {
 typedef struct _CommandList CommandList;
 typedef struct _Command Command;
 typedef struct _IFexpression IFexpression;
+typedef struct _ELSEexprssion ELSEexpression;
 typedef struct _WHILEexpression WHILEexpression;
 typedef struct _ATR ATR;
 typedef struct _DECL DECL;
