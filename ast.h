@@ -26,6 +26,40 @@ struct _CommandList {
 };
 
 struct _Command {
+  enum {
+    E_IF,
+    E_WHILE,
+    E_ATR,
+    E_DECL,
+    E_PRINT,
+    E_SCAN
+  }kind;
+  struct _IFexpression expression_if;
+  struct _WHILEexpression while_expr; 
+};
+
+struct _IFexpression {
+
+};
+
+struct _WHILEexpression {
+
+};
+
+struct _ATR {
+
+};
+
+struct _DECL {
+
+};
+
+struct _PRINT {
+
+};
+
+struct _SCAN {
+
 };
 
 struct _BoolExpr {
@@ -34,7 +68,7 @@ struct _BoolExpr {
     E_RELOP
   } kind;
   union {
-    int value; // for bollean values
+    int value; // for boolean values
     struct { 
       int operator;
       struct _Expr* left;
@@ -48,6 +82,12 @@ struct _BoolExpr {
 
 typedef struct _CommandList CommandList;
 typedef struct _Command Command;
+typedef struct _IFexpression IFexpression;
+typedef struct _WHILEexpression WHILEexpression;
+typedef struct _ATR ATR;
+typedef struct _DECL DECL;
+typedef struct _PRINT PRINT;
+typedef struct _SCAN SCAN;
 typedef struct _Expr Expr; // Convenience typedef
 typedef struct _BoolExpr BoolExpr;
 typedef struct _BoolExprList BoolExprList;
