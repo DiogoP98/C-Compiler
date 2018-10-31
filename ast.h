@@ -64,4 +64,8 @@ BoolExpr* ast_boolOperation(int operator, BoolExpr* left, BoolExpr* right);
 BoolExpr* ast_boolOperation2(int operator, Expr* left, Expr* right);
 BoolExpr* ast_singleExpr(Expr* expr);
 
+// The expression can be int or float
+Expr* ast_number(Expr* expr);
+Command* if_command(BoolExpr* bexpr);
+
 #endif

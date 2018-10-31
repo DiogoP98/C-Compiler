@@ -15,6 +15,15 @@
   LOQ
   GRE
   GOQ
+  IF
+  THEN
+  ELSE
+  WHILE
+  INTD
+  FLOATD
+  SCAN
+  PRINT
+  VAR
 
 // Operator associativity & precedence
 %left EQU DIF LES LOQ GRE GOQ
@@ -22,6 +31,10 @@
 %left MUL DIV MOD
 %left INT FLOAT
 %left AND OR
+%left VAR
+%left IF THEN ELSE WHILE
+%left SCAN PRINT
+
 
 // Root-level grammar symbol
 %start program;
@@ -29,14 +42,19 @@
 // Types/values in association to grammar symbols.
 %union {
   int intValue;
+  float floatValue;
+  Command* cmdValue;
   CommandList* commandlist;
   Expr* exprValue;
-  ExprList* exprList; 
+  ExprList* exprList;
   BoolExpr* boolExpr;
 }
 
 %type <intValue> INT
-%type <commandlist> list
+%type <floatValue> FLOAT
+%type <numValue> num
+%type <cmdValue> cmd
+%type <commandList> list
 %type <exprValue> expr
 %type <boolExpr> bexpr
 
@@ -56,7 +74,7 @@ CommandList* list;
 }
 
 %%
-program: 'int main() {' list '}' {root = $1;};
+program: "int main() {" list '}' { root = $1; }
 
 list:
   {
@@ -64,11 +82,17 @@ list:
   }
   |
   cmd list{
-    $$ = commandlist(cmd, list);
-  };
+    $$ = commandlist($1, $2);
+  }
+  |
+  cmd {
+    $$ = commandlist($1, NULL);
+  }
+  ;
+
 cmd:
   if_expr {
-
+    $$ = if_command($1)
   }
   |
   while_expr {
@@ -100,14 +124,14 @@ if_expr:
 
   }
   |
-  IF '(' bexpr ') {' cmd '}' {
+  IF '(' bexpr ") {" cmd '}' {
 
   }
-  IF '(' bexpr ') {' cmd '}' ELSE cmd {
+  IF '(' bexpr ") {" cmd '}' ELSE cmd {
 
   }
   |
-  IF '(' bexpr ') {' cmd '}' ELSE '{' cmd '}' {
+  IF '(' bexpr ") {" cmd '}' ELSE '{' cmd '}' {
 
   }
   |
@@ -121,7 +145,7 @@ while_expr:
 
   }
   |
-  WHILE '(' bexpr ') {' '}' {
+  WHILE '(' bexpr ") {" '}' {
 
   } 
   ;
@@ -155,18 +179,21 @@ list_var:
   ;
 
 print_expr:
- {}
- ;
+  {
+  }
+  ;
 
 scan_expr: 
   {}
   ;
 
 expr: 
-  num 
-  | 
+  num {
+    $$ = ast_number($1);
+  }
+  |
   expr PLUS expr { 
-    $$ = ast_operation(PLUS, $1, $3); 
+    $$ = ast_operation(PLUS, $1, $3);
   }
   |
   expr SUB expr {
@@ -223,13 +250,13 @@ bexpr:
   }
   ;
 
-num: 
+num:
   INT {
-
+    $$ = ast_integer($1);
   }
   |
   FLOAT {
-
+    $$ = ast_float($1);
   }
 %%
 
