@@ -43,8 +43,10 @@
 %union {
   int intValue;
   float floatValue;
-  Command* cmdValue;
   CommandList* commandlist;
+  Command* cmdType;
+  IFexpression* ifExpression;
+  WHILEexpression* whileExpression;
   Expr* exprValue;
   ExprList* exprList;
   BoolExpr* boolExpr;
@@ -53,10 +55,12 @@
 %type <intValue> INT
 %type <floatValue> FLOAT
 %type <numValue> num
-%type <cmdValue> cmd
+%type <cmdType> cmd
 %type <commandList> list
 %type <exprValue> expr
 %type <boolExpr> bexpr
+%type <ifExpression> if_expr
+%type <whileExpression> while_expr
 
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
@@ -92,51 +96,52 @@ list:
 
 cmd:
   if_expr {
-    $$ = $1;
+    $$ = if_declaration();
   }
   |
   while_expr {
-    $$ = $1;
+    $$ = while_declaration();
   }
   |
   decl ';' {
-    $$ = $1;
+    $$ = declaration_declaration();
   }
   |
   PRINT '(' print_expr ')' ';' {
-
+    $$ = print_command(print_expr);
   }
   |
   SCAN '(' scan_expr ')' ';' {
+    $$ = scan_command(scan_expr);
   }
   |
   atr ';' {
-
+    $$ = atribution_declaration();
   }
   ;
 
 if_expr:
-  IF '(' bexpr ')' cmd {
-
+  IF '(' bexpr ')' list {
+    $$ = if_command($3, $5);
   }
   |
-  IF '(' bexpr ')' cmd ELSE cmd {
-
+  IF '(' bexpr ')' list ELSE list {
+    $$ = if_else_command($3, $5, $7);
   }
   |
-  IF '(' bexpr ") {" cmd '}' {
-
+  IF '(' bexpr ") {" list '}' {
+    $$ = if_command($3, $5);
   }
-  IF '(' bexpr ") {" cmd '}' ELSE cmd {
-
-  }
-  |
-  IF '(' bexpr ") {" cmd '}' ELSE '{' cmd '}' {
-
+  IF '(' bexpr ") {" list '}' ELSE list {
+    $$ = if_else_command($3, $5, $6);
   }
   |
-  IF '(' bexpr ')' cmd ELSE '{' cmd '}' {
-
+  IF '(' bexpr ") {" list '}' ELSE '{' list '}' {
+    $$ = if_else_command($3, $5, $6);
+  }
+  |
+  IF '(' bexpr ')' list ELSE '{' list '}' {
+    $$ = if_else_command($3, $5, $7);
   }
   ;
 
@@ -148,12 +153,12 @@ atr:
   ;
 
 while_expr: 
-  WHILE'(' bexpr ')' {
-
+  WHILE'(' bexpr ')' list{
+    $$ = while_command($3, $5);
   }
   |
   WHILE '(' bexpr ") {" '}' {
-
+    $$ = while_command($3, $5);
   } 
   ;
 
@@ -183,15 +188,6 @@ list_var:
   VAR'[' num ']' ',' list_var{
 
   }
-  ;
-
-print_expr:
-  {
-  }
-  ;
-
-scan_expr: 
-  {}
   ;
 
 expr: 

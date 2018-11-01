@@ -3,23 +3,6 @@
 #ifndef __ast_h__
 #define __ast_h__
 
-// AST for expressions
-struct _Expr {
-  enum { 
-    E_INTEGER,
-    E_OPERATION,
-    E_FLOAT
-  } kind;
-  union {
-    int value; // for integer values
-    struct { 
-      int operator; // PLUS, MINUS, etc 
-      struct _Expr* left;
-      struct _Expr* right;
-    } op; // for binary expressions
-  } attr;
-};
-
 struct _CommandList {
     struct _Command* expr;
     struct _CommandList* next;
@@ -34,31 +17,45 @@ struct _Command {
     E_PRINT,
     E_SCAN
   }kind;
-  struct _IFexpression if_expression;
-  struct _WHILEexpression while_expr; 
 };
 
 struct _IFexpression {
-  struct _BoolExpr* bexpr;
-  struct _Command* cmd;
-  struct _ELSEexpression* else_expr;
-};
+  enum {
+    E_IF,
+    E_IF_ELSE
+  } kind;
 
-struct _ELSEexpression {
-  struct _Command* cmd;
+  struct {
+    struct _BoolExpr* bexpr;
+    struct _CommandList* list;
+  } if_type;
+  
+  struct {
+    struct _BoolExpr* bexpr;
+    struct _CommandList* list;
+    struct _CommandList* else_list;
+  } if_else_type;
 };
 
 struct _WHILEexpression {
   struct _BoolExpr* bexpr;
-  struct _Command* cmd;
+  struct _CommandList* list;
 };
 
 struct _ATR {
+  struct {
+    char* name;
+    int value;
+  } integer_value;
 
+  struct {
+    char* name;
+    float value;
+  } float_value;
 };
 
 struct _DECL {
-
+  char* name;
 };
 
 struct _PRINT {
@@ -67,6 +64,24 @@ struct _PRINT {
 
 struct _SCAN {
 
+};
+
+// AST for expressions
+struct _Expr {
+  enum { 
+    E_INTEGER,
+    E_OPERATION,
+    E_FLOAT
+  } kind;
+  union {
+    int value; // for integer values
+    float valuef;
+    struct { 
+      int operator; // PLUS, MINUS, etc 
+      struct _Expr* left;
+      struct _Expr* right;
+    } op; // for binary expressions
+  } attr;
 };
 
 struct _BoolExpr {
@@ -78,8 +93,6 @@ struct _BoolExpr {
     int value; // for boolean values
     struct { 
       int operator;
-      struct _Expr* left;
-      struct _Expr* right;
       struct _BoolExpr* bleft;
       struct _BoolExpr* bright;
     } relop; // for binary expressions
@@ -96,27 +109,37 @@ typedef struct _ATR ATR;
 typedef struct _DECL DECL;
 typedef struct _PRINT PRINT;
 typedef struct _SCAN SCAN;
-typedef struct _Expr Expr; // Convenience typedef
+typedef struct _Expr Expr; 
 typedef struct _BoolExpr BoolExpr;
 typedef struct _BoolExprList BoolExprList;
 
-// Constructor functions (see implementation in ast.c)
+
+//------- Command list -----------------
+CommandList* ast_commandList(Command* cmd, CommandList* next);
+
+//------- Command functions -------------
+Command* if_declaration();
+Command* while_declaration();
+Command* atribution_declaration();
+Command* declaration_declaration();
+
+//------- IF expressions ----------------
+IFexpression* if_command(BoolExpr* bexpr, struct CommandList* list);
+IFexpression* if_else_command(BoolExpr* bexpr, struct CommandList* list, struct CommandList* else_list);
+
+//------- WHILE expressions ----------------
+WHILEexpression* while_command(BoolExpr* bexpr, struct CommandList* list);
+
+//------- Expressions functions -------------
 Expr* ast_integer(int v);
 Expr* ast_float(float v);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
-CommandList* ast_commandList(Command* cmd, CommandList* next);
-BoolExprList* ast_boolExprlist(BoolExpr* expr, BoolExprList* next);
+
+//------- Bool Expressions functions -------------
 BoolExpr* ast_bool(int v);
 BoolExpr* ast_boolNot(int operator, BoolExpr* bexpr);
 BoolExpr* ast_boolOperation(int operator, BoolExpr* left, BoolExpr* right);
 BoolExpr* ast_boolOperation2(int operator, Expr* left, Expr* right);
 BoolExpr* ast_singleExpr(Expr* expr);
-
-// The expression can be int or float
-Expr* ast_number(Expr* expr);
-Command* if_command(BoolExpr* bexpr);
-Command* else_command(BoolExpr* bexpr);
-Command* while_command(BoolExpr* bexpr);
-Command* atribution_command(char *name, Expr* expr);
 
 #endif
