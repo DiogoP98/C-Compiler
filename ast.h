@@ -12,7 +12,7 @@ struct _Command {
   enum {
     E_IF,
     E_WHILE,
-    E_ATR,
+    E_ASG,
     E_DECL,
     E_PRINT,
     E_SCAN
@@ -42,20 +42,17 @@ struct _WHILEexpression {
   struct _CommandList* list;
 };
 
-struct _ATR {
-  struct {
-    char* name;
-    int value;
-  } integer_value;
-
-  struct {
-    char* name;
-    float value;
-  } float_value;
+struct _DeclarationList {
+  struct _ASG* assignemt;
+  struct _DECL* declaration;
+  struct _DeclarationList* next;
 };
 
 struct _DECL {
   char* name;
+  int type;
+  int valuei;
+  float valuef;
 };
 
 struct _PRINT {
@@ -74,7 +71,7 @@ struct _Expr {
     E_FLOAT
   } kind;
   union {
-    int value; // for integer values
+    int value;
     float valuef;
     struct { 
       int operator; // PLUS, MINUS, etc 
@@ -105,7 +102,8 @@ typedef struct _Command Command;
 typedef struct _IFexpression IFexpression;
 typedef struct _ELSEexprssion ELSEexpression;
 typedef struct _WHILEexpression WHILEexpression;
-typedef struct _ATR ATR;
+typedef struct _DeclarationList DeclarationList;
+typedef struct _ASG ASG;
 typedef struct _DECL DECL;
 typedef struct _PRINT PRINT;
 typedef struct _SCAN SCAN;
@@ -120,7 +118,7 @@ CommandList* ast_commandList(Command* cmd, CommandList* next);
 //------- Command functions -------------
 Command* if_declaration();
 Command* while_declaration();
-Command* atribution_declaration();
+Command* assignment_declaration();
 Command* declaration_declaration();
 
 //------- IF expressions ----------------
@@ -129,6 +127,13 @@ IFexpression* if_else_command(BoolExpr* bexpr, struct CommandList* list, struct 
 
 //------- WHILE expressions ----------------
 WHILEexpression* while_command(BoolExpr* bexpr, struct CommandList* list);
+
+//------- Declarations expressions ----------------
+DeclarationList* declaration(DECL* decl, DeclarationList* next);
+DeclarationList* assignment(DECL* decl, DeclarationList* next);
+DECL* int_variable(char* s, int type, int value);
+DECL* float_variable(char* s, int type, float value);
+
 
 //------- Expressions functions -------------
 Expr* ast_integer(int v);

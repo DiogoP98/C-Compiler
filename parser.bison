@@ -43,6 +43,7 @@
 %union {
   int intValue;
   float floatValue;
+  char* stringValue;
   CommandList* commandlist;
   Command* cmdType;
   IFexpression* ifExpression;
@@ -116,7 +117,7 @@ cmd:
   }
   |
   atr ';' {
-    $$ = atribution_declaration();
+    $$ = asignment_declaration();
   }
   ;
 
@@ -145,13 +146,6 @@ if_expr:
   }
   ;
 
-atr:
-  VAR '=' expr
-  {
-
-  }
-  ;
-
 while_expr: 
   WHILE '(' bexpr ')' list{
     $$ = while_command($3, $5);
@@ -163,32 +157,57 @@ while_expr:
   ;
 
 decl: 
- INTD list_var{
-
+ INTD list_var_int{
+   $$ = int_declaration_command($2);
  }
  |
- FLOAT list_var{
-
+ FLOAT list_var_float{
+   $$ = float_declaration_command($2);
  }
  ;
 
-list_var:
-  VAR {
+ atr:
+  VAR '=' expr
+  {
+    $$ = ass();
+  }
+  ;
 
+list_var_int:
+  VAR {
+    $$ = int_variable($1, INT, 0);
   }
   |
   VAR ',' list_var{
-
+    $$ = declaration($1,$3);
   }
   |
   VAR '=' expr ',' list_var{
-
+    $$ = assignment_int($1, $3, $5);
   }
   |
-  VAR'[' num ']' ',' list_var{
-
+  VAR'[' INT ']' ',' list_var{
+    $$ = array_declaration($1,$3,$6);
   }
   ;
+
+  list_var_float:
+    VAR {
+      $$ = float_variable($1, FLOAT, 0);
+    }
+    |
+    VAR ',' list_var{
+      $$ = declaration($1,$3);
+    }
+    |
+    VAR '=' expr ',' list_var{
+      $$ = assignment_float($1, $3, $5);
+    }
+    |
+    VAR'[' INT ']' ',' list_var{
+      $$ = array_declaration($1,$3,$6);
+    }
+    ;
 
 expr: 
   num {

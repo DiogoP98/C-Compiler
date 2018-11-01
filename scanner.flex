@@ -54,8 +54,7 @@ int yyline = 1;
 ">=" { return GOQ;  }
 
 [a-zA-Z_][a-zA-Z0-9_]* { 
-    yylval = yytext;
-    printf("Identifier: %s\n", yytext);
+    yylval.stringValue = yytext;
     return VAR;
 }
 

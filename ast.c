@@ -3,6 +3,7 @@
 #include <stdlib.h> // for malloc
 #include "ast.h" // AST header
 
+//------- Command list -----------------
 CommandList* ast_commandList(Command* cmd, CommandList* next) {
   CommandList* node = (CommandList*) malloc(sizeof(CommandList));
   node->expr = cmd;
@@ -10,6 +11,8 @@ CommandList* ast_commandList(Command* cmd, CommandList* next) {
   return node;
 }
 
+
+//------- Command functions -------------
 Command* if_declaration() {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_IF; 
@@ -22,9 +25,9 @@ Command* while_declaration() {
   return node; 
 }
 
-Command* atribution_declaration() {
+Command* assignment_declaration() {
   Command* node = (Command*) malloc(sizeof(Command));
-  node->kind = E_ATR; 
+  node->kind = E_ASG; 
   return node;
 }
 
@@ -34,6 +37,7 @@ Command* declaration_declaration() {
   return node; 
 }
 
+//------- IF expressions ----------------
 IFexpression* if_command(BoolExpr* bexpr, struct CommandList* list) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   node->kind = E_IF;
@@ -51,6 +55,7 @@ IFexpression* if_else_command(BoolExpr* bexpr, struct CommandList* list, struct 
   return node;
 }
 
+//------- WHILE expressions ----------------
 WHILEexpression* while_command(BoolExpr* bexpr, struct CommandList* list) {
   WHILEexpression* node = (WHILEexpression*) malloc(sizeof(WHILEexpression));
   node->bexpr = bexpr;
@@ -58,6 +63,37 @@ WHILEexpression* while_command(BoolExpr* bexpr, struct CommandList* list) {
   return node;
 }
 
+//--------- Declaration List -------------
+DeclarationList* declaration(DECL* decl, DeclarationList* next) {
+  DeclarationList* node = (DeclarationList*) malloc(sizeof(DeclarationList));
+  node->declaration = decl;
+  node->next = next;
+  return node;
+}
+
+DeclarationList* assignment(DECL* decl, DeclarationList* next) {
+  DeclarationList* node = (DeclarationList*) malloc(sizeof(DeclarationList));
+  node->assignemt = decl;
+  node->next = next;
+  return node;
+}
+
+DECL* int_variable(char* s, int type, int value) {
+  DECL* node = (DECL*) malloc(sizeof(DECL));
+  node->name = s;
+  node->type = type;
+  return node;
+}
+
+DECL* float_variable(char* s, int type, float value) {
+  DECL* node = (DECL*) malloc(sizeof(DECL));
+  node->name = s;
+  node->type = type;
+  return node;
+}
+
+
+//------- Expressions functions -------------
 Expr* ast_integer(int v) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
   node->kind = E_INTEGER;
@@ -81,6 +117,7 @@ Expr* ast_operation(int operator, Expr* left, Expr* right) {
   return node;
 }
 
+//------- Bool Expressions functions -------------
 BoolExpr* ast_bool(int v) {
   BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
   node->kind = E_BOOL;
