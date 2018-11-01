@@ -53,5 +53,15 @@ int yyline = 1;
 ">"  { return GRE;  }
 ">=" { return GOQ;  }
 
+[a-zA-Z_][a-zA-Z0-9_]* { 
+    yylval = yytext;
+    printf("Identifier: %s\n", yytext);
+    return VAR;
+}
+
 .  { yyerror("unexpected character"); }
 %%
+
+int main() {
+    yylex();
+}

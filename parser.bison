@@ -133,31 +133,31 @@ if_expr:
     $$ = if_command($3, $5);
   }
   IF '(' bexpr ") {" list '}' ELSE list {
-    $$ = if_else_command($3, $5, $6);
+    $$ = if_else_command($3, $5, $7);
   }
   |
   IF '(' bexpr ") {" list '}' ELSE '{' list '}' {
-    $$ = if_else_command($3, $5, $6);
+    $$ = if_else_command($3, $5, $9);
   }
   |
   IF '(' bexpr ')' list ELSE '{' list '}' {
-    $$ = if_else_command($3, $5, $7);
+    $$ = if_else_command($3, $5, $8);
   }
   ;
 
 atr:
   VAR '=' expr
   {
-    $$ = atribution_command($1, $3);
+
   }
   ;
 
 while_expr: 
-  WHILE'(' bexpr ')' list{
+  WHILE '(' bexpr ')' list{
     $$ = while_command($3, $5);
   }
   |
-  WHILE '(' bexpr ") {" '}' {
+  WHILE '(' bexpr ") {" list '}'{
     $$ = while_command($3, $5);
   } 
   ;

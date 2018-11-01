@@ -1,2 +1,4 @@
-# A sum of 4 numbers
-7 / 4
+int a = 5;
+float b;
+printf();
+if ();
