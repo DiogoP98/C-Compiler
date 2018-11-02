@@ -43,16 +43,32 @@ struct _WHILEexpression {
 };
 
 struct _DeclarationList {
+  enum {
+    E_assignment,
+    E_declaration
+  } type;
   struct _ASG* assignemt;
   struct _DECL* declaration;
   struct _DeclarationList* next;
 };
 
 struct _DECL {
+  enum {
+    E_array,
+    E_single
+  } type;
   char* name;
-  int type;
-  int valuei;
-  float valuef;
+  int size;
+};
+
+struct _ASG {
+  enum {
+    E_array,
+    E_single
+  } type;
+  char* name;
+  int position;
+  struct _Expr* value;
 };
 
 struct _PRINT {
@@ -122,18 +138,19 @@ Command* assignment_declaration();
 Command* declaration_declaration();
 
 //------- IF expressions ----------------
-IFexpression* if_command(BoolExpr* bexpr, struct CommandList* list);
-IFexpression* if_else_command(BoolExpr* bexpr, struct CommandList* list, struct CommandList* else_list);
+IFexpression* if_command(BoolExpr* bexpr, CommandList* list);
+IFexpression* if_else_command(BoolExpr* bexpr, CommandList* list, CommandList* else_list);
 
 //------- WHILE expressions ----------------
-WHILEexpression* while_command(BoolExpr* bexpr, struct CommandList* list);
+WHILEexpression* while_command(BoolExpr* bexpr, CommandList* list);
 
 //------- Declarations expressions ----------------
 DeclarationList* declaration(DECL* decl, DeclarationList* next);
-DeclarationList* assignment(DECL* decl, DeclarationList* next);
-DECL* int_variable(char* s, int type, int value);
-DECL* float_variable(char* s, int type, float value);
-
+DeclarationList* assignment(ASG* asg, DeclarationList* next);
+DECL* var_declaration(char* s);
+DECL* array_declaration(char* s, int size);
+ASG* var_assignment(char*s, Expr* expr);
+ASG* array_assignment(char* s, int position, Expr* expr);
 
 //------- Expressions functions -------------
 Expr* ast_integer(int v);

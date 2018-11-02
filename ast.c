@@ -38,7 +38,7 @@ Command* declaration_declaration() {
 }
 
 //------- IF expressions ----------------
-IFexpression* if_command(BoolExpr* bexpr, struct CommandList* list) {
+IFexpression* if_command(BoolExpr* bexpr, CommandList* list) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   node->kind = E_IF;
   node->if_type.bexpr = bexpr;
@@ -46,7 +46,7 @@ IFexpression* if_command(BoolExpr* bexpr, struct CommandList* list) {
   return node;
 }
 
-IFexpression* if_else_command(BoolExpr* bexpr, struct CommandList* list, struct CommandList* else_list) {
+IFexpression* if_else_command(BoolExpr* bexpr, CommandList* list, CommandList* else_list) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   node->kind = E_IF_ELSE;
   node->if_type.bexpr = bexpr;
@@ -56,7 +56,7 @@ IFexpression* if_else_command(BoolExpr* bexpr, struct CommandList* list, struct 
 }
 
 //------- WHILE expressions ----------------
-WHILEexpression* while_command(BoolExpr* bexpr, struct CommandList* list) {
+WHILEexpression* while_command(BoolExpr* bexpr, CommandList* list) {
   WHILEexpression* node = (WHILEexpression*) malloc(sizeof(WHILEexpression));
   node->bexpr = bexpr;
   node->list = list;
@@ -66,32 +66,51 @@ WHILEexpression* while_command(BoolExpr* bexpr, struct CommandList* list) {
 //--------- Declaration List -------------
 DeclarationList* declaration(DECL* decl, DeclarationList* next) {
   DeclarationList* node = (DeclarationList*) malloc(sizeof(DeclarationList));
+  node->type = E_declaration;
   node->declaration = decl;
   node->next = next;
   return node;
 }
 
-DeclarationList* assignment(DECL* decl, DeclarationList* next) {
+DeclarationList* assignment(ASG* asg, DeclarationList* next) {
   DeclarationList* node = (DeclarationList*) malloc(sizeof(DeclarationList));
-  node->assignemt = decl;
+  node->type = E_assignment;
+  node->assignemt = asg;
   node->next = next;
   return node;
 }
 
-DECL* int_variable(char* s, int type, int value) {
+DECL* var_declaration(char* s) {
   DECL* node = (DECL*) malloc(sizeof(DECL));
+  node ->type = E_single;
   node->name = s;
-  node->type = type;
   return node;
 }
 
-DECL* float_variable(char* s, int type, float value) {
+DECL* array_declaration(char* s, int size) {
   DECL* node = (DECL*) malloc(sizeof(DECL));
-  node->name = s;
-  node->type = type;
+  node -> type = E_array;
+  node -> size = size;
+  node -> name = s;
   return node;
 }
 
+ASG* var_assignment(char* s, Expr* expr) {
+  ASG* node = (ASG*) malloc(sizeof(ASG));
+  node->type = E_single;
+  node->name = s;
+  node->value = expr;
+  return node;
+}
+
+ASG* array_assignment(char* s, int position, Expr* expr) {
+  ASG* node = (ASG*) malloc(sizeof(ASG));
+  node->type = E_array;
+  node->position = position;
+  node->name = s;
+  node->value = expr;
+  return node;
+}
 
 //------- Expressions functions -------------
 Expr* ast_integer(int v) {

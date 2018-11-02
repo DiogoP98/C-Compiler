@@ -157,57 +157,49 @@ while_expr:
   ;
 
 decl: 
- INTD list_var_int{
-   $$ = int_declaration_command($2);
+ INTD list_var{
+   $$ = declaration_command($2);
  }
  |
- FLOAT list_var_float{
-   $$ = float_declaration_command($2);
+ FLOAT list_var{
+   $$ = declaration_command($2);
  }
  ;
 
  atr:
   VAR '=' expr
   {
-    $$ = ass();
+    $$ = var_assignment($1,$3);
+  }
+  |
+  VAR'[' INT ']' '=' expr {
+    $$ = array_assignment($1,$3,$6);
   }
   ;
 
-list_var_int:
-  VAR {
-    $$ = int_variable($1, INT, 0);
+  decl:
+    VAR {
+      $$ = var_declaration($1);
+    }
+    |
+    VAR '[' INT ']' {
+      $$ = array_declaration($1,$3);
+    }
+  ;
+
+list_var:
+  {
+    $$ = NULL;
   }
   |
-  VAR ',' list_var{
+  decl ',' list_var{
     $$ = declaration($1,$3);
   }
   |
-  VAR '=' expr ',' list_var{
-    $$ = assignment_int($1, $3, $5);
-  }
-  |
-  VAR'[' INT ']' ',' list_var{
-    $$ = array_declaration($1,$3,$6);
+  atr ',' list_var{
+    $$ = assignment($1, $3, $5);
   }
   ;
-
-  list_var_float:
-    VAR {
-      $$ = float_variable($1, FLOAT, 0);
-    }
-    |
-    VAR ',' list_var{
-      $$ = declaration($1,$3);
-    }
-    |
-    VAR '=' expr ',' list_var{
-      $$ = assignment_float($1, $3, $5);
-    }
-    |
-    VAR'[' INT ']' ',' list_var{
-      $$ = array_declaration($1,$3,$6);
-    }
-    ;
 
 expr: 
   num {
