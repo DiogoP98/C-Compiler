@@ -82,10 +82,6 @@ CommandList* list;
 program: list { root = $1; }
 
 list:
-  {
-    $$ = NULL;
-  }
-  |
   cmd list{
     $$ = commandlist($1, $2);
   }
@@ -188,16 +184,20 @@ decl:
   ;
 
 list_var:
-  {
-    $$ = NULL;
+  decl {
+    $$ = declaration($1,NULL);
   }
   |
   decl ',' list_var{
     $$ = declaration($1,$3);
   }
   |
+  atr {
+    $$ = assignment($1, NULL);
+  }
+  |
   atr ',' list_var{
-    $$ = assignment($1, $3, $5);
+    $$ = assignment($1, $3);
   }
   ;
 
