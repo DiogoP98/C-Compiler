@@ -144,7 +144,7 @@ IFexpression* if_else_command(BoolExpr* bexpr, CommandList* list, CommandList* e
 //------- WHILE expressions ----------------
 WHILEexpression* while_command(BoolExpr* bexpr, CommandList* list);
 
-//------- Declarations expressions ----------------
+//------- Declarations/Assignments expressions ----------------
 DeclarationList* declaration(DECL* decl, DeclarationList* next);
 DeclarationList* assignment(ASG* asg, DeclarationList* next);
 DECL* var_declaration(char* s);

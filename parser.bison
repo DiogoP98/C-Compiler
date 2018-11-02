@@ -166,7 +166,7 @@ decl:
  }
  ;
 
- atr:
+atr:
   VAR '=' expr
   {
     $$ = var_assignment($1,$3);
@@ -177,7 +177,7 @@ decl:
   }
   ;
 
-  decl:
+decl:
     VAR {
       $$ = var_declaration($1);
     }
