@@ -112,7 +112,7 @@ cmd:
     $$ = scan_command(scan_expr);
   }
   |
-  atr ';' {
+  list_var ';' {
     $$ = asignment_declaration();
   }
   ;
