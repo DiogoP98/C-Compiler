@@ -34,42 +34,6 @@ for(int i = 0; i < spaces; i++)
   }
 }
 
-void printBool(BoolExpr* expr, int spaces) {
-for(int i = 0; i < spaces; i++)
-    printf(" ");
-  if (expr == 0) {
-    yyerror("Null expression!!");
-  }
-
-  else if (expr->kind == E_BOOL) 
-    printf ("BOOL %d\n", expr->attr_bool.value); 
-
-  else if (expr->kind == E_RELOP) {
-    switch (expr->attr_bool.relop.operator) {
-      case EQU:
-        printf("==:\n");
-        break;
-      case DIF:
-        printf("!=:\n");
-        break;
-      case LES:
-        printf("<:\n");
-        break;
-      case LOQ:
-        printf("<=:\n");
-        break;
-      case GRE:
-        printf(">:\n");
-        break;
-	  case GOQ:
-        printf(">=:\n");
-        break;
-    }
-    printExpr(expr->attr_bool.relop.left, spaces+1);
-    printExpr(expr->attr_bool.relop.right, spaces+1);
-  }
-}
-
 int main(int argc, char** argv) {
   --argc; ++argv;
   if (argc != 0) {
@@ -81,8 +45,6 @@ int main(int argc, char** argv) {
   } //  yyin = stdin
   if (yyparse() == 0) {
     while(root != NULL) {
-      if(root->expr != NULL) printBool(root->bexpr, 0);
-      else printExpr(root->expr, 0);
       printf("\n\n\n\n\n\n\n\n\n");
       root = root->next;
     }

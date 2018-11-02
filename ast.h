@@ -17,6 +17,9 @@ struct _Command {
     E_PRINT,
     E_SCAN
   }kind;
+  struct _DeclarationList* next;
+  struct _IFexpression* ifnext;
+  struct _WHILEexpression* whilenext;
 };
 
 struct _IFexpression {
@@ -71,11 +74,11 @@ struct _ASG {
   struct _Expr* value;
 };
 
-struct _PRINT {
+struct _PRINTF_EXP {
 
 };
 
-struct _SCAN {
+struct _SCANF_EXP {
 
 };
 
@@ -121,8 +124,8 @@ typedef struct _WHILEexpression WHILEexpression;
 typedef struct _DeclarationList DeclarationList;
 typedef struct _ASG ASG;
 typedef struct _DECL DECL;
-typedef struct _PRINT PRINT;
-typedef struct _SCAN SCAN;
+typedef struct _PRINTF_EXP PRINTF_EXP;
+typedef struct _SCANF_EXP SCANF_EXP;
 typedef struct _Expr Expr; 
 typedef struct _BoolExpr BoolExpr;
 typedef struct _BoolExprList BoolExprList;
@@ -132,10 +135,10 @@ typedef struct _BoolExprList BoolExprList;
 CommandList* ast_commandList(Command* cmd, CommandList* next);
 
 //------- Command functions -------------
-Command* if_declaration();
-Command* while_declaration();
-Command* assignment_declaration();
-Command* declaration_declaration();
+Command* if_declaration(IFexpression* ifnext);
+Command* while_declaration(WHILEexpression* whilenext);
+Command* assignment_declaration(DeclarationList* next);
+Command* declaration_declaration(DeclarationList* next);
 
 //------- IF expressions ----------------
 IFexpression* if_command(BoolExpr* bexpr, CommandList* list);

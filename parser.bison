@@ -24,6 +24,8 @@
   SCAN
   PRINT
   VAR
+  PRINTF_EXPR
+  SCAN_EXPR
 
 // Operator associativity & precedence
 %left EQU DIF LES LOQ GRE GOQ
@@ -44,24 +46,29 @@
   int intValue;
   float floatValue;
   char* stringValue;
-  CommandList* commandlist;
+  CommandList* commandList;
   Command* cmdType;
   IFexpression* ifExpression;
   WHILEexpression* whileExpression;
+  DeclarationList* list_decl;
+  ASG* assignment;
+  DECL* declaration;
   Expr* exprValue;
-  ExprList* exprList;
   BoolExpr* boolExpr;
 }
 
 %type <intValue> INT
 %type <floatValue> FLOAT
-%type <numValue> num
+%type <stringValue> VAR
 %type <cmdType> cmd
 %type <commandList> list
 %type <exprValue> expr
 %type <boolExpr> bexpr
 %type <ifExpression> if_expr
 %type <whileExpression> while_expr
+%type <list_decl> list_var
+%type <assignment> atr
+%type <declaration> decl
 
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
@@ -75,7 +82,7 @@ extern int yyline;
 extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
-CommandList* list;
+CommandList* root;
 }
 
 %%
@@ -83,37 +90,41 @@ program: list { root = $1; }
 
 list:
   cmd list{
-    $$ = commandlist($1, $2);
+    $$ = ast_commandList($1, $2);
   }
   |
   cmd {
-    $$ = commandlist($1, NULL);
+    $$ = ast_commandList($1, NULL);
   }
   ;
 
 cmd:
   if_expr {
-    $$ = if_declaration();
+    $$ = if_declaration($1);
   }
   |
   while_expr {
-    $$ = while_declaration();
+    $$ = while_declaration($1);
   }
   |
-  decl ';' {
-    $$ = declaration_declaration();
+  INTD list_var ';' {
+    $$ = declaration_declaration($2);
   }
   |
-  PRINT '(' print_expr ')' ';' {
-    $$ = print_command(print_expr);
+  FLOATD list_var ';' {
+    $$ = declaration_declaration($2);
   }
   |
-  SCAN '(' scan_expr ')' ';' {
-    $$ = scan_command(scan_expr);
+  PRINT '(' PRINTF_EXPR ',' list_var ')' ';' {
+
+  }
+  |
+  SCAN '(' SCAN_EXPR ')' ';' {
+  
   }
   |
   list_var ';' {
-    $$ = asignment_declaration();
+    $$ = assignment_declaration($1);
   }
   ;
 
@@ -127,10 +138,11 @@ if_expr:
   }
   |
   IF '(' bexpr ") {" list '}' {
-    $$ = if_command($3, $5);
+    $$ = if_command($3,$5);
   }
+  |
   IF '(' bexpr ") {" list '}' ELSE list {
-    $$ = if_else_command($3, $5, $7);
+    $$ = if_else_command($3, $5, $5);
   }
   |
   IF '(' bexpr ") {" list '}' ELSE '{' list '}' {
@@ -152,19 +164,8 @@ while_expr:
   } 
   ;
 
-decl: 
- INTD list_var{
-   $$ = declaration_command($2);
- }
- |
- FLOAT list_var{
-   $$ = declaration_command($2);
- }
- ;
-
 atr:
-  VAR '=' expr
-  {
+  VAR '=' expr {
     $$ = var_assignment($1,$3);
   }
   |
@@ -202,8 +203,12 @@ list_var:
   ;
 
 expr: 
-  num {
-    $$ = ast_number($1);
+  INT {
+    $$ = ast_integer($1);
+  }
+  |
+  FLOAT {
+    $$ = ast_float($1);
   }
   |
   expr PLUS expr { 
@@ -263,15 +268,6 @@ bexpr:
     $$ = ast_boolOperation2(GOQ, $1, $3);
   }
   ;
-
-num:
-  INT {
-    $$ = ast_integer($1);
-  }
-  |
-  FLOAT {
-    $$ = ast_float($1);
-  }
 %%
 
 void yyerror(const char* err) {

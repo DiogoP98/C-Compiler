@@ -60,7 +60,3 @@ int yyline = 1;
 
 .  { yyerror("unexpected character"); }
 %%
-
-int main() {
-    yylex();
-}

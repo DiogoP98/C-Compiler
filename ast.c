@@ -13,27 +13,31 @@ CommandList* ast_commandList(Command* cmd, CommandList* next) {
 
 
 //------- Command functions -------------
-Command* if_declaration() {
+Command* if_declaration(IFexpression* ifnext) {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_IF; 
+  node->ifnext = ifnext;
   return node;
 }
 
-Command* while_declaration() {
+Command* while_declaration(WHILEexpression* whilenext) {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_WHILE;
+  node->whilenext = whilenext;
   return node; 
 }
 
-Command* assignment_declaration() {
+Command* assignment_declaration(DeclarationList* next) {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_ASG; 
+  node->next = next;
   return node;
 }
 
-Command* declaration_declaration() {
+Command* declaration_declaration(DeclarationList* next) {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_DECL;
+  node->next = next;
   return node; 
 }
 
