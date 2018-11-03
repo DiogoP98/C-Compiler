@@ -1,6 +1,3 @@
-State 47 conflicts: 2 shift/reduce
-
-
 Grammar
 
     0 $accept: program $end
@@ -609,11 +606,6 @@ State 47
    38      | bexpr . AND bexpr
    39      | NOT bexpr .
 
-    OR   shift, and go to state 60
-    AND  shift, and go to state 61
-
-    OR        [reduce using rule 39 (bexpr)]
-    AND       [reduce using rule 39 (bexpr)]
     $default  reduce using rule 39 (bexpr)
 
 

@@ -154,11 +154,16 @@ Command* printf_declaration(PRINTF_EXP* printnext);
 Command* scanf_declaration(SCANF_EXP* scannext);
 
 //------- IF expressions ----------------
-IFexpression* if_command(BoolExpr* bexpr, CommandList* list);
-IFexpression* if_else_command(BoolExpr* bexpr, CommandList* list, CommandList* else_list);
+IFexpression* if_command(BoolExpr* bexpr, Command* cmd);
+IFexpression* if_command_else_command(BoolExpr* bexpr, Command* cmd, Command* else_cmd);
+IFexpression* if_commands(BoolExpr* bexpr, CommandList* list);
+IFexpression* if_commands_else_command(BoolExpr* bexpr, CommandList* list, Command* else_cmd);
+IFexpression* if_commands_else_commands(BoolExpr* bexpr, CommandList* list, CommandList* else_list);
+IFexpression* if_command_else_commands(BoolExpr* bexpr, Command* cmd, CommandList* else_list);
 
 //------- WHILE expressions ----------------
-WHILEexpression* while_command(BoolExpr* bexpr, CommandList* list);
+WHILEexpression* while_command(BoolExpr* bexpr, Command* cmd);
+WHILEexpression* while_commands(BoolExpr* bexpr, CommandList* list);
 
 //------- INPUT/OUTPUT expressions ----------------
 PRINTF_EXP* ast_printf(char* types, DeclarationList* vars);

@@ -38,7 +38,7 @@
 %left PLUS SUB
 %left MUL DIV MOD
 %left INT FLOAT
-%left AND OR
+%left AND OR NOT
 %left VAR
 %left IF WHILE
 %nonassoc NO_ELSE
@@ -155,23 +155,23 @@ if_expr:
   }
   |
   IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd ELSE cmd {
-    $$ = if_else_command($3, $5, $7);
+    $$ = if_command_else_command($3, $5, $7);
   }
   |
   IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list %prec NO_ELSE CLOSECURLYBRACKETS {
-    $$ = if_command($3,$6);
+    $$ = if_commands($3,$6);
   }
   |
   IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE cmd {
-    $$ = if_else_command($3, $6, $9);
+    $$ = if_commands_else_command($3, $6, $9);
   }
   |
   IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
-    $$ = if_else_command($3, $6, $10);
+    $$ = if_commands_else_commands($3, $6, $10);
   }
   |
   IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
-    $$ = if_else_command($3, $5, $8);
+    $$ = if_command_else_commands($3, $5, $8);
   }
   ;
 
@@ -181,7 +181,7 @@ while_expr:
   }
   |
   WHILE OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
-    $$ = while_command($3, $6);
+    $$ = while_commands($3, $6);
   } 
   ;
 

@@ -49,15 +49,54 @@ Command* variable_declaration(varList* list) {
 }
 
 //------- IF expressions ----------------
-IFexpression* if_command(BoolExpr* bexpr, CommandList* list) {
+
+IFexpression* if_command(BoolExpr* bexpr, Command* cmd) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
+  CommandList* list = (CommandList*) malloc(sizeof(CommandList));
+  list->expr = cmd;
+  list->next = NULL;
   node->kind = E_IF_EXPR;
-  node->if_type.bexpr = bexpr;
   node->if_type.list = list;
+  node->if_type.bexpr = bexpr;
   return node;
 }
 
-IFexpression* if_else_command(BoolExpr* bexpr, CommandList* list, CommandList* else_list) {
+IFexpression* if_command_else_command(BoolExpr* bexpr, Command* cmd, Command* else_cmd) {
+  IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
+  CommandList* list = (CommandList*) malloc(sizeof(CommandList));
+  CommandList* list2 = (CommandList*) malloc(sizeof(CommandList));
+  list->expr = cmd;
+  list->next = NULL;
+  list2->expr = else_cmd;
+  list2->next = NULL;
+  node->kind = E_IF_ELSE;
+  node->if_else_type.bexpr = bexpr;
+  node->if_else_type.list = list;
+  node->if_else_type.else_list = list2;
+  return node;
+}
+
+IFexpression* if_commands(BoolExpr* bexpr, CommandList* list) {
+  IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
+  node->kind = E_IF_EXPR;
+  node->if_type.list = list;
+  node->if_type.bexpr = bexpr;
+  return node;
+}
+
+IFexpression* if_commands_else_command(BoolExpr* bexpr, CommandList* list, Command* else_cmd) {
+  IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
+  CommandList* list2 = (CommandList*) malloc(sizeof(CommandList));
+  list2->expr = else_cmd;
+  list2->next = NULL;
+  node->kind = E_IF_ELSE;
+  node->if_else_type.bexpr = bexpr;
+  node->if_else_type.list = list;
+  node->if_else_type.else_list = list2;
+  return node;
+}
+
+IFexpression* if_commands_else_commands(BoolExpr* bexpr, CommandList* list, CommandList* else_list) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   node->kind = E_IF_ELSE;
   node->if_type.bexpr = bexpr;
@@ -66,8 +105,30 @@ IFexpression* if_else_command(BoolExpr* bexpr, CommandList* list, CommandList* e
   return node;
 }
 
+IFexpression* if_command_else_commands(BoolExpr* bexpr, Command* cmd, CommandList* else_list) {
+  IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
+  CommandList* list = (CommandList*) malloc(sizeof(CommandList));
+  list->expr = cmd;
+  list->next = NULL;
+  node->kind = E_IF_ELSE;
+  node->if_type.bexpr = bexpr;
+  node->if_type.list = list;
+  node->if_else_type.else_list = else_list;
+  return node;
+}
+
 //------- WHILE expressions ----------------
-WHILEexpression* while_command(BoolExpr* bexpr, CommandList* list) {
+WHILEexpression* while_command(BoolExpr* bexpr, Command* cmd) {
+  WHILEexpression* node = (WHILEexpression*) malloc(sizeof(WHILEexpression));
+  CommandList* list = (CommandList*) malloc(sizeof(CommandList));
+  list->expr = cmd;
+  list->next = NULL;
+  node->bexpr = bexpr;
+  node->list = list;
+  return node;
+}
+
+WHILEexpression* while_commands(BoolExpr* bexpr, CommandList* list) {
   WHILEexpression* node = (WHILEexpression*) malloc(sizeof(WHILEexpression));
   node->bexpr = bexpr;
   node->list = list;
