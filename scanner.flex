@@ -52,10 +52,6 @@ int yyline = 1;
 
 "}" { return CLOSECURLYBRACKETS; }
 
-"[" { return OPENSQUAREBRACKETS; }
-
-"]" { return CLOSESQUAREBRACKETS; }
-
 "," { return COMMA; }
 
 

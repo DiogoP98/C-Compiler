@@ -12,13 +12,12 @@ struct _Command {
   enum {
     E_IF,
     E_WHILE,
-    E_ASG,
-    E_DECL,
+    E_VAR,
     E_PRINT,
     E_SCAN
   } kind;
 
-  struct _DeclarationList* declnext;
+  struct _VarList* list;
   struct _IFexpression* ifnext;
   struct _WHILEexpression* whilenext;
   struct _PRINTF_EXP* printnext;
@@ -58,27 +57,22 @@ struct _DeclarationList {
   struct _DeclarationList* next;
 };
 
+struct _VarList {
+  int type;
+  struct _DeclarationList* list;
+};
+
 struct _ScanDeclarationList {
   struct _DECL* declaration;
   struct _ScanDeclarationList* next;
 };
 
 struct _DECL {
-  enum {
-    E_ARRAY,
-    E_SINGLE
-  } type;
   char* name;
-  int size;
 };
 
 struct _ASG {
-  enum {
-    E_ARRAY_ASG,
-    E_SINGLE_ASG
-  } type;
   char* name;
-  int position;
   struct _Expr* value;
 };
 
@@ -147,7 +141,7 @@ typedef struct _Expr Expr;
 typedef struct _BoolExpr BoolExpr;
 typedef struct _BoolExprList BoolExprList;
 typedef struct _ScanDeclarationList ScanDeclarationList;
-
+typedef struct _VarList varList;
 
 //------- Command list -----------------
 CommandList* ast_commandList(Command* cmd, CommandList* next);
@@ -155,8 +149,7 @@ CommandList* ast_commandList(Command* cmd, CommandList* next);
 //------- Command functions -------------
 Command* if_declaration(IFexpression* ifnext);
 Command* while_declaration(WHILEexpression* whilenext);
-Command* assignment_declaration(DeclarationList* next);
-Command* declaration_declaration(DeclarationList* next);
+Command* variable_declaration(varList* list);
 Command* printf_declaration(PRINTF_EXP* printnext);
 Command* scanf_declaration(SCANF_EXP* scannext);
 
@@ -173,12 +166,11 @@ SCANF_EXP* ast_scanf(char* type, ScanDeclarationList* vars);
 ScanDeclarationList* ast_scanlist(DECL* var, ScanDeclarationList* next);
 
 //------- Declarations/Assignments expressions ----------------
-DeclarationList* declaration(DECL* decl, DeclarationList* next);
-DeclarationList* assignment(ASG* asg, DeclarationList* next);
+varList* ast_varlist(int type, DeclarationList* next);
+DeclarationList* ast_declaration(DECL* decl, DeclarationList* next);
+DeclarationList* ast_assignment(ASG* asg, DeclarationList* next);
 DECL* var_declaration(char* s);
-DECL* array_declaration(char* s, int size);
-ASG* var_assignment(char*s, Expr* expr);
-ASG* array_assignment(char* s, int position, Expr* expr);
+ASG* var_assignment(char* s, Expr* expr);
 
 //------- Expressions functions -------------
 Expr* ast_integer(int v);

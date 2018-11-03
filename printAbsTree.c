@@ -5,6 +5,7 @@ void printExpr(Expr* expr, int spaces);
 void printBoolExpr(BoolExpr* expr, int spaces);
 void printDeclaration(DECL* decl, int spaces);
 void printAssignment(ASG* asg, int spaces);
+void printvarList (varList* list, int spaces);
 void printDeclarationList(DeclarationList* declList, int spaces);
 void printCommand(Command* cmd, int spaces);
 void printIf(IFexpression* ifExpr, int spaces);
@@ -109,8 +110,7 @@ void printDeclaration(DECL* decl, int spaces) {
   if (decl == NULL)
     yyerror("Null declaration!!");
   
-  else if (decl->type == E_SINGLE)
-    printf("SINGLE %s\n", decl->name);
+  printf("%s\n", decl->name);
 }
 
 void printAssignment(ASG* asg, int spaces) {
@@ -120,10 +120,9 @@ void printAssignment(ASG* asg, int spaces) {
   if (asg == NULL)
     yyerror("Null assignment!!");
   
-  else if (asg->type == E_SINGLE_ASG)
-    printf("SINGLE %s = \n", asg->name);
+  printf("%s\n=\n", asg->name);
 
-  printExpr(asg->value, spaces + 1);
+  printExpr(asg->value, spaces);
 }
 
 void printCommand(Command* cmd, int spaces) {
@@ -141,11 +140,8 @@ void printCommand(Command* cmd, int spaces) {
       case E_WHILE:
         printWhile(cmd->whilenext, spaces+1);
         break;
-      case E_ASG:
-        printDeclarationList(cmd->declnext, spaces+1);
-        break;
-      case E_DECL:
-        printDeclarationList(cmd->declnext, spaces+1);
+      case E_VAR:
+        printvarList(cmd->list, spaces+1);
         break;
       case E_PRINT:
         printPrintf(cmd->printnext, spaces+1);
@@ -157,6 +153,18 @@ void printCommand(Command* cmd, int spaces) {
         printf("Undefined\n");
     }
   }
+}
+
+void printvarList (varList* list, int spaces) {
+  for(int i = 0; i < spaces; i++)
+    printf(" ");
+
+  if(list->type == FLOATD)
+    printf("FLOAT:\n");
+  else
+    printf("INT:\n");
+
+  printDeclarationList(list->list, spaces + 1);
 }
 
 void printDeclarationList(DeclarationList* declList, int spaces){

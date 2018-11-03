@@ -30,8 +30,6 @@
   CLOSEPARENTHESIS
   OPENCURLYBRACKETS
   CLOSECURLYBRACKETS
-  OPENSQUAREBRACKETS
-  CLOSESQUAREBRACKETS
   COMMA
   TYPES
 
@@ -42,6 +40,7 @@
 %left INT FLOAT
 %left AND OR
 %left VAR
+%left IF WHILE
 %nonassoc NO_ELSE
 %nonassoc ELSE
 
@@ -61,6 +60,7 @@
   WHILEexpression* whileExpression;
   PRINTF_EXP* printf_exp;
   SCANF_EXP* scan_expr;
+  varList* varList;
   DeclarationList* list_decl;
   ScanDeclarationList* scan_list;
   ASG* assignment;
@@ -85,6 +85,7 @@
 %type <declaration> decl
 %type <printf_exp> printf
 %type <scan_expr> scanf
+%type <varList> var_dec
 
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
@@ -123,12 +124,8 @@ cmd:
     $$ = while_declaration($1);
   }
   |
-  INTD list_var SEMICOLON {
-    $$ = declaration_declaration($2);
-  }
-  |
-  FLOATD list_var SEMICOLON {
-    $$ = declaration_declaration($2);
+  var_dec SEMICOLON {
+    $$ = variable_declaration($1);
   }
   |
   printf SEMICOLON{
@@ -137,10 +134,6 @@ cmd:
   |
   scanf SEMICOLON{
     $$ = scanf_declaration($1);
-  }
-  |
-  list_var SEMICOLON {
-    $$ = assignment_declaration($1);
   }
   ;
 
@@ -157,11 +150,11 @@ scanf:
   };
 
 if_expr:
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS list %prec NO_ELSE {
+  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd %prec NO_ELSE {
     $$ = if_command($3, $5);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS list ELSE list {
+  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd ELSE cmd {
     $$ = if_else_command($3, $5, $7);
   }
   |
@@ -169,7 +162,7 @@ if_expr:
     $$ = if_command($3,$6);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE list {
+  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE cmd {
     $$ = if_else_command($3, $6, $9);
   }
   |
@@ -177,13 +170,13 @@ if_expr:
     $$ = if_else_command($3, $6, $10);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS list ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
+  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
     $$ = if_else_command($3, $5, $8);
   }
   ;
 
 while_expr: 
-  WHILE OPENPARENTHESIS bexpr CLOSEPARENTHESIS list{
+  WHILE OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd{
     $$ = while_command($3, $5);
   }
   |
@@ -196,21 +189,13 @@ atr:
   VAR EQUAL expr {
     $$ = var_assignment($1,$3);
   }
-  |
-  VAR OPENSQUAREBRACKETS INT CLOSESQUAREBRACKETS EQUAL expr {
-    $$ = array_assignment($1,$3,$6);
-  }
   ;
 
 decl:
-    VAR {
-      $$ = var_declaration($1);
-    }
-    |
-    VAR OPENSQUAREBRACKETS INT CLOSESQUAREBRACKETS {
-      $$ = array_declaration($1,$3);
-    }
-  ;
+  VAR {
+    $$ = var_declaration($1);
+  }
+;
 
 list_scan_var:
   '&'decl COMMA list_scan_var {
@@ -220,23 +205,33 @@ list_scan_var:
   '&'decl {
     $$ = ast_scanlist($2,NULL);
   }
-  ;
+;
+
+var_dec: 
+  INTD list_var {
+    $$ = ast_varlist(INTD, $2);
+  }
+  |
+  FLOATD list_var {
+    $$ = ast_varlist(FLOATD, $2);
+  }
+;
 
 list_var:
   decl {
-    $$ = declaration($1,NULL);
+    $$ = ast_declaration($1, NULL);
   }
   |
-  decl COMMA list_var{
-    $$ = declaration($1,$3);
-  }
-  |
-  atr {
-    $$ = assignment($1, NULL);
+  decl COMMA list_var {
+    $$ = ast_declaration($1, $3);
   }
   |
   atr COMMA list_var{
-    $$ = assignment($1, $3);
+    $$ = ast_assignment($1, $3);
+  }
+  |
+  atr {
+    $$ = ast_assignment($1, NULL);
   }
   ;
 
