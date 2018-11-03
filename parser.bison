@@ -42,8 +42,8 @@
 %left INT FLOAT
 %left AND OR
 %left VAR
-%left IF WHILE
-%left ELSE
+%nonassoc NO_ELSE
+%nonassoc ELSE
 %left SCAN PRINT
 
 
@@ -158,7 +158,7 @@ scanf:
   };
 
 if_expr:
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS list {
+  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS list %prec NO_ELSE {
     $$ = if_command($3, $5);
   }
   |
@@ -166,7 +166,7 @@ if_expr:
     $$ = if_else_command($3, $5, $7);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
+  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list %prec NO_ELSE CLOSECURLYBRACKETS {
     $$ = if_command($3,$6);
   }
   |
