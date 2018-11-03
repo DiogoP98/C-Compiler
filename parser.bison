@@ -17,7 +17,6 @@
   GRE
   GOQ
   IF
-  THEN
   ELSE
   WHILE
   INTD
@@ -25,9 +24,6 @@
   SCAN
   PRINT
   VAR
-  PRINTF_EXPR
-  SCAN_EXPR
-  STARTOFPROGRAM
   SEMICOLON
   EQUAL
   OPENPARENTHESIS
@@ -37,7 +33,6 @@
   OPENSQUAREBRACKETS
   CLOSESQUAREBRACKETS
   COMMA
-  SPACE
   TYPES
 
 // Operator associativity & precedence
@@ -47,7 +42,8 @@
 %left INT FLOAT
 %left AND OR
 %left VAR
-%left IF THEN ELSE WHILE
+%left IF WHILE
+%left ELSE
 %left SCAN PRINT
 
 
@@ -170,19 +166,19 @@ if_expr:
     $$ = if_else_command($3, $5, $7);
   }
   |
-  IF OPENPARENTHESIS bexpr ") {" list CLOSECURLYBRACKETS {
-    $$ = if_command($3,$5);
+  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
+    $$ = if_command($3,$6);
   }
   |
-  IF OPENPARENTHESIS bexpr ") {" list CLOSECURLYBRACKETS ELSE list {
-    $$ = if_else_command($3, $5, $5);
+  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE list {
+    $$ = if_else_command($3, $6, $9);
   }
   |
-  IF OPENPARENTHESIS bexpr ") {" list CLOSECURLYBRACKETS ELSE '{' list CLOSECURLYBRACKETS {
-    $$ = if_else_command($3, $5, $9);
+  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
+    $$ = if_else_command($3, $6, $10);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS list ELSE '{' list CLOSECURLYBRACKETS {
+  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS list ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
     $$ = if_else_command($3, $5, $8);
   }
   ;
@@ -192,8 +188,8 @@ while_expr:
     $$ = while_command($3, $5);
   }
   |
-  WHILE OPENPARENTHESIS bexpr ") {" list CLOSECURLYBRACKETS {
-    $$ = while_command($3, $5);
+  WHILE OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
+    $$ = while_command($3, $6);
   } 
   ;
 
@@ -202,7 +198,7 @@ atr:
     $$ = var_assignment($1,$3);
   }
   |
-  VAR OPENSQUAREBRACKETS INT CLOSECURLYBRACKETS EQUAL expr {
+  VAR OPENSQUAREBRACKETS INT CLOSESQUAREBRACKETS EQUAL expr {
     $$ = array_assignment($1,$3,$6);
   }
   ;
@@ -212,7 +208,7 @@ decl:
       $$ = var_declaration($1);
     }
     |
-    VAR OPENSQUAREBRACKETS INT CLOSECURLYBRACKETS {
+    VAR OPENSQUAREBRACKETS INT CLOSESQUAREBRACKETS {
       $$ = array_declaration($1,$3);
     }
   ;
@@ -289,6 +285,10 @@ bexpr:
   |
   expr {
     $$ = ast_singleExpr($1);
+  }
+  |
+  OPENPARENTHESIS expr CLOSEPARENTHESIS {
+    $$ = ast_singleExpr($2);
   }
   |
   expr EQU expr {

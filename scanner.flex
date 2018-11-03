@@ -58,8 +58,6 @@ int yyline = 1;
 
 "," { return COMMA; }
 
-" " { return SPACE; }
-
 
 "+"  { return PLUS; }
 "-"  { return SUB;  }
