@@ -30,21 +30,21 @@ Command* while_declaration(WHILEexpression* whilenext) {
 Command* assignment_declaration(DeclarationList* next) {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_ASG; 
-  node->next = next;
+  node->declnext = next;
   return node;
 }
 
 Command* declaration_declaration(DeclarationList* next) {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_DECL;
-  node->next = next;
+  node->declnext = next;
   return node; 
 }
 
 //------- IF expressions ----------------
 IFexpression* if_command(BoolExpr* bexpr, CommandList* list) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
-  node->kind = E_IF;
+  node->kind = E_IF_EXPR;
   node->if_type.bexpr = bexpr;
   node->if_type.list = list;
   return node;
@@ -70,7 +70,7 @@ WHILEexpression* while_command(BoolExpr* bexpr, CommandList* list) {
 //--------- Declaration List -------------
 DeclarationList* declaration(DECL* decl, DeclarationList* next) {
   DeclarationList* node = (DeclarationList*) malloc(sizeof(DeclarationList));
-  node->type = E_declaration;
+  node->type = E_DECLARATION;
   node->declaration = decl;
   node->next = next;
   return node;
@@ -78,22 +78,22 @@ DeclarationList* declaration(DECL* decl, DeclarationList* next) {
 
 DeclarationList* assignment(ASG* asg, DeclarationList* next) {
   DeclarationList* node = (DeclarationList*) malloc(sizeof(DeclarationList));
-  node->type = E_assignment;
-  node->assignemt = asg;
+  node->type = E_ASSIGNMENT;
+  node->assignment = asg;
   node->next = next;
   return node;
 }
 
 DECL* var_declaration(char* s) {
   DECL* node = (DECL*) malloc(sizeof(DECL));
-  node ->type = E_single;
+  node ->type = E_SINGLE;
   node->name = s;
   return node;
 }
 
 DECL* array_declaration(char* s, int size) {
   DECL* node = (DECL*) malloc(sizeof(DECL));
-  node -> type = E_array;
+  node -> type = E_ARRAY;
   node -> size = size;
   node -> name = s;
   return node;
@@ -101,7 +101,7 @@ DECL* array_declaration(char* s, int size) {
 
 ASG* var_assignment(char* s, Expr* expr) {
   ASG* node = (ASG*) malloc(sizeof(ASG));
-  node->type = E_single;
+  node->type = E_SINGLE_ASG;
   node->name = s;
   node->value = expr;
   return node;
@@ -109,7 +109,7 @@ ASG* var_assignment(char* s, Expr* expr) {
 
 ASG* array_assignment(char* s, int position, Expr* expr) {
   ASG* node = (ASG*) malloc(sizeof(ASG));
-  node->type = E_array;
+  node->type = E_ARRAY_ASG;
   node->position = position;
   node->name = s;
   node->value = expr;
@@ -120,7 +120,7 @@ ASG* array_assignment(char* s, int position, Expr* expr) {
 Expr* ast_integer(int v) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
   node->kind = E_INTEGER;
-  node->attr.value = v;
+  node->attr.valuei = v;
   return node;
 }
 

@@ -26,6 +26,17 @@
   VAR
   PRINTF_EXPR
   SCAN_EXPR
+  STARTOFPROGRAM
+  SEMICOLON
+  EQUAL
+  OPENPARENTHESIS
+  CLOSEPARENTHESIS
+  OPENCURLYBRACKETS
+  CLOSECURLYBRACKETS
+  OPENSQUAREBRACKETS
+  CLOSESQUAREBRACKETS
+  COMMA
+  SPACE
 
 // Operator associativity & precedence
 %left EQU DIF LES LOQ GRE GOQ
@@ -86,7 +97,7 @@ CommandList* root;
 }
 
 %%
-program: list { root = $1; }
+program: STARTOFPROGRAM list CLOSECURLYBRACKETS { root = $2; }
 
 list:
   cmd list{
@@ -107,69 +118,69 @@ cmd:
     $$ = while_declaration($1);
   }
   |
-  INTD list_var ';' {
+  INTD list_var SEMICOLON {
     $$ = declaration_declaration($2);
   }
   |
-  FLOATD list_var ';' {
+  FLOATD list_var SEMICOLON {
     $$ = declaration_declaration($2);
   }
   |
-  PRINT '(' PRINTF_EXPR ',' list_var ')' ';' {
+  PRINT OPENPARENTHESIS PRINTF_EXPR COMMA list_var CLOSEPARENTHESIS SEMICOLON {
 
   }
   |
-  SCAN '(' SCAN_EXPR ')' ';' {
+  SCAN OPENPARENTHESIS SCAN_EXPR CLOSEPARENTHESIS SEMICOLON {
   
   }
   |
-  list_var ';' {
+  list_var SEMICOLON {
     $$ = assignment_declaration($1);
   }
   ;
 
 if_expr:
-  IF '(' bexpr ')' list {
+  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS list {
     $$ = if_command($3, $5);
   }
   |
-  IF '(' bexpr ')' list ELSE list {
+  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS list ELSE list {
     $$ = if_else_command($3, $5, $7);
   }
   |
-  IF '(' bexpr ") {" list '}' {
+  IF OPENPARENTHESIS bexpr ") {" list CLOSECURLYBRACKETS {
     $$ = if_command($3,$5);
   }
   |
-  IF '(' bexpr ") {" list '}' ELSE list {
+  IF OPENPARENTHESIS bexpr ") {" list CLOSECURLYBRACKETS ELSE list {
     $$ = if_else_command($3, $5, $5);
   }
   |
-  IF '(' bexpr ") {" list '}' ELSE '{' list '}' {
+  IF OPENPARENTHESIS bexpr ") {" list CLOSECURLYBRACKETS ELSE '{' list CLOSECURLYBRACKETS {
     $$ = if_else_command($3, $5, $9);
   }
   |
-  IF '(' bexpr ')' list ELSE '{' list '}' {
+  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS list ELSE '{' list CLOSECURLYBRACKETS {
     $$ = if_else_command($3, $5, $8);
   }
   ;
 
 while_expr: 
-  WHILE '(' bexpr ')' list{
+  WHILE OPENPARENTHESIS bexpr CLOSEPARENTHESIS list{
     $$ = while_command($3, $5);
   }
   |
-  WHILE '(' bexpr ") {" list '}'{
+  WHILE OPENPARENTHESIS bexpr ") {" list CLOSECURLYBRACKETS {
     $$ = while_command($3, $5);
   } 
   ;
 
 atr:
-  VAR '=' expr {
+  VAR EQUAL expr {
     $$ = var_assignment($1,$3);
   }
   |
-  VAR'[' INT ']' '=' expr {
+  VAR OPENSQUAREBRACKETS INT CLOSECURLYBRACKETS EQUAL expr {
     $$ = array_assignment($1,$3,$6);
   }
   ;
@@ -179,7 +190,7 @@ decl:
       $$ = var_declaration($1);
     }
     |
-    VAR '[' INT ']' {
+    VAR OPENSQUAREBRACKETS INT CLOSECURLYBRACKETS {
       $$ = array_declaration($1,$3);
     }
   ;
@@ -189,7 +200,7 @@ list_var:
     $$ = declaration($1,NULL);
   }
   |
-  decl ',' list_var{
+  decl COMMA list_var{
     $$ = declaration($1,$3);
   }
   |
@@ -197,7 +208,7 @@ list_var:
     $$ = assignment($1, NULL);
   }
   |
-  atr ',' list_var{
+  atr COMMA list_var{
     $$ = assignment($1, $3);
   }
   ;
@@ -246,6 +257,10 @@ bexpr:
   |
   expr {
     $$ = ast_singleExpr($1);
+  }
+  |
+  expr EQU expr {
+    $$ = ast_boolOperation2(EQU, $1, $3);
   }
   |
   expr DIF expr {

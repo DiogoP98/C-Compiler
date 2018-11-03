@@ -24,6 +24,8 @@ int yyline = 1;
 	return FLOAT;
 }
 
+"int main() {" { return STARTOFPROGRAM; }
+
 "if" { return IF; }
 
 "else" { return ELSE; }
@@ -36,7 +38,28 @@ int yyline = 1;
 
 "scanf" { return SCAN; }
 
-"while" { return WHILE; } 
+"while" { return WHILE; }
+
+";" { return SEMICOLON; }
+
+"=" { return EQUAL; }
+
+"(" { return OPENPARENTHESIS; }
+
+")" { return CLOSEPARENTHESIS; }
+
+"{" { return OPENCURLYBRACKETS; }
+
+"}" { return CLOSECURLYBRACKETS; }
+
+"[" { return OPENSQUAREBRACKETS; }
+
+"]" { return CLOSESQUAREBRACKETS; }
+
+"," { return COMMA; }
+
+" " { return SPACE; }
+
 
 "+"  { return PLUS; }
 "-"  { return SUB;  }

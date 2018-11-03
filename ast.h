@@ -16,15 +16,15 @@ struct _Command {
     E_DECL,
     E_PRINT,
     E_SCAN
-  }kind;
-  struct _DeclarationList* next;
+  } kind;
+  struct _DeclarationList* declnext;
   struct _IFexpression* ifnext;
   struct _WHILEexpression* whilenext;
 };
 
 struct _IFexpression {
   enum {
-    E_IF,
+    E_IF_EXPR,
     E_IF_ELSE
   } kind;
 
@@ -47,18 +47,18 @@ struct _WHILEexpression {
 
 struct _DeclarationList {
   enum {
-    E_assignment,
-    E_declaration
+    E_ASSIGNMENT,
+    E_DECLARATION
   } type;
-  struct _ASG* assignemt;
+  struct _ASG* assignment;
   struct _DECL* declaration;
   struct _DeclarationList* next;
 };
 
 struct _DECL {
   enum {
-    E_array,
-    E_single
+    E_ARRAY,
+    E_SINGLE
   } type;
   char* name;
   int size;
@@ -66,8 +66,8 @@ struct _DECL {
 
 struct _ASG {
   enum {
-    E_array,
-    E_single
+    E_ARRAY_ASG,
+    E_SINGLE_ASG
   } type;
   char* name;
   int position;
@@ -90,7 +90,7 @@ struct _Expr {
     E_FLOAT
   } kind;
   union {
-    int value;
+    int valuei;
     float valuef;
     struct { 
       int operator; // PLUS, MINUS, etc 
