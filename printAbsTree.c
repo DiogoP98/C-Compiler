@@ -91,8 +91,14 @@ void printBoolExpr(BoolExpr* expr, int spaces) {
       default:
         printf("Undefined\n");
     }
-    printBoolExpr(expr->attr_bool.relop.bleft, spaces+1);
-    printBoolExpr(expr->attr_bool.relop.bright, spaces+1);
+    if(expr->attr_bool.relop.bleft != NULL)
+      printBoolExpr(expr->attr_bool.relop.bleft, spaces+1);
+    if(expr->attr_bool.relop.bright != NULL)
+      printBoolExpr(expr->attr_bool.relop.bright, spaces+1);
+    if(expr->attr_bool.relop.left != NULL)
+      printExpr(expr->attr_bool.relop.left, spaces+1);
+    if(expr->attr_bool.relop.right != NULL)
+      printExpr(expr->attr_bool.relop.right, spaces+1);
   }
 }
 
