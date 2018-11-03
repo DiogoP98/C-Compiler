@@ -1,4 +1,7 @@
-int a = 5;
-float b;
-printf();
-if ();
+int main() {
+    int a = 5;
+    float b;
+    printf("%d", n);
+    if (0 == 0)
+        int b;
+}

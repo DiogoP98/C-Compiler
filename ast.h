@@ -17,6 +17,7 @@ struct _Command {
     E_PRINT,
     E_SCAN
   } kind;
+
   struct _DeclarationList* declnext;
   struct _IFexpression* ifnext;
   struct _WHILEexpression* whilenext;
