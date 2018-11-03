@@ -128,7 +128,6 @@ struct _BoolExpr {
 typedef struct _CommandList CommandList;
 typedef struct _Command Command;
 typedef struct _IFexpression IFexpression;
-typedef struct _ELSEexprssion ELSEexpression;
 typedef struct _WHILEexpression WHILEexpression;
 typedef struct _DeclarationList DeclarationList;
 typedef struct _ASG ASG;

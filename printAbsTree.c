@@ -9,6 +9,8 @@ void printDeclarationList(DeclarationList* declList, int spaces);
 void printCommand(Command* cmd, int spaces);
 void printIf(IFexpression* ifExpr, int spaces);
 void printWhile(WHILEexpression* whileExpr, int spaces);
+void printPrintf(PRINTF_EXP* printf, int spaces);
+void printScanf(SCANF_EXP* scanf, int spaces);
 
 void printExpr(Expr* expr, int spaces) {
   for(int i = 0; i < spaces; i++)
@@ -71,19 +73,19 @@ void printBoolExpr(BoolExpr* expr, int spaces) {
         printf("==:\n");
         break;
       case DIF:
-        printf("!=:\n", 37);
+        printf("!=:\n");
         break;
       case LES:
-        printf("<:\n", 37);
+        printf("<:\n");
         break;
       case LOQ:
-        printf("<=:\n", 37);
+        printf("<=:\n");
         break;
       case GRE:
-        printf(">:\n", 37);
+        printf(">:\n");
         break;
       case GOQ:
-        printf(">=:\n", 37);
+        printf(">=:\n");
         break;
       default:
         printf("Undefined\n");
@@ -139,10 +141,10 @@ void printCommand(Command* cmd, int spaces) {
         printDeclarationList(cmd->declnext, spaces+1);
         break;
       case E_PRINT:
-        //printPrintf("!=:\n", 37);
+        printPrintf(cmd->printnext, spaces+1);
         break;
       case E_SCAN:
-        //printfScanf("<:\n", 37);
+        printScanf(cmd->scannext, spaces+1);
         break;
       default:
         printf("Undefined\n");
@@ -226,6 +228,14 @@ void printWhile(WHILEexpression* whileExpr, int spaces) {
     printCommand(cmdList->expr, spaces + 1);
     cmdList = cmdList->next;
   }
+}
+
+void printPrintf(PRINTF_EXP* printf, int spaces) {
+
+}
+
+void printScanf(SCANF_EXP* scanf, int spaces) {
+  
 }
 
 int main(int argc, char** argv) {

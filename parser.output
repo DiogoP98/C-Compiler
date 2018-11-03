@@ -1,7 +1,5 @@
 State 16 conflicts: 7 shift/reduce
 State 54 conflicts: 2 shift/reduce
-State 89 conflicts: 1 shift/reduce
-State 104 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -110,38 +108,39 @@ CLOSESQUAREBRACKETS (289) 22 24
 COMMA (290) 11 12 25 28 30
 TYPES <typesValue> (291) 11 12
 MOD (292) 37
+NO_ELSE (293)
 
 
 Nonterminals, with rules where they appear
 
-$accept (39)
+$accept (40)
     on left: 0
-program (40)
+program (41)
     on left: 1, on right: 0
-list <commandList> (41)
+list <commandList> (42)
     on left: 2 3, on right: 1 2 13 14 15 16 17 18 19 20
-cmd <cmdType> (42)
+cmd <cmdType> (43)
     on left: 4 5 6 7 8 9 10, on right: 2 3
-printf <printf_exp> (43)
+printf <printf_exp> (44)
     on left: 11, on right: 8
-scanf <scan_expr> (44)
+scanf <scan_expr> (45)
     on left: 12, on right: 9
-if_expr <ifExpression> (45)
+if_expr <ifExpression> (46)
     on left: 13 14 15 16 17 18, on right: 4
-while_expr <whileExpression> (46)
+while_expr <whileExpression> (47)
     on left: 19 20, on right: 5
-atr <assignment> (47)
+atr <assignment> (48)
     on left: 21 22, on right: 29 30
-decl <declaration> (48)
+decl <declaration> (49)
     on left: 23 24, on right: 25 26 27 28
-list_scan_var <scan_list> (49)
+list_scan_var <scan_list> (50)
     on left: 25 26, on right: 12 25
-list_var <list_decl> (50)
+list_var <list_decl> (51)
     on left: 27 28 29 30, on right: 6 7 10 11 28 30
-expr <exprValue> (51)
+expr <exprValue> (52)
     on left: 31 32 33 34 35 36 37, on right: 21 22 33 34 35 36 37 41
     42 43 44 45 46 47 48
-bexpr <boolExpr> (52)
+bexpr <boolExpr> (53)
     on left: 38 39 40 41 42 43 44 45 46 47 48, on right: 13 14 15 16
     17 18 19 20 38 39 40
 
@@ -1167,7 +1166,6 @@ State 89
 
     ELSE  shift, and go to state 97
 
-    ELSE      [reduce using rule 13 (if_expr)]
     $default  reduce using rule 13 (if_expr)
 
 
@@ -1336,7 +1334,6 @@ State 104
 
     ELSE  shift, and go to state 110
 
-    ELSE      [reduce using rule 15 (if_expr)]
     $default  reduce using rule 15 (if_expr)
 
 

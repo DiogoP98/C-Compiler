@@ -44,7 +44,6 @@
 %left VAR
 %nonassoc NO_ELSE
 %nonassoc ELSE
-%left SCAN PRINT
 
 
 // Root-level grammar symbol
