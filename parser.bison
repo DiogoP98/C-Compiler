@@ -1,5 +1,6 @@
 // Tokens
 %token
+  MAIN
   INT
   FLOAT
   PLUS
@@ -37,6 +38,7 @@
   CLOSESQUAREBRACKETS
   COMMA
   SPACE
+  TYPES
 
 // Operator associativity & precedence
 %left EQU DIF LES LOQ GRE GOQ
@@ -57,11 +59,15 @@
   int intValue;
   float floatValue;
   char* stringValue;
+  char* typesValue;
   CommandList* commandList;
   Command* cmdType;
   IFexpression* ifExpression;
   WHILEexpression* whileExpression;
+  PRINTF_EXP* printf_exp;
+  SCANF_EXP* scan_expr;
   DeclarationList* list_decl;
+  ScanDeclarationList* scan_list;
   ASG* assignment;
   DECL* declaration;
   Expr* exprValue;
@@ -71,6 +77,7 @@
 %type <intValue> INT
 %type <floatValue> FLOAT
 %type <stringValue> VAR
+%type <typesValue> TYPES
 %type <cmdType> cmd
 %type <commandList> list
 %type <exprValue> expr
@@ -78,8 +85,11 @@
 %type <ifExpression> if_expr
 %type <whileExpression> while_expr
 %type <list_decl> list_var
+%type <scan_list> list_scan_var
 %type <assignment> atr
 %type <declaration> decl
+%type <printf_exp> printf
+%type <scan_expr> scanf
 
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
@@ -97,7 +107,7 @@ CommandList* root;
 }
 
 %%
-program: STARTOFPROGRAM list CLOSECURLYBRACKETS { root = $2; }
+program: INTD MAIN OPENPARENTHESIS CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS { root = $6; }
 
 list:
   cmd list{
@@ -126,18 +136,30 @@ cmd:
     $$ = declaration_declaration($2);
   }
   |
-  PRINT OPENPARENTHESIS PRINTF_EXPR COMMA list_var CLOSEPARENTHESIS SEMICOLON {
-
+  printf SEMICOLON{
+    $$ = printf_declaration($1);
   }
   |
-  SCAN OPENPARENTHESIS SCAN_EXPR CLOSEPARENTHESIS SEMICOLON {
-  
+  scanf SEMICOLON{
+    $$ = scanf_declaration($1);
   }
   |
   list_var SEMICOLON {
     $$ = assignment_declaration($1);
   }
   ;
+
+
+printf:
+  PRINT OPENPARENTHESIS TYPES COMMA list_var CLOSEPARENTHESIS{
+    $$ = ast_printf($3,$5);
+  }
+  ;
+
+scanf:
+  SCAN OPENPARENTHESIS TYPES COMMA list_scan_var CLOSEPARENTHESIS {
+    $$ = ast_scanf($3,$5);
+  };
 
 if_expr:
   IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS list {
@@ -193,6 +215,16 @@ decl:
     VAR OPENSQUAREBRACKETS INT CLOSECURLYBRACKETS {
       $$ = array_declaration($1,$3);
     }
+  ;
+
+list_scan_var:
+  '&'decl COMMA list_scan_var {
+    $$ = ast_scanlist($2,$4);
+  }
+  |
+  '&'decl {
+    $$ = ast_scanlist($2,NULL);
+  }
   ;
 
 list_var:

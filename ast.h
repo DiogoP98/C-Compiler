@@ -20,6 +20,8 @@ struct _Command {
   struct _DeclarationList* declnext;
   struct _IFexpression* ifnext;
   struct _WHILEexpression* whilenext;
+  struct _PRINTF_EXP* printnext;
+  struct _SCANF_EXP* scannext;
 };
 
 struct _IFexpression {
@@ -55,6 +57,11 @@ struct _DeclarationList {
   struct _DeclarationList* next;
 };
 
+struct _ScanDeclarationList {
+  struct _DECL* declaration;
+  struct _ScanDeclarationList* next;
+};
+
 struct _DECL {
   enum {
     E_ARRAY,
@@ -75,11 +82,13 @@ struct _ASG {
 };
 
 struct _PRINTF_EXP {
-
+  char* string_of_types;
+  struct _DeclarationList* vars;
 };
 
 struct _SCANF_EXP {
-
+  char* string_of_types;
+  struct _ScanDeclarationList* vars;
 };
 
 // AST for expressions
@@ -129,6 +138,7 @@ typedef struct _SCANF_EXP SCANF_EXP;
 typedef struct _Expr Expr; 
 typedef struct _BoolExpr BoolExpr;
 typedef struct _BoolExprList BoolExprList;
+typedef struct _ScanDeclarationList ScanDeclarationList;
 
 
 //------- Command list -----------------
@@ -139,6 +149,8 @@ Command* if_declaration(IFexpression* ifnext);
 Command* while_declaration(WHILEexpression* whilenext);
 Command* assignment_declaration(DeclarationList* next);
 Command* declaration_declaration(DeclarationList* next);
+Command* printf_declaration(PRINTF_EXP* printnext);
+Command* scanf_declaration(SCANF_EXP* scannext);
 
 //------- IF expressions ----------------
 IFexpression* if_command(BoolExpr* bexpr, CommandList* list);
@@ -146,6 +158,11 @@ IFexpression* if_else_command(BoolExpr* bexpr, CommandList* list, CommandList* e
 
 //------- WHILE expressions ----------------
 WHILEexpression* while_command(BoolExpr* bexpr, CommandList* list);
+
+//------- INPUT/OUTPUT expressions ----------------
+PRINTF_EXP* ast_printf(char* types, DeclarationList* vars);
+SCANF_EXP* ast_scanf(char* type, ScanDeclarationList* vars);
+ScanDeclarationList* ast_scanlist(DECL* var, ScanDeclarationList* next);
 
 //------- Declarations/Assignments expressions ----------------
 DeclarationList* declaration(DECL* decl, DeclarationList* next);

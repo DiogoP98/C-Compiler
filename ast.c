@@ -27,6 +27,20 @@ Command* while_declaration(WHILEexpression* whilenext) {
   return node; 
 }
 
+Command* printf_declaration(PRINTF_EXP* printnext) {
+  Command* node = (Command*) malloc(sizeof(Command));
+  node->kind = E_PRINT;
+  node->printnext = printnext;
+  return node; 
+}
+
+Command* scanf_declaration(SCANF_EXP* scannext) {
+  Command* node = (Command*) malloc(sizeof(Command));
+  node->kind = E_SCAN;
+  node->scannext = scannext;
+  return node; 
+}
+
 Command* assignment_declaration(DeclarationList* next) {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_ASG; 
@@ -64,6 +78,28 @@ WHILEexpression* while_command(BoolExpr* bexpr, CommandList* list) {
   WHILEexpression* node = (WHILEexpression*) malloc(sizeof(WHILEexpression));
   node->bexpr = bexpr;
   node->list = list;
+  return node;
+}
+
+//------- INPUT/OUTPUT expressions ----------------
+PRINTF_EXP* ast_printf(char* types, DeclarationList* vars) {
+  PRINTF_EXP* node = (PRINTF_EXP*) malloc(sizeof(PRINTF_EXP));
+  node->string_of_types = types;
+  node->vars = vars;
+  return node;
+}
+
+SCANF_EXP* ast_scanf(char* type, ScanDeclarationList* vars) {
+  SCANF_EXP* node = (SCANF_EXP*) malloc(sizeof(SCANF_EXP));
+  node->string_of_types = type;
+  node->vars = vars;
+  return node;
+}
+
+ScanDeclarationList* ast_scanlist(DECL* var, ScanDeclarationList* next) {
+  ScanDeclarationList* node = (ScanDeclarationList*) malloc(sizeof(ScanDeclarationList));
+  node->declaration = var;
+  node->next = next;
   return node;
 }
 

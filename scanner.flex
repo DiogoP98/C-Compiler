@@ -24,7 +24,7 @@ int yyline = 1;
 	return FLOAT;
 }
 
-"int main() {" { return STARTOFPROGRAM; }
+"main" { return MAIN; }
 
 "if" { return IF; }
 
@@ -75,6 +75,11 @@ int yyline = 1;
 "<=" { return LOQ;	}
 ">"  { return GRE;  }
 ">=" { return GOQ;  }
+
+\"(\\.|[^\\"])*\" {
+    yylval.typesValue = yytext;
+    return TYPES;
+}
 
 [a-zA-Z_][a-zA-Z0-9_]* { 
     yylval.stringValue = yytext;
