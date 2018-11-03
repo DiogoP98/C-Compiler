@@ -102,7 +102,7 @@ CommandList* root;
 }
 
 %%
-program: INTD MAIN OPENPARENTHESIS CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS { root = $6; }
+program: INTD MAIN OPENPARENTHESIS CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS { root = $6; };
 
 list:
   cmd list{
@@ -249,6 +249,10 @@ expr:
     $$ = ast_float($1);
   }
   |
+  OPENPARENTHESIS expr CLOSEPARENTHESIS {
+    $$ = ast_pexpr($2);
+  }
+  |
   expr PLUS expr { 
     $$ = ast_operation(PLUS, $1, $3);
   }
@@ -279,15 +283,11 @@ bexpr:
   }
   |
   NOT bexpr {
-    $$ = ast_boolNot(NOT,$2);
+    $$ = ast_boolOperation(NOT,$2, NULL);
   }
   |
   expr {
     $$ = ast_singleExpr($1);
-  }
-  |
-  OPENPARENTHESIS expr CLOSEPARENTHESIS {
-    $$ = ast_singleExpr($2);
   }
   |
   expr EQU expr {

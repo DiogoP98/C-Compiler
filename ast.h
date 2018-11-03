@@ -96,8 +96,14 @@ struct _Expr {
   enum { 
     E_INTEGER,
     E_OPERATION,
-    E_FLOAT
+    E_FLOAT,
   } kind;
+
+  enum {
+    E_HAS,
+    E_HASNOT
+  } parenthesis;
+
   union {
     int valuei;
     float valuef;
@@ -120,6 +126,8 @@ struct _BoolExpr {
       int operator;
       struct _BoolExpr* bleft;
       struct _BoolExpr* bright;
+      struct _Expr* right;
+      struct _Expr* left;
     } relop; // for binary expressions
   } attr_bool;
 };
@@ -175,10 +183,10 @@ ASG* array_assignment(char* s, int position, Expr* expr);
 Expr* ast_integer(int v);
 Expr* ast_float(float v);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
+Expr* ast_pexpr(Expr* expr);
 
 //------- Bool Expressions functions -------------
 BoolExpr* ast_bool(int v);
-BoolExpr* ast_boolNot(int operator, BoolExpr* bexpr);
 BoolExpr* ast_boolOperation(int operator, BoolExpr* left, BoolExpr* right);
 BoolExpr* ast_boolOperation2(int operator, Expr* left, Expr* right);
 BoolExpr* ast_singleExpr(Expr* expr);

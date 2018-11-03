@@ -170,9 +170,17 @@ Expr* ast_float(float v) {
 Expr* ast_operation(int operator, Expr* left, Expr* right) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
   node->kind = E_OPERATION;
+  node->parenthesis = E_HASNOT;
   node->attr.op.operator = operator;
   node->attr.op.left = left;
   node->attr.op.right = right;
+  return node;
+}
+
+Expr* ast_pexpr(Expr* expr) {
+  Expr* node = (Expr*) malloc(sizeof(Expr));
+  node = expr;
+  node->parenthesis = E_HAS;
   return node;
 }
 
@@ -181,14 +189,6 @@ BoolExpr* ast_bool(int v) {
   BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
   node->kind = E_BOOL;
   node->attr_bool.value = (v==0)? 0:1;
-  return node;
-}
-
-BoolExpr* ast_boolNot(int operator, BoolExpr* bexpr) {
-  BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
-  node->kind = E_BOOL;
-  node->attr_bool.relop.operator = operator;
-  node->attr_bool.relop.bleft = bexpr;
   return node;
 }
 
@@ -205,14 +205,14 @@ BoolExpr* ast_boolOperation2(int operator, Expr* left, Expr* right) {
   BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
   node->kind = E_RELOP;
   node->attr_bool.relop.operator = operator;
-  //node->attr_bool.relop.left = left;
-  //node->attr_bool.relop.right = right;
+  node->attr_bool.relop.left = left;
+  node->attr_bool.relop.right = right;
   return node;
 }
 
 BoolExpr* ast_singleExpr(Expr* expr) {
   BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
-  //node->attr_bool.relop.left = expr;
+  node->attr_bool.relop.left = expr;
   return node;
 }
 

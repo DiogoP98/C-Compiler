@@ -11,6 +11,7 @@ void printIf(IFexpression* ifExpr, int spaces);
 void printWhile(WHILEexpression* whileExpr, int spaces);
 void printPrintf(PRINTF_EXP* printf, int spaces);
 void printScanf(SCANF_EXP* scanf, int spaces);
+void printScanDeclarationList(ScanDeclarationList* list, int spaces);
 
 void printExpr(Expr* expr, int spaces) {
   for(int i = 0; i < spaces; i++)
@@ -162,10 +163,10 @@ void printDeclarationList(DeclarationList* declList, int spaces){
   else{
     switch (declList->type) {
       case E_ASSIGNMENT:
-        printAssignment(declList->assignment, spaces+1);
+        printAssignment(declList->assignment, spaces);
         break;
       case E_DECLARATION:
-        printDeclaration(declList->declaration, spaces+1);
+        printDeclaration(declList->declaration, spaces);
         break;
       default:
         printf("Undefined\n");
@@ -230,12 +231,31 @@ void printWhile(WHILEexpression* whileExpr, int spaces) {
   }
 }
 
-void printPrintf(PRINTF_EXP* printf, int spaces) {
-
+void printPrintf(PRINTF_EXP* printfExp, int spaces) {
+  for(int i = 0; i < spaces; i++)
+    printf(" ");
+  
+  printf("%s\n", printfExp->string_of_types);
+  printDeclarationList(printfExp->vars, spaces);
 }
 
-void printScanf(SCANF_EXP* scanf, int spaces) {
-  
+void printScanf(SCANF_EXP* scanfExp, int spaces) {
+  for(int i = 0; i < spaces; i++)
+    printf(" ");
+
+  printf("%s\n", scanfExp->string_of_types);
+  printScanDeclarationList(scanfExp->vars, spaces);
+}
+
+void printScanDeclarationList(ScanDeclarationList* list, int spaces) {
+  for(int i = 0; i < spaces; i++)
+    printf(" ");
+
+  printDeclaration(list->declaration, spaces);
+  while(list->next != NULL) {
+    list = list->next;
+    printDeclaration(list->declaration, spaces);
+  }
 }
 
 int main(int argc, char** argv) {
