@@ -1,5 +1,5 @@
 // AST constructor functions
-
+#include <stdio.h>
 #include <stdlib.h> // for malloc
 #include "ast.h" // AST header
 
@@ -190,6 +190,7 @@ DECL* var_declaration(char* s) {
 
 ASG* var_assignment(char* s, Expr* expr) {
   ASG* node = (ASG*) malloc(sizeof(ASG));
+  printf("assignment name: %s  acabou", s);
   node->name = s;
   node->value = expr;
   return node;

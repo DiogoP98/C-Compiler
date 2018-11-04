@@ -1,5 +1,5 @@
 int main() {
-    int a = 5;
+    float a = 5.2 + 3;
     float b;
     printf("%d", n);
     if (0 == 0)

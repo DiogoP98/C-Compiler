@@ -75,7 +75,7 @@ int yyline = 1;
     return TYPES;
 }
 
-[a-zA-Z_][a-zA-Z0-9_]* { 
+[a-zA-Z_][a-zA-Z0-9]* { 
     yylval.stringValue = yytext;
     return VAR;
 }

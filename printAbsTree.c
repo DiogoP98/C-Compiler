@@ -24,7 +24,7 @@ void printExpr(Expr* expr, int spaces) {
   else if (expr->kind == E_INTEGER)
     printf("INT %d\n", expr->attr.valuei);
   
-  else if (expr->kind == E_INTEGER)
+  else if (expr->kind == E_FLOAT)
     printf("FLOAT %f\n", expr->attr.valuef);
 
   else if (expr->kind == E_OPERATION) {
@@ -52,42 +52,43 @@ void printExpr(Expr* expr, int spaces) {
 
 void printBoolExpr(BoolExpr* expr, int spaces) {
   for(int i = 0; i < spaces; i++)
-    printf(" ");
+    //printf(" ");
   
   if (expr == NULL)
     yyerror("Null bool expression!!");
   
   else if (expr->kind == E_BOOL)
-    printf("BOOL %d\n", expr->attr_bool.value);
+    continue;
+  //printf("BOOL %d\n", expr->attr_bool.value);
 
   else if (expr->kind == E_RELOP) {
     switch (expr->attr_bool.relop.operator) {
       case OR:
-        printf("||:\n");
+        //printf("||:\n");
         break;
       case AND:
-        printf("&&:\n");
+        //printf("&&:\n");
         break;
       case NOT:
-        printf("!:\n");
+        //printf("!:\n");
         break;
       case EQU:
-        printf("==:\n");
+        //printf("==:\n");
         break;
       case DIF:
-        printf("!=:\n");
+        //printf("!=:\n");
         break;
       case LES:
-        printf("<:\n");
+        //printf("<:\n");
         break;
       case LOQ:
-        printf("<=:\n");
+        //printf("<=:\n");
         break;
       case GRE:
-        printf(">:\n");
+        //printf(">:\n");
         break;
       case GOQ:
-        printf(">=:\n");
+        //printf(">=:\n");
         break;
       default:
         printf("Undefined\n");
@@ -105,13 +106,13 @@ void printBoolExpr(BoolExpr* expr, int spaces) {
 
 void printDeclaration(DECL* decl, int spaces) {
   for(int i = 0; i < spaces; i++)
-    printf(" ");
+    //printf(" ");
   
   if (decl == NULL)
     yyerror("Null declaration!!");
   
-  printf("%s\n", decl->name);
-  printf("hereeeeee\n");
+  //printf("%s\n", decl->name);
+  //printf("hereeeeee\n");
 }
 
 void printAssignment(ASG* asg, int spaces) {
@@ -121,35 +122,42 @@ void printAssignment(ASG* asg, int spaces) {
   if (asg == NULL)
     yyerror("Null assignment!!");
   
-  printf("%s\n=\n", asg->name);
-  printf("aquiiiii\n");
+  //printf("%s\n=\n", asg->name);
   printExpr(asg->value, spaces);
-  printf("hereeeeee2\n");
 }
 
 void printCommand(Command* cmd, int spaces) {
-  for(int i = 0; i < spaces; i++)
-    printf(" ");
+  //printf("entrou\n");
+  //for(int i = 0; i < spaces; i++)
+    //printf(" ");
+  //printf("passou2\n");
   
-  if (cmd == NULL)
+  if (cmd == NULL) {
+    //printf("passou\n");
     yyerror("Null command!!");
+  }
   
   else {
     switch (cmd->kind) {
       case E_IF:
-        printIf(cmd->ifnext, spaces+1);
+        printf("hereeeee if\n");
+        //printIf(cmd->ifnext, spaces+1);
         break;
       case E_WHILE:
-        printWhile(cmd->whilenext, spaces+1);
+        printf("hereeeee while\n");
+        //printWhile(cmd->whilenext, spaces+1);
         break;
       case E_VAR:
+        printf("hereeeee declorasg\n");
         printvarList(cmd->list, spaces+1);
         break;
       case E_PRINT:
-        printPrintf(cmd->printnext, spaces+1);
+        printf("hereeeee4 print\n");
+        //printPrintf(cmd->printnext, spaces+1);
         break;
       case E_SCAN:
-        printScanf(cmd->scannext, spaces+1);
+        printf("hereeeee5 scan\n");
+        //printScanf(cmd->scannext, spaces+1);
         break;
       default:
         printf("Undefined\n");
@@ -178,19 +186,23 @@ void printDeclarationList(DeclarationList* declList, int spaces){
       printAssignment(declList->assignment, spaces);
       break;
     case E_DECLARATION:
-      printDeclaration(declList->declaration, spaces);
+      //printDeclaration(declList->declaration, spaces);
       break;
     default:
       printf("Undefined\n");
   }
-  declList = declList->next;
-  if(declList != NULL) printDeclarationList(declList, spaces+1);
+
+  if(declList->next != NULL) {
+    declList = declList->next;
+    printDeclarationList(declList, spaces);
+  }
+
 }
 
 
 void printIf(IFexpression* ifExpr, int spaces) {
   for(int i = 0; i < spaces; i++)
-    printf(" ");
+    //printf(" ");
   
   if (ifExpr == NULL)
     yyerror("Null command!!");
@@ -228,7 +240,7 @@ void printIf(IFexpression* ifExpr, int spaces) {
 
 void printWhile(WHILEexpression* whileExpr, int spaces) {
   for(int i = 0; i < spaces; i++)
-    printf(" ");
+    //printf(" ");
   
   if (whileExpr == NULL)
     yyerror("Null command!!");
@@ -244,23 +256,23 @@ void printWhile(WHILEexpression* whileExpr, int spaces) {
 
 void printPrintf(PRINTF_EXP* printfExp, int spaces) {
   for(int i = 0; i < spaces; i++)
-    printf(" ");
+    //printf(" ");
   
-  printf("%s\n", printfExp->string_of_types);
+  //printf("%s\n", printfExp->string_of_types);
   printDeclarationList(printfExp->vars, spaces);
 }
 
 void printScanf(SCANF_EXP* scanfExp, int spaces) {
   for(int i = 0; i < spaces; i++)
-    printf(" ");
+    //printf(" ");
 
-  printf("%s\n", scanfExp->string_of_types);
+  //printf("%s\n", scanfExp->string_of_types);
   printScanDeclarationList(scanfExp->vars, spaces);
 }
 
 void printScanDeclarationList(ScanDeclarationList* list, int spaces) {
   for(int i = 0; i < spaces; i++)
-    printf(" ");
+    //printf(" ");
 
   printDeclaration(list->declaration, spaces);
   while(list->next != NULL) {
@@ -281,7 +293,6 @@ int main(int argc, char** argv) {
   if (yyparse() == 0) {
     while(root != NULL) {
       printCommand(root->expr, 0);
-
       root = root->next;
     }
   }
