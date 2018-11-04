@@ -147,6 +147,10 @@ printf:
   PRINT OPENPARENTHESIS string COMMA list_var CLOSEPARENTHESIS SEMICOLON{
     $$ = ast_printf($3,$5);
   }
+  |
+  PRINT OPENPARENTHESIS string CLOSEPARENTHESIS SEMICOLON{
+    $$ = ast_printf($3, NULL);
+  }
   ;
 
 scanf:

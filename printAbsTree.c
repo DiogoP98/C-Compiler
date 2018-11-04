@@ -20,8 +20,10 @@ void printExpr(Expr* expr, int spaces) {
   for(int i = 0; i < spaces; i++)
     printf(" ");
   
-  if (expr == NULL)
+  if (expr == NULL){
     yyerror("Null expression!!");
+    return;
+  }
   
   else if (expr->kind == E_NUM)
     printNumber(expr->attr.number, spaces+1);
@@ -53,6 +55,11 @@ void printNumber(NUMBER* n, int spaces) {
   for(int i = 0; i < spaces; i++)
     printf(" ");
 
+  if (n == NULL){
+    yyerror("Null number!!");
+    return;
+  }
+
   if(n->type == E_INTEGER)
     printf ("%d\n", n->valuei);
   
@@ -64,8 +71,10 @@ void printBoolExpr(BoolExpr* expr, int spaces) {
   for(int i = 0; i < spaces; i++)
     printf(" ");
   
-  if (expr == NULL)
+  if (expr == NULL){
     yyerror("Null bool expression!!");
+    return;
+  }
   
   else if (expr->kind == E_BOOL)
     printf("BOOL %d\n", expr->attr_bool.value);
@@ -117,15 +126,19 @@ void printDeclaration(DECL* decl, int spaces) {
   for(int i = 0; i < spaces; i++)
     printf(" ");
   
-  if (decl == NULL)
+  if (decl == NULL){
     yyerror("Null declaration!!");
+    return;
+  }
   
   printf("%s\n", decl->name);
 }
 
 void printAssignment(ASG* asg, int spaces) {
-  if (asg == NULL)
+  if (asg == NULL){
     yyerror("Null assignment!!");
+    return;
+  }
 
   printDeclaration(asg->name, spaces);
   for(int i = 0; i < spaces+2; i++)
@@ -141,6 +154,7 @@ void printCommand(Command* cmd, int spaces) {
   
   if (cmd == NULL) {
     yyerror("Null command!!");
+    return;
   }
   
   else {
@@ -170,6 +184,11 @@ void printvarList (varList* list, int spaces) {
   for(int i = 0; i < spaces; i++)
     printf(" ");
 
+  if (list == NULL){
+    yyerror("Null var list!!");
+    return;
+  }
+
   if(list->type == FLOATD)
     printf("FLOAT:\n");
   else
@@ -182,6 +201,11 @@ void printDeclarationList(DeclarationList* declList, int spaces){
   for(int i = 0; i < spaces; i++)
     printf(" ");
 
+  if (declList == NULL){
+    yyerror("Null declaration list!!");
+    return;
+  }
+
   switch (declList->type) {
     case E_ASSIGNMENT:
       printAssignment(declList->assignment, spaces+1);
@@ -193,9 +217,10 @@ void printDeclarationList(DeclarationList* declList, int spaces){
       printf("Undefined\n");
   }
 
-  if(declList->next != NULL) {
-    declList = declList->next;
-    printDeclarationList(declList, spaces);
+  DeclarationList* declList_copy = declList;
+  if(declList_copy->next != NULL) {
+    declList_copy = declList_copy->next;
+    printDeclarationList(declList_copy, spaces);
   }
 
 }
@@ -205,8 +230,10 @@ void printIf(IFexpression* ifExpr, int spaces) {
   for(int i = 0; i < spaces; i++)
     printf(" ");
   
-  if (ifExpr == NULL)
-    yyerror("Null command!!");
+  if (ifExpr == NULL){
+    yyerror("Null if expression!!");
+    return;
+  }
   
   else {
     CommandList* cmdList;
@@ -247,8 +274,10 @@ void printWhile(WHILEexpression* whileExpr, int spaces) {
   for(int i = 0; i < spaces; i++)
     printf(" ");
   
-  if (whileExpr == NULL)
-    yyerror("Null command!!");
+  if (whileExpr == NULL){
+    yyerror("Null while expression!!");
+    return;
+  }
 
   printf("WHILE:\n");
 
@@ -264,15 +293,28 @@ void printWhile(WHILEexpression* whileExpr, int spaces) {
 void printPrintf(PRINTF_EXP* printfExp, int spaces) {
   for(int i = 0; i < spaces; i++)
     printf(" ");
+  
+  if (printfExp == NULL){
+    yyerror("Null printf!!");
+    return;
+  }
+
   printf("PRINTF:\n");
 
   printStrOfTypes(printfExp->string_of_types, spaces+2);
-  printDeclarationList(printfExp->vars, spaces+2);
+
+  if(printfExp->vars)
+    printDeclarationList(printfExp->vars, spaces+2);
 }
 
 void printScanf(SCANF_EXP* scanfExp, int spaces) {
   for(int i = 0; i < spaces; i++)
     printf(" ");
+
+  if (scanfExp == NULL){
+    yyerror("Null scanf!!");
+    return;
+  }
 
   printf("SCANF:\n");
   printStrOfTypes(scanfExp->string_of_types, spaces+2);
@@ -282,12 +324,23 @@ void printScanf(SCANF_EXP* scanfExp, int spaces) {
 void printStrOfTypes(TYPES_STR* str, int spaces) {
   for(int i = 0; i < spaces; i++)
     printf(" ");
+
+  if (str == NULL){
+    yyerror("Null types!!");
+    return;
+  }
+
   printf("%s\n", str->types);
 }
 
 void printScanDeclarationList(ScanDeclarationList* list, int spaces) {
   for(int i = 0; i < spaces; i++)
     printf(" ");
+
+  if (list == NULL){
+    yyerror("Null scan declaration list!!");
+    return;
+  }
 
   printDeclaration(list->declaration, spaces);
   while(list->next != NULL) {
