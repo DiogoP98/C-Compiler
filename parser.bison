@@ -108,7 +108,9 @@ CommandList* root;
 }
 
 %%
-program: INTD MAIN OPENPARENTHESIS CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS { root = $6; };
+program: INTD MAIN OPENPARENTHESIS CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
+  root = $6;
+};
 
 list:
   cmd list{
@@ -191,7 +193,7 @@ if_expr:
   }
   ;
 
-while_expr: 
+while_expr:
   WHILE OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd{
     $$ = while_command($3, $5);
   }
@@ -281,6 +283,10 @@ expr:
   };
   
 bexpr:
+  OPENPARENTHESIS bexpr CLOSEPARENTHESIS {
+    $$ = $2;
+  }
+  |
   bexpr OR bexpr {
     $$ = ast_boolOperation(OR, $1, $3);
   }
