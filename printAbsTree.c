@@ -292,6 +292,8 @@ void printScanDeclarationList(ScanDeclarationList* list, int spaces) {
   printDeclaration(list->declaration, spaces);
   while(list->next != NULL) {
     list = list->next;
+    for(int i = 0; i < spaces; i++)
+      printf(" ");
     printDeclaration(list->declaration, spaces);
   }
 }
