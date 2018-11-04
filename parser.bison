@@ -39,7 +39,7 @@
 %left MUL DIV MOD
 %left INT FLOAT
 %left AND OR NOT
-%left VAR
+%left EQUAL CLOSEPARENTHESIS
 %left IF WHILE
 %nonassoc NO_ELSE
 %nonassoc ELSE
@@ -124,30 +124,31 @@ cmd:
     $$ = while_declaration($1);
   }
   |
-  var_dec SEMICOLON {
+  var_dec {
     $$ = variable_declaration($1);
   }
   |
-  printf SEMICOLON{
+  printf {
     $$ = printf_declaration($1);
   }
   |
-  scanf SEMICOLON{
+  scanf {
     $$ = scanf_declaration($1);
   }
   ;
 
 
 printf:
-  PRINT OPENPARENTHESIS TYPES COMMA list_var CLOSEPARENTHESIS{
+  PRINT OPENPARENTHESIS TYPES COMMA list_var CLOSEPARENTHESIS SEMICOLON{
     $$ = ast_printf($3,$5);
   }
   ;
 
 scanf:
-  SCAN OPENPARENTHESIS TYPES COMMA list_scan_var CLOSEPARENTHESIS {
+  SCAN OPENPARENTHESIS TYPES COMMA list_scan_var CLOSEPARENTHESIS SEMICOLON{
     $$ = ast_scanf($3,$5);
-  };
+  }
+  ;
 
 if_expr:
   IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd %prec NO_ELSE {
@@ -186,7 +187,7 @@ while_expr:
   ;
 
 atr:
-  VAR EQUAL expr {
+  decl EQUAL expr {
     $$ = var_assignment($1,$3);
   }
   ;
@@ -208,11 +209,11 @@ list_scan_var:
 ;
 
 var_dec: 
-  INTD list_var {
+  INTD list_var SEMICOLON{
     $$ = ast_varlist(INTD, $2);
   }
   |
-  FLOATD list_var {
+  FLOATD list_var SEMICOLON{
     $$ = ast_varlist(FLOATD, $2);
   }
 ;

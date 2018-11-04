@@ -70,7 +70,7 @@ int yyline = 1;
 ">"  { return GRE;  }
 ">=" { return GOQ;  }
 
-\"(\\.|[^\\"])*\" {
+\".*?[^\\]\" {
     yylval.typesValue = yytext;
     return TYPES;
 }

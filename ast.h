@@ -72,7 +72,7 @@ struct _DECL {
 };
 
 struct _ASG {
-  char* name;
+  struct _DECL* name;
   struct _Expr* value;
 };
 
@@ -175,7 +175,7 @@ varList* ast_varlist(int type, DeclarationList* next);
 DeclarationList* ast_declaration(DECL* decl, DeclarationList* next);
 DeclarationList* ast_assignment(ASG* asg, DeclarationList* next);
 DECL* var_declaration(char* s);
-ASG* var_assignment(char* s, Expr* expr);
+ASG* var_assignment(DECL* s, Expr* expr);
 
 //------- Expressions functions -------------
 Expr* ast_integer(int v);

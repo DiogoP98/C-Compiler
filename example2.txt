@@ -1,7 +1,9 @@
 int main() {
     float a = 5.2 + 3;
-    float b;
-    printf("%d", n);
+    float b, c, d;
+    printf("%d" , n);
     if (0 == 0)
         int b;
+    else 
+        int a;
 }

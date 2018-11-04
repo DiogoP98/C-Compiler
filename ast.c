@@ -1,5 +1,6 @@
 // AST constructor functions
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h> // for malloc
 #include "ast.h" // AST header
 
@@ -138,14 +139,14 @@ WHILEexpression* while_commands(BoolExpr* bexpr, CommandList* list) {
 //------- INPUT/OUTPUT expressions ----------------
 PRINTF_EXP* ast_printf(char* types, DeclarationList* vars) {
   PRINTF_EXP* node = (PRINTF_EXP*) malloc(sizeof(PRINTF_EXP));
-  node->string_of_types = types;
+  node->string_of_types = strdup(types);
   node->vars = vars;
   return node;
 }
 
 SCANF_EXP* ast_scanf(char* type, ScanDeclarationList* vars) {
   SCANF_EXP* node = (SCANF_EXP*) malloc(sizeof(SCANF_EXP));
-  node->string_of_types = type;
+  node->string_of_types = strdup(type);
   node->vars = vars;
   return node;
 }
@@ -184,13 +185,12 @@ DeclarationList* ast_assignment(ASG* asg, DeclarationList* next) {
 
 DECL* var_declaration(char* s) {
   DECL* node = (DECL*) malloc(sizeof(DECL));
-  node->name = s;
+  node->name = strdup(s);
   return node;
 }
 
-ASG* var_assignment(char* s, Expr* expr) {
+ASG* var_assignment(DECL* s, Expr* expr) {
   ASG* node = (ASG*) malloc(sizeof(ASG));
-  printf("assignment name: %s  acabou", s);
   node->name = s;
   node->value = expr;
   return node;

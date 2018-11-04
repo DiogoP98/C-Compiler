@@ -52,43 +52,42 @@ void printExpr(Expr* expr, int spaces) {
 
 void printBoolExpr(BoolExpr* expr, int spaces) {
   for(int i = 0; i < spaces; i++)
-    //printf(" ");
+    printf(" ");
   
   if (expr == NULL)
     yyerror("Null bool expression!!");
   
   else if (expr->kind == E_BOOL)
-    continue;
-  //printf("BOOL %d\n", expr->attr_bool.value);
+    printf("BOOL %d\n", expr->attr_bool.value);
 
   else if (expr->kind == E_RELOP) {
     switch (expr->attr_bool.relop.operator) {
       case OR:
-        //printf("||:\n");
+        printf("||:\n");
         break;
       case AND:
-        //printf("&&:\n");
+        printf("&&:\n");
         break;
       case NOT:
-        //printf("!:\n");
+        printf("!:\n");
         break;
       case EQU:
-        //printf("==:\n");
+        printf("==:\n");
         break;
       case DIF:
-        //printf("!=:\n");
+        printf("!=:\n");
         break;
       case LES:
-        //printf("<:\n");
+        printf("<:\n");
         break;
       case LOQ:
-        //printf("<=:\n");
+        printf("<=:\n");
         break;
       case GRE:
-        //printf(">:\n");
+        printf(">:\n");
         break;
       case GOQ:
-        //printf(">=:\n");
+        printf(">=:\n");
         break;
       default:
         printf("Undefined\n");
@@ -106,13 +105,12 @@ void printBoolExpr(BoolExpr* expr, int spaces) {
 
 void printDeclaration(DECL* decl, int spaces) {
   for(int i = 0; i < spaces; i++)
-    //printf(" ");
+    printf(" ");
   
   if (decl == NULL)
     yyerror("Null declaration!!");
   
-  //printf("%s\n", decl->name);
-  //printf("hereeeeee\n");
+  printf("%s\n", decl->name);
 }
 
 void printAssignment(ASG* asg, int spaces) {
@@ -122,42 +120,35 @@ void printAssignment(ASG* asg, int spaces) {
   if (asg == NULL)
     yyerror("Null assignment!!");
   
-  //printf("%s\n=\n", asg->name);
+  printDeclaration(asg->name, spaces);
+  printf("=:\n");
   printExpr(asg->value, spaces);
 }
 
 void printCommand(Command* cmd, int spaces) {
-  //printf("entrou\n");
-  //for(int i = 0; i < spaces; i++)
-    //printf(" ");
-  //printf("passou2\n");
+  for(int i = 0; i < spaces; i++)
+    printf(" ");
   
   if (cmd == NULL) {
-    //printf("passou\n");
     yyerror("Null command!!");
   }
   
   else {
     switch (cmd->kind) {
       case E_IF:
-        printf("hereeeee if\n");
-        //printIf(cmd->ifnext, spaces+1);
+        printIf(cmd->ifnext, spaces+1);
         break;
       case E_WHILE:
-        printf("hereeeee while\n");
-        //printWhile(cmd->whilenext, spaces+1);
+        printWhile(cmd->whilenext, spaces+1);
         break;
       case E_VAR:
-        printf("hereeeee declorasg\n");
         printvarList(cmd->list, spaces+1);
         break;
       case E_PRINT:
-        printf("hereeeee4 print\n");
-        //printPrintf(cmd->printnext, spaces+1);
+        printPrintf(cmd->printnext, spaces+1);
         break;
       case E_SCAN:
-        printf("hereeeee5 scan\n");
-        //printScanf(cmd->scannext, spaces+1);
+        printScanf(cmd->scannext, spaces+1);
         break;
       default:
         printf("Undefined\n");
@@ -186,7 +177,7 @@ void printDeclarationList(DeclarationList* declList, int spaces){
       printAssignment(declList->assignment, spaces);
       break;
     case E_DECLARATION:
-      //printDeclaration(declList->declaration, spaces);
+      printDeclaration(declList->declaration, spaces);
       break;
     default:
       printf("Undefined\n");
@@ -202,7 +193,7 @@ void printDeclarationList(DeclarationList* declList, int spaces){
 
 void printIf(IFexpression* ifExpr, int spaces) {
   for(int i = 0; i < spaces; i++)
-    //printf(" ");
+    printf(" ");
   
   if (ifExpr == NULL)
     yyerror("Null command!!");
@@ -211,6 +202,7 @@ void printIf(IFexpression* ifExpr, int spaces) {
     CommandList* cmdList;
     switch (ifExpr->kind) {
       case E_IF_EXPR:
+        printf("IF:\n");
         printBoolExpr(ifExpr->if_type.bexpr, spaces+1);
         cmdList = ifExpr->if_type.list;
         while(cmdList != NULL){
@@ -219,14 +211,15 @@ void printIf(IFexpression* ifExpr, int spaces) {
         }
         break;
       case E_IF_ELSE:
-        printBoolExpr(ifExpr->if_type.bexpr, spaces+1);
-        cmdList = ifExpr->if_type.list;
+        printf("IF:\n");
+        printBoolExpr(ifExpr->if_else_type.bexpr, spaces+1);
+        cmdList = ifExpr->if_else_type.list;
         while(cmdList != NULL){
           printCommand(cmdList->expr, spaces + 1);
           cmdList = cmdList->next;
         }
-        
-        cmdList = ifExpr->if_else_type.list;
+        printf("ELSE:\n");
+        cmdList = ifExpr->if_else_type.else_list;
         while(cmdList != NULL){
           printCommand(cmdList->expr, spaces + 1);
           cmdList = cmdList->next;
@@ -240,10 +233,12 @@ void printIf(IFexpression* ifExpr, int spaces) {
 
 void printWhile(WHILEexpression* whileExpr, int spaces) {
   for(int i = 0; i < spaces; i++)
-    //printf(" ");
+    printf(" ");
   
   if (whileExpr == NULL)
     yyerror("Null command!!");
+
+  printf("WHILE:\n");
 
   printBoolExpr(whileExpr->bexpr, spaces + 1);
 
@@ -256,23 +251,26 @@ void printWhile(WHILEexpression* whileExpr, int spaces) {
 
 void printPrintf(PRINTF_EXP* printfExp, int spaces) {
   for(int i = 0; i < spaces; i++)
-    //printf(" ");
-  
-  //printf("%s\n", printfExp->string_of_types);
-  printDeclarationList(printfExp->vars, spaces);
+    printf(" ");
+  printf("PRINTF:\n");
+  for(int i = 0; i < spaces+1; i++)
+    printf(" ");
+
+  printf("%s\n", printfExp->string_of_types);
+  printDeclarationList(printfExp->vars, spaces+1);
 }
 
 void printScanf(SCANF_EXP* scanfExp, int spaces) {
   for(int i = 0; i < spaces; i++)
-    //printf(" ");
+    printf(" ");
 
-  //printf("%s\n", scanfExp->string_of_types);
+  printf("%s\n", scanfExp->string_of_types);
   printScanDeclarationList(scanfExp->vars, spaces);
 }
 
 void printScanDeclarationList(ScanDeclarationList* list, int spaces) {
   for(int i = 0; i < spaces; i++)
-    //printf(" ");
+    printf(" ");
 
   printDeclaration(list->declaration, spaces);
   while(list->next != NULL) {
