@@ -2,8 +2,10 @@ int main() {
     float a = 5.2 + 3;
     float b, c, d;
     printf("%d" , n);
-    if (0 == 0)
+    if (0 == 0){
         int b;
-    else 
+    }
+    else {
         int a;
+    }
 }

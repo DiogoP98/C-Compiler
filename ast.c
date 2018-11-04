@@ -100,8 +100,8 @@ IFexpression* if_commands_else_command(BoolExpr* bexpr, CommandList* list, Comma
 IFexpression* if_commands_else_commands(BoolExpr* bexpr, CommandList* list, CommandList* else_list) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   node->kind = E_IF_ELSE;
-  node->if_type.bexpr = bexpr;
-  node->if_type.list = list;
+  node->if_else_type.bexpr = bexpr;
+  node->if_else_type.list = list;
   node->if_else_type.else_list = else_list;
   return node;
 }
@@ -112,8 +112,8 @@ IFexpression* if_command_else_commands(BoolExpr* bexpr, Command* cmd, CommandLis
   list->expr = cmd;
   list->next = NULL;
   node->kind = E_IF_ELSE;
-  node->if_type.bexpr = bexpr;
-  node->if_type.list = list;
+  node->if_else_type.bexpr = bexpr;
+  node->if_else_type.list = list;
   node->if_else_type.else_list = else_list;
   return node;
 }
