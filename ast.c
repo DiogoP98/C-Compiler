@@ -49,6 +49,13 @@ Command* variable_declaration(varList* list) {
   return node;
 }
 
+Command* assignment_declaration(AsgList* asg_list) {
+  Command* node = (Command*) malloc(sizeof(Command));
+  node->kind = E_ASG; 
+  node->asg_list = asg_list;
+  return node;
+}
+
 //------- IF expressions ----------------
 
 IFexpression* if_command(BoolExpr* bexpr, Command* cmd) {
@@ -200,6 +207,13 @@ ASG* var_assignment(DECL* s, Expr* expr) {
   ASG* node = (ASG*) malloc(sizeof(ASG));
   node->name = s;
   node->value = expr;
+  return node;
+}
+
+AsgList* ast_assignmentList(ASG* asg, AsgList* next) {
+  AsgList* node = (AsgList*) malloc(sizeof(AsgList));
+  node->assignment = asg;
+  node->next = next;
   return node;
 }
 

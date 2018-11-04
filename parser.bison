@@ -44,6 +44,7 @@
 %left IF WHILE
 %nonassoc NO_ELSE
 %nonassoc ELSE
+%expect 1
 
 
 // Root-level grammar symbol
@@ -64,6 +65,7 @@
   TYPES_STR* string_types;
   varList* varList;
   DeclarationList* list_decl;
+  AsgList* asg_list;
   ScanDeclarationList* scan_list;
   ASG* assignment;
   DECL* declaration;
@@ -91,6 +93,7 @@
 %type <varList> var_dec
 %type <string_types> string
 %type <number> num
+%type <asg_list> list_asg
 
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
@@ -131,8 +134,12 @@ cmd:
     $$ = while_declaration($1);
   }
   |
-  var_dec {
+  var_dec{
     $$ = variable_declaration($1);
+  }
+  |
+  list_asg SEMICOLON {
+    $$ = assignment_declaration($1);
   }
   |
   printf {
@@ -251,7 +258,17 @@ list_var:
   atr {
     $$ = ast_assignment($1, NULL);
   }
-  ;
+;
+
+list_asg: 
+  atr COMMA list_asg{
+    $$ = ast_assignmentList($1, $3);
+  }
+  |
+  atr {
+    $$ = ast_assignmentList($1, NULL);
+  }
+;
 
 expr: 
   num {
@@ -283,8 +300,8 @@ expr:
   };
   
 bexpr:
-  num {
-    $$ = ast_bool($1);
+  expr {
+    $$ = ast_singleExpr($1);
   }
   |
   OPENPARENTHESIS bexpr CLOSEPARENTHESIS {

@@ -13,11 +13,13 @@ struct _Command {
     E_IF,
     E_WHILE,
     E_VAR,
+    E_ASG,
     E_PRINT,
     E_SCAN
   } kind;
 
   struct _VarList* list;
+  struct _AsgList* asg_list;
   struct _IFexpression* ifnext;
   struct _WHILEexpression* whilenext;
   struct _PRINTF_EXP* printnext;
@@ -55,6 +57,11 @@ struct _DeclarationList {
   struct _ASG* assignment;
   struct _DECL* declaration;
   struct _DeclarationList* next;
+};
+
+struct _AsgList {
+  struct _ASG* assignment;
+  struct _AsgList* next;
 };
 
 struct _VarList {
@@ -156,6 +163,7 @@ typedef struct _ScanDeclarationList ScanDeclarationList;
 typedef struct _VarList varList;
 typedef struct _TYPES TYPES_STR;
 typedef struct _NUMBER NUMBER;
+typedef struct _AsgList AsgList;
 
 //------- Command list -----------------
 CommandList* ast_commandList(Command* cmd, CommandList* next);
@@ -166,6 +174,7 @@ Command* while_declaration(WHILEexpression* whilenext);
 Command* variable_declaration(varList* list);
 Command* printf_declaration(PRINTF_EXP* printnext);
 Command* scanf_declaration(SCANF_EXP* scannext);
+Command* assignment_declaration(AsgList* asg_list);
 
 //------- IF expressions ----------------
 IFexpression* if_command(BoolExpr* bexpr, Command* cmd);
@@ -189,6 +198,7 @@ ScanDeclarationList* ast_scanlist(DECL* var, ScanDeclarationList* next);
 varList* ast_varlist(int type, DeclarationList* next);
 DeclarationList* ast_declaration(DECL* decl, DeclarationList* next);
 DeclarationList* ast_assignment(ASG* asg, DeclarationList* next);
+AsgList* ast_assignmentList(ASG* asg, AsgList* next);
 DECL* var_declaration(char* s);
 ASG* var_assignment(DECL* s, Expr* expr);
 

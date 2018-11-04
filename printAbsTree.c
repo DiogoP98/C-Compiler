@@ -15,6 +15,7 @@ void printPrintf(PRINTF_EXP* printf, int spaces);
 void printScanf(SCANF_EXP* scanf, int spaces);
 void printStrOfTypes(TYPES_STR* str, int spaces);
 void printScanDeclarationList(ScanDeclarationList* list, int spaces);
+void printAssignmentList(AsgList* asg_list, int spaces);
 
 void printExpr(Expr* expr, int spaces) {
   for(int i = 0; i < spaces; i++)
@@ -134,6 +135,23 @@ void printDeclaration(DECL* decl, int spaces) {
   printf("%s\n", decl->name);
 }
 
+void printAssignmentList(AsgList* asg_list, int spaces) {
+  for(int i = 0; i < spaces; i++)
+    printf(" ");
+
+  if (asg_list == NULL){
+    yyerror("Null var list!!");
+    return;
+  }
+
+  printAssignment(asg_list->assignment, spaces+1);
+  AsgList* asg_list_copy = asg_list;
+  if(asg_list_copy->next != NULL) {
+    asg_list_copy = asg_list_copy->next;
+    printAssignmentList(asg_list_copy, spaces);
+  }
+}
+
 void printAssignment(ASG* asg, int spaces) {
   if (asg == NULL){
     yyerror("Null assignment!!");
@@ -167,6 +185,9 @@ void printCommand(Command* cmd, int spaces) {
         break;
       case E_VAR:
         printvarList(cmd->list, spaces+1);
+        break;
+      case E_ASG:
+        printAssignmentList(cmd->asg_list, spaces+1);
         break;
       case E_PRINT:
         printPrintf(cmd->printnext, spaces+1);
