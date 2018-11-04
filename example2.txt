@@ -2,8 +2,8 @@ int main() {
     float a = 5.2 + 3;
     float b, c, d;
     printf("%d" , n);
-    scanf("%d", & n);
-    if (0 == 0){
+    scanf("%d, %d", &n, &f);
+    if ( (2 + 2) == (2 * 3) ){
         int b;
     }
     else {

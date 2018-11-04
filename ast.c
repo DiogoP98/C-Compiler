@@ -204,24 +204,31 @@ ASG* var_assignment(DECL* s, Expr* expr) {
 }
 
 //------- Expressions functions -------------
-Expr* ast_integer(int v) {
-  Expr* node = (Expr*) malloc(sizeof(Expr));
-  node->kind = E_INTEGER;
-  node->attr.valuei = v;
+NUMBER* ast_integer(int v) {
+  NUMBER* node = (NUMBER*) malloc(sizeof(NUMBER));
+  node->valuei = v;
+  node->type = E_INTEGER;
   return node;
 }
 
-Expr* ast_float(float v) {
+NUMBER* ast_float(float v) {
+  NUMBER* node = (NUMBER*) malloc(sizeof(NUMBER));
+  node->valuef = v;
+  node->type = E_FLOAT;
+  return node;
+}
+
+Expr* ast_number(NUMBER* m) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
-  node->kind = E_FLOAT;
-  node->attr.valuef = v;
+  node->attr.number = m;
+  node->kind = E_NUM;
   return node;
 }
 
 Expr* ast_operation(int operator, Expr* left, Expr* right) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
-  node->kind = E_OPERATION;
   node->parenthesis = E_HASNOT;
+  node->kind = E_OPERATION;
   node->attr.op.operator = operator;
   node->attr.op.left = left;
   node->attr.op.right = right;

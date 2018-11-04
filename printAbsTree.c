@@ -2,6 +2,7 @@
 #include "parser.h"
 
 void printExpr(Expr* expr, int spaces);
+void printNumber(NUMBER* n, int spaces);
 void printBoolExpr(BoolExpr* expr, int spaces);
 void printDeclaration(DECL* decl, int spaces);
 void printAssignment(ASG* asg, int spaces);
@@ -22,11 +23,8 @@ void printExpr(Expr* expr, int spaces) {
   if (expr == NULL)
     yyerror("Null expression!!");
   
-  else if (expr->kind == E_INTEGER)
-    printf("INT %d\n", expr->attr.valuei);
-  
-  else if (expr->kind == E_FLOAT)
-    printf("FLOAT %f\n", expr->attr.valuef);
+  else if (expr->kind == E_NUM)
+    printNumber(expr->attr.number, spaces+1);
 
   else if (expr->kind == E_OPERATION) {
     switch (expr->attr.op.operator) {
@@ -49,6 +47,17 @@ void printExpr(Expr* expr, int spaces) {
     printExpr(expr->attr.op.left, spaces+1);
     printExpr(expr->attr.op.right, spaces+1);
   }
+}
+
+void printNumber(NUMBER* n, int spaces) {
+  for(int i = 0; i < spaces; i++)
+    printf(" ");
+
+  if(n->type == E_INTEGER)
+    printf ("%d\n", n->valuei);
+  
+  else 
+    printf("%f\n", n->valuef);
 }
 
 void printBoolExpr(BoolExpr* expr, int spaces) {

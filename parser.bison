@@ -69,6 +69,7 @@
   DECL* declaration;
   Expr* exprValue;
   BoolExpr* boolExpr;
+  NUMBER* number;
 }
 
 %type <intValue> INT
@@ -89,6 +90,7 @@
 %type <scan_expr> scanf
 %type <varList> var_dec
 %type <string_types> string
+%type <number> num
 
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
@@ -246,12 +248,8 @@ list_var:
   ;
 
 expr: 
-  INT {
-    $$ = ast_integer($1);
-  }
-  |
-  FLOAT {
-    $$ = ast_float($1);
+  num {
+    $$ = ast_number($1);
   }
   |
   OPENPARENTHESIS expr CLOSEPARENTHESIS {
@@ -319,6 +317,16 @@ bexpr:
     $$ = ast_boolOperation2(GOQ, $1, $3);
   }
   ;
+
+num: 
+  INT {
+    $$ = ast_integer($1);
+  }
+  |
+  FLOAT {
+    $$ = ast_float($1);
+  }
+;
 %%
 
 void yyerror(const char* err) {

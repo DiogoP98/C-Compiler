@@ -93,9 +93,8 @@ struct _TYPES {
 // AST for expressions
 struct _Expr {
   enum { 
-    E_INTEGER,
     E_OPERATION,
-    E_FLOAT,
+    E_NUM,
   } kind;
 
   enum {
@@ -104,8 +103,7 @@ struct _Expr {
   } parenthesis;
 
   union {
-    int valuei;
-    float valuef;
+    struct _NUMBER* number;
     struct { 
       int operator; // PLUS, MINUS, etc 
       struct _Expr* left;
@@ -131,6 +129,16 @@ struct _BoolExpr {
   } attr_bool;
 };
 
+struct _NUMBER {
+  enum { 
+    E_INTEGER,
+    E_FLOAT,
+  } type;
+
+  int valuei;
+  float valuef;
+};
+
 
 typedef struct _CommandList CommandList;
 typedef struct _Command Command;
@@ -147,6 +155,7 @@ typedef struct _BoolExprList BoolExprList;
 typedef struct _ScanDeclarationList ScanDeclarationList;
 typedef struct _VarList varList;
 typedef struct _TYPES TYPES_STR;
+typedef struct _NUMBER NUMBER;
 
 //------- Command list -----------------
 CommandList* ast_commandList(Command* cmd, CommandList* next);
@@ -184,8 +193,9 @@ DECL* var_declaration(char* s);
 ASG* var_assignment(DECL* s, Expr* expr);
 
 //------- Expressions functions -------------
-Expr* ast_integer(int v);
-Expr* ast_float(float v);
+NUMBER* ast_integer(int v);
+NUMBER* ast_float(float v);
+Expr* ast_number(NUMBER* m);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
 Expr* ast_pexpr(Expr* expr);
 
