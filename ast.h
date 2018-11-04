@@ -118,7 +118,7 @@ struct _BoolExpr {
     E_RELOP
   } kind;
   union {
-    int value; // for boolean values
+    struct _NUMBER* value; // for boolean values
     struct { 
       int operator;
       struct _BoolExpr* bleft;
@@ -200,7 +200,8 @@ Expr* ast_operation(int operator, Expr* left, Expr* right);
 Expr* ast_pexpr(Expr* expr);
 
 //------- Bool Expressions functions -------------
-BoolExpr* ast_bool(int v);
+BoolExpr* ast_bool(NUMBER* v);
+BoolExpr* ast_pbexpr(BoolExpr* bexpr);
 BoolExpr* ast_boolOperation(int operator, BoolExpr* left, BoolExpr* right);
 BoolExpr* ast_boolOperation2(int operator, Expr* left, Expr* right);
 BoolExpr* ast_singleExpr(Expr* expr);

@@ -38,9 +38,9 @@
 %left EQU DIF LES LOQ GRE GOQ
 %left PLUS SUB
 %left MUL DIV MOD
+%left OPENPARENTHESIS CLOSEPARENTHESIS
 %left INT FLOAT
 %left AND OR NOT
-%left EQUAL CLOSEPARENTHESIS
 %left IF WHILE
 %nonassoc NO_ELSE
 %nonassoc ELSE
@@ -283,8 +283,12 @@ expr:
   };
   
 bexpr:
+  num {
+    $$ = ast_bool($1);
+  }
+  |
   OPENPARENTHESIS bexpr CLOSEPARENTHESIS {
-    $$ = $2;
+    $$ = ast_pbexpr($2);
   }
   |
   bexpr OR bexpr {
@@ -297,10 +301,6 @@ bexpr:
   |
   NOT bexpr {
     $$ = ast_boolOperation(NOT,$2, NULL);
-  }
-  |
-  expr {
-    $$ = ast_singleExpr($1);
   }
   |
   expr EQU expr {

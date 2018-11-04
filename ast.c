@@ -243,10 +243,16 @@ Expr* ast_pexpr(Expr* expr) {
 }
 
 //------- Bool Expressions functions -------------
-BoolExpr* ast_bool(int v) {
+BoolExpr* ast_bool(NUMBER* v) {
   BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
   node->kind = E_BOOL;
-  node->attr_bool.value = (v==0)? 0:1;
+  node->attr_bool.value = v;
+  return node;
+}
+
+BoolExpr* ast_pbexpr(BoolExpr* bexpr) {
+  BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
+  node = bexpr;
   return node;
 }
 

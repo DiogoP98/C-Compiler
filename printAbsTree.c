@@ -77,7 +77,7 @@ void printBoolExpr(BoolExpr* expr, int spaces) {
   }
   
   else if (expr->kind == E_BOOL)
-    printf("BOOL %d\n", expr->attr_bool.value);
+    printNumber(expr->attr_bool.value, spaces+1);
 
   else if (expr->kind == E_RELOP) {
     switch (expr->attr_bool.relop.operator) {
