@@ -111,6 +111,7 @@ void printDeclaration(DECL* decl, int spaces) {
     yyerror("Null declaration!!");
   
   printf("%s\n", decl->name);
+  printf("hereeeeee\n");
 }
 
 void printAssignment(ASG* asg, int spaces) {
@@ -121,8 +122,9 @@ void printAssignment(ASG* asg, int spaces) {
     yyerror("Null assignment!!");
   
   printf("%s\n=\n", asg->name);
-
+  printf("aquiiiii\n");
   printExpr(asg->value, spaces);
+  printf("hereeeeee2\n");
 }
 
 void printCommand(Command* cmd, int spaces) {
@@ -170,24 +172,19 @@ void printvarList (varList* list, int spaces) {
 void printDeclarationList(DeclarationList* declList, int spaces){
   for(int i = 0; i < spaces; i++)
     printf(" ");
-  
-  if (declList == NULL)
-    yyerror("Null command!!");
 
-  else{
-    switch (declList->type) {
-      case E_ASSIGNMENT:
-        printAssignment(declList->assignment, spaces);
-        break;
-      case E_DECLARATION:
-        printDeclaration(declList->declaration, spaces);
-        break;
-      default:
-        printf("Undefined\n");
-    }
-
-    printDeclarationList(declList->next, spaces+1);
+  switch (declList->type) {
+    case E_ASSIGNMENT:
+      printAssignment(declList->assignment, spaces);
+      break;
+    case E_DECLARATION:
+      printDeclaration(declList->declaration, spaces);
+      break;
+    default:
+      printf("Undefined\n");
   }
+  declList = declList->next;
+  if(declList != NULL) printDeclarationList(declList, spaces+1);
 }
 
 
