@@ -228,6 +228,8 @@ void printIf(IFexpression* ifExpr, int spaces) {
           printCommand(cmdList->expr, spaces + 1);
           cmdList = cmdList->next;
         }
+        for(int i = 0; i < spaces; i++)
+          printf(" ");
         printf("ELSE:\n");
         cmdList = ifExpr->if_else_type.else_list;
         while(cmdList != NULL){
