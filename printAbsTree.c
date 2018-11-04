@@ -12,6 +12,7 @@ void printIf(IFexpression* ifExpr, int spaces);
 void printWhile(WHILEexpression* whileExpr, int spaces);
 void printPrintf(PRINTF_EXP* printf, int spaces);
 void printScanf(SCANF_EXP* scanf, int spaces);
+void printStrOfTypes(TYPES_STR* str, int spaces);
 void printScanDeclarationList(ScanDeclarationList* list, int spaces);
 
 void printExpr(Expr* expr, int spaces) {
@@ -253,19 +254,24 @@ void printPrintf(PRINTF_EXP* printfExp, int spaces) {
   for(int i = 0; i < spaces; i++)
     printf(" ");
   printf("PRINTF:\n");
-  for(int i = 0; i < spaces+1; i++)
-    printf(" ");
 
-  printf("%s\n", printfExp->string_of_types);
-  printDeclarationList(printfExp->vars, spaces+1);
+  printStrOfTypes(printfExp->string_of_types, spaces+2);
+  printDeclarationList(printfExp->vars, spaces+2);
 }
 
 void printScanf(SCANF_EXP* scanfExp, int spaces) {
   for(int i = 0; i < spaces; i++)
     printf(" ");
 
-  printf("%s\n", scanfExp->string_of_types);
-  printScanDeclarationList(scanfExp->vars, spaces);
+  printf("SCANF:\n");
+  printStrOfTypes(scanfExp->string_of_types, spaces+2);
+  printScanDeclarationList(scanfExp->vars, spaces+2);
+}
+
+void printStrOfTypes(TYPES_STR* str, int spaces) {
+  for(int i = 0; i < spaces; i++)
+    printf(" ");
+  printf("%s\n", str->types);
 }
 
 void printScanDeclarationList(ScanDeclarationList* list, int spaces) {

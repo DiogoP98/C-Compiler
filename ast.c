@@ -137,16 +137,23 @@ WHILEexpression* while_commands(BoolExpr* bexpr, CommandList* list) {
 }
 
 //------- INPUT/OUTPUT expressions ----------------
-PRINTF_EXP* ast_printf(char* types, DeclarationList* vars) {
+
+TYPES_STR* ast_string_of_types(char* type) {
+  TYPES_STR* node = (TYPES_STR*) malloc(sizeof(TYPES_STR));
+  node->types = strdup(type);
+  return node;
+}
+
+PRINTF_EXP* ast_printf(TYPES_STR* types, DeclarationList* vars) {
   PRINTF_EXP* node = (PRINTF_EXP*) malloc(sizeof(PRINTF_EXP));
-  node->string_of_types = strdup(types);
+  node->string_of_types = types;
   node->vars = vars;
   return node;
 }
 
-SCANF_EXP* ast_scanf(char* type, ScanDeclarationList* vars) {
+SCANF_EXP* ast_scanf(TYPES_STR* types, ScanDeclarationList* vars) {
   SCANF_EXP* node = (SCANF_EXP*) malloc(sizeof(SCANF_EXP));
-  node->string_of_types = strdup(type);
+  node->string_of_types = types;
   node->vars = vars;
   return node;
 }

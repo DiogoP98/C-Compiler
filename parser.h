@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 92 "parser.bison" /* yacc.c:1919  */
+#line 95 "parser.bison" /* yacc.c:1919  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -91,9 +91,10 @@ CommandList* root;
     OPENCURLYBRACKETS = 286,
     CLOSECURLYBRACKETS = 287,
     COMMA = 288,
-    TYPES = 289,
-    MOD = 290,
-    NO_ELSE = 291
+    SCANNER_SYM = 289,
+    TYPES = 290,
+    MOD = 291,
+    NO_ELSE = 292
   };
 #endif
 
@@ -102,7 +103,7 @@ CommandList* root;
 
 union YYSTYPE
 {
-#line 52 "parser.bison" /* yacc.c:1919  */
+#line 53 "parser.bison" /* yacc.c:1919  */
 
   int intValue;
   float floatValue;
@@ -114,6 +115,7 @@ union YYSTYPE
   WHILEexpression* whileExpression;
   PRINTF_EXP* printf_exp;
   SCANF_EXP* scan_expr;
+  TYPES_STR* string_types;
   varList* varList;
   DeclarationList* list_decl;
   ScanDeclarationList* scan_list;
@@ -122,7 +124,7 @@ union YYSTYPE
   Expr* exprValue;
   BoolExpr* boolExpr;
 
-#line 126 "parser.h" /* yacc.c:1919  */
+#line 128 "parser.h" /* yacc.c:1919  */
 };
 
 typedef union YYSTYPE YYSTYPE;

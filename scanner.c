@@ -364,8 +364,8 @@ static void yy_fatal_error (yyconst char msg[]  );
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 38
-#define YY_END_OF_BUFFER 39
+#define YY_NUM_RULES 39
+#define YY_END_OF_BUFFER 40
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -375,14 +375,14 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[84] =
     {   0,
-        0,    0,   39,   37,    1,    3,   28,   37,   37,   25,
-       37,   16,   17,   23,   21,   20,   22,   37,   24,    4,
-       14,   31,   15,   33,   36,   36,   36,   36,   36,   36,
-       36,   36,   18,   37,   19,    1,   30,    0,    0,    0,
-        0,    2,   27,    0,    5,    4,    5,    5,   32,   29,
-       34,   36,   36,   36,    7,   36,   36,   36,   36,   36,
-       26,   35,   35,    5,   36,   36,    9,   36,   36,   36,
-       36,    8,   36,    6,   36,   36,   36,   10,   36,   12,
+        0,    0,   40,   38,    1,    3,   29,   38,   38,   26,
+       21,   16,   17,   24,   22,   20,   23,   38,   25,    4,
+       14,   32,   15,   34,   37,   37,   37,   37,   37,   37,
+       37,   37,   18,   38,   19,    1,   31,    0,    0,    0,
+        0,    2,   28,    0,    5,    4,    5,    5,   33,   30,
+       35,   37,   37,   37,    7,   37,   37,   37,   37,   37,
+       27,   36,   36,    5,   37,   37,    9,   37,   37,   37,
+       37,    8,   37,    6,   37,   37,   37,   10,   37,   12,
        13,   11,    0
     } ;
 
@@ -894,102 +894,107 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 58 "scanner.flex"
-{ return PLUS; }
+#line 57 "scanner.flex"
+{ return SCANNER_SYM; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 59 "scanner.flex"
-{ return SUB;  }
+{ return PLUS; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 60 "scanner.flex"
-{ return MUL;  }
+{ return SUB;  }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 61 "scanner.flex"
-{ return DIV;  }
+{ return MUL;  }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 62 "scanner.flex"
-{ return MOD;  }
+{ return DIV;  }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 63 "scanner.flex"
-{ return OR;   }
+{ return MOD;  }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 64 "scanner.flex"
-{ return AND;  }
+{ return OR;   }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 65 "scanner.flex"
-{ return NOT;  }
+{ return AND;  }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 66 "scanner.flex"
-{ return EQU;  }
+{ return NOT;  }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 67 "scanner.flex"
-{ return DIF;  }
+{ return EQU;  }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 68 "scanner.flex"
-{ return LES;	}
+{ return DIF;  }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 69 "scanner.flex"
-{ return LOQ;	}
+{ return LES;	}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 70 "scanner.flex"
-{ return GRE;  }
+{ return LOQ;	}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 71 "scanner.flex"
-{ return GOQ;  }
+{ return GRE;  }
 	YY_BREAK
 case 35:
-/* rule 35 can match eol */
 YY_RULE_SETUP
-#line 73 "scanner.flex"
+#line 72 "scanner.flex"
+{ return GOQ;  }
+	YY_BREAK
+case 36:
+/* rule 36 can match eol */
+YY_RULE_SETUP
+#line 74 "scanner.flex"
 {
     yylval.typesValue = yytext;
     return TYPES;
 }
 	YY_BREAK
-case 36:
+case 37:
 YY_RULE_SETUP
-#line 78 "scanner.flex"
+#line 79 "scanner.flex"
 { 
     yylval.stringValue = yytext;
     return VAR;
 }
 	YY_BREAK
-case 37:
-YY_RULE_SETUP
-#line 83 "scanner.flex"
-{ yyerror("unexpected character"); }
-	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 84 "scanner.flex"
+{ yyerror("unexpected character"); }
+	YY_BREAK
+case 39:
+YY_RULE_SETUP
+#line 85 "scanner.flex"
 ECHO;
 	YY_BREAK
-#line 993 "scanner.c"
+#line 998 "scanner.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1986,7 +1991,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 84 "scanner.flex"
+#line 85 "scanner.flex"
 
 
 

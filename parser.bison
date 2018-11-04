@@ -31,6 +31,7 @@
   OPENCURLYBRACKETS
   CLOSECURLYBRACKETS
   COMMA
+  SCANNER_SYM
   TYPES
 
 // Operator associativity & precedence
@@ -60,6 +61,7 @@
   WHILEexpression* whileExpression;
   PRINTF_EXP* printf_exp;
   SCANF_EXP* scan_expr;
+  TYPES_STR* string_types;
   varList* varList;
   DeclarationList* list_decl;
   ScanDeclarationList* scan_list;
@@ -86,6 +88,7 @@
 %type <printf_exp> printf
 %type <scan_expr> scanf
 %type <varList> var_dec
+%type <string_types> string
 
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
@@ -139,14 +142,20 @@ cmd:
 
 
 printf:
-  PRINT OPENPARENTHESIS TYPES COMMA list_var CLOSEPARENTHESIS SEMICOLON{
+  PRINT OPENPARENTHESIS string COMMA list_var CLOSEPARENTHESIS SEMICOLON{
     $$ = ast_printf($3,$5);
   }
   ;
 
 scanf:
-  SCAN OPENPARENTHESIS TYPES COMMA list_scan_var CLOSEPARENTHESIS SEMICOLON{
+  SCAN OPENPARENTHESIS string COMMA list_scan_var CLOSEPARENTHESIS SEMICOLON{
     $$ = ast_scanf($3,$5);
+  }
+  ;
+
+string:
+  TYPES {
+    $$ = ast_string_of_types($1);
   }
   ;
 
@@ -199,11 +208,11 @@ decl:
 ;
 
 list_scan_var:
-  '&'decl COMMA list_scan_var {
+  SCANNER_SYM decl COMMA list_scan_var {
     $$ = ast_scanlist($2,$4);
   }
   |
-  '&'decl {
+  SCANNER_SYM decl {
     $$ = ast_scanlist($2,NULL);
   }
 ;

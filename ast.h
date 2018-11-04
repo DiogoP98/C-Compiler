@@ -77,13 +77,17 @@ struct _ASG {
 };
 
 struct _PRINTF_EXP {
-  char* string_of_types;
+  struct _TYPES* string_of_types;
   struct _DeclarationList* vars;
 };
 
 struct _SCANF_EXP {
-  char* string_of_types;
+  struct _TYPES* string_of_types;
   struct _ScanDeclarationList* vars;
+};
+
+struct _TYPES {
+  char* types;
 };
 
 // AST for expressions
@@ -142,6 +146,7 @@ typedef struct _BoolExpr BoolExpr;
 typedef struct _BoolExprList BoolExprList;
 typedef struct _ScanDeclarationList ScanDeclarationList;
 typedef struct _VarList varList;
+typedef struct _TYPES TYPES_STR;
 
 //------- Command list -----------------
 CommandList* ast_commandList(Command* cmd, CommandList* next);
@@ -166,8 +171,9 @@ WHILEexpression* while_command(BoolExpr* bexpr, Command* cmd);
 WHILEexpression* while_commands(BoolExpr* bexpr, CommandList* list);
 
 //------- INPUT/OUTPUT expressions ----------------
-PRINTF_EXP* ast_printf(char* types, DeclarationList* vars);
-SCANF_EXP* ast_scanf(char* type, ScanDeclarationList* vars);
+TYPES_STR* ast_string_of_types(char* type);
+PRINTF_EXP* ast_printf(TYPES_STR* types, DeclarationList* vars);
+SCANF_EXP* ast_scanf(TYPES_STR* type, ScanDeclarationList* vars);
 ScanDeclarationList* ast_scanlist(DECL* var, ScanDeclarationList* next);
 
 //------- Declarations/Assignments expressions ----------------
