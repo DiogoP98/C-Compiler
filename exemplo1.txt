@@ -1,0 +1,11 @@
+int main() {
+
+    if((2 + 2) == 2) {
+        if(0 == 0)
+            int b;
+        else 
+            int a;
+    }
+    else
+        int c;
+}
