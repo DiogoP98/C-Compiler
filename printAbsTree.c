@@ -143,7 +143,6 @@ void printAssignmentList(AsgList* asg_list, int spaces) {
     yyerror("Null var list!!");
     return;
   }
-
   printAssignment(asg_list->assignment, spaces+1);
   AsgList* asg_list_copy = asg_list;
   if(asg_list_copy->next != NULL) {
@@ -187,6 +186,7 @@ void printCommand(Command* cmd, int spaces) {
         printvarList(cmd->list, spaces+1);
         break;
       case E_ASG:
+        printf("Assignment:\n");
         printAssignmentList(cmd->asg_list, spaces+1);
         break;
       case E_PRINT:
