@@ -31,7 +31,7 @@
   OPENCURLYBRACKETS
   CLOSECURLYBRACKETS
   COMMA
-  SCANNER_SYM
+  '&'
   TYPES
 
 // Operator associativity & precedence
@@ -223,11 +223,11 @@ decl:
 ;
 
 list_scan_var:
-  SCANNER_SYM decl COMMA list_scan_var {
+  '&' decl COMMA list_scan_var {
     $$ = ast_scanlist($2,$4);
   }
   |
-  SCANNER_SYM decl {
+  '&' decl {
     $$ = ast_scanlist($2,NULL);
   }
 ;

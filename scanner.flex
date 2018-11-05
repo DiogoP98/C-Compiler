@@ -54,7 +54,7 @@ int yyline = 1;
 
 "," { return COMMA; }
 
-"&" { return SCANNER_SYM; }
+"&" { return '&'; }
 
 "+"  { return PLUS; }
 "-"  { return SUB;  }
