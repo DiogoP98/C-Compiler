@@ -78,7 +78,7 @@ void printBoolExpr(BoolExpr* expr, int spaces) {
   }
   
   else if (expr->kind == E_BOOL)
-    printNumber(expr->attr_bool.value, spaces+1);
+    printExpr(expr->attr_bool.single_expr.expr, spaces+1);
 
   else if (expr->kind == E_RELOP) {
     switch (expr->attr_bool.relop.operator) {
@@ -91,6 +91,17 @@ void printBoolExpr(BoolExpr* expr, int spaces) {
       case NOT:
         printf("!:\n");
         break;
+      default:
+        printf("Undefined\n");
+    }
+    if(expr->attr_bool.relop.bleft != NULL)
+      printBoolExpr(expr->attr_bool.relop.bleft, spaces+1);
+    if(expr->attr_bool.relop.bright != NULL)
+      printBoolExpr(expr->attr_bool.relop.bright, spaces+1);
+  }
+
+  else if(expr->kind == E_EXPR) {
+    switch (expr->attr_bool.relop.operator) {
       case EQU:
         printf("==:\n");
         break;
@@ -109,17 +120,12 @@ void printBoolExpr(BoolExpr* expr, int spaces) {
       case GOQ:
         printf(">=:\n");
         break;
-      default:
-        printf("Undefined\n");
     }
-    if(expr->attr_bool.relop.bleft != NULL)
-      printBoolExpr(expr->attr_bool.relop.bleft, spaces+1);
-    if(expr->attr_bool.relop.bright != NULL)
-      printBoolExpr(expr->attr_bool.relop.bright, spaces+1);
-    if(expr->attr_bool.relop.left != NULL)
-      printExpr(expr->attr_bool.relop.left, spaces+1);
-    if(expr->attr_bool.relop.right != NULL)
-      printExpr(expr->attr_bool.relop.right, spaces+1);
+
+    if(expr->attr_bool.rel_expr.left != NULL)
+      printExpr(expr->attr_bool.rel_expr.left, spaces+1);
+    if(expr->attr_bool.rel_expr.right != NULL)
+      printExpr(expr->attr_bool.rel_expr.right, spaces+1);
   }
 }
 

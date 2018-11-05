@@ -130,18 +130,27 @@ struct _Expr {
 struct _BoolExpr {
   enum { 
     E_BOOL,
-    E_RELOP
+    E_RELOP,
+    E_EXPR
   } kind;
 
   union {
-    struct _NUMBER* value; // for boolean values
     struct { 
       int operator;
       struct _BoolExpr* bleft;
       struct _BoolExpr* bright;
+    } relop;
+    
+    struct {
+      int operator;
       struct _Expr* right;
       struct _Expr* left;
-    } relop; // for binary expressions
+    } rel_expr; // for binary expressions
+
+    struct {
+      struct _Expr* expr;
+    } single_expr;
+
   } attr_bool;
 };
 
