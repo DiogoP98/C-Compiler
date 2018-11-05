@@ -1,11 +1,8 @@
 int main() {
-
-    if((2 + 2) == 2) {
-        if(0 == 0)
-            int b;
-        else 
-            int a;
-    }
-    else
-        int c;
+    int a = (((2 +3))) * 2, b;
+    if(((0 == 0)))
+        int ola;
+    
+    while(1==(1 -1)) 
+        printf("%d", ola);
 }

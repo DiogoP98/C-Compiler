@@ -7,7 +7,7 @@
 //------- Command list -----------------
 CommandList* ast_commandList(Command* cmd, CommandList* next) {
   CommandList* node = (CommandList*) malloc(sizeof(CommandList));
-  node->expr = cmd;
+  node->cmd = cmd;
   node->next = next;
   return node;
 }
@@ -17,42 +17,42 @@ CommandList* ast_commandList(Command* cmd, CommandList* next) {
 Command* if_declaration(IFexpression* ifnext) {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_IF; 
-  node->ifnext = ifnext;
+  node->content.ifnext = ifnext;
   return node;
 }
 
 Command* while_declaration(WHILEexpression* whilenext) {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_WHILE;
-  node->whilenext = whilenext;
+  node->content.whilenext = whilenext;
   return node; 
 }
 
 Command* printf_declaration(PRINTF_EXP* printnext) {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_PRINT;
-  node->printnext = printnext;
+  node->content.printnext = printnext;
   return node; 
 }
 
 Command* scanf_declaration(SCANF_EXP* scannext) {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_SCAN;
-  node->scannext = scannext;
+  node->content.scannext = scannext;
   return node; 
 }
 
 Command* variable_declaration(varList* list) {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_VAR; 
-  node->list = list;
+  node->content.list = list;
   return node;
 }
 
 Command* assignment_declaration(AsgList* asg_list) {
   Command* node = (Command*) malloc(sizeof(Command));
   node->kind = E_ASG; 
-  node->asg_list = asg_list;
+  node->content.asg_list = asg_list;
   return node;
 }
 
@@ -61,11 +61,11 @@ Command* assignment_declaration(AsgList* asg_list) {
 IFexpression* if_command(BoolExpr* bexpr, Command* cmd) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   CommandList* list = (CommandList*) malloc(sizeof(CommandList));
-  list->expr = cmd;
+  list->cmd = cmd;
   list->next = NULL;
   node->kind = E_IF_EXPR;
-  node->if_type.list = list;
-  node->if_type.bexpr = bexpr;
+  node->content.if_type.list = list;
+  node->content.if_type.bexpr = bexpr;
   return node;
 }
 
@@ -73,55 +73,55 @@ IFexpression* if_command_else_command(BoolExpr* bexpr, Command* cmd, Command* el
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   CommandList* list = (CommandList*) malloc(sizeof(CommandList));
   CommandList* list2 = (CommandList*) malloc(sizeof(CommandList));
-  list->expr = cmd;
+  list->cmd = cmd;
   list->next = NULL;
-  list2->expr = else_cmd;
+  list2->cmd = else_cmd;
   list2->next = NULL;
   node->kind = E_IF_ELSE;
-  node->if_else_type.bexpr = bexpr;
-  node->if_else_type.list = list;
-  node->if_else_type.else_list = list2;
+  node->content.if_else_type.bexpr = bexpr;
+  node->content.if_else_type.list = list;
+  node->content.if_else_type.else_list = list2;
   return node;
 }
 
 IFexpression* if_commands(BoolExpr* bexpr, CommandList* list) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   node->kind = E_IF_EXPR;
-  node->if_type.list = list;
-  node->if_type.bexpr = bexpr;
+  node->content.if_type.list = list;
+  node->content.if_type.bexpr = bexpr;
   return node;
 }
 
 IFexpression* if_commands_else_command(BoolExpr* bexpr, CommandList* list, Command* else_cmd) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   CommandList* list2 = (CommandList*) malloc(sizeof(CommandList));
-  list2->expr = else_cmd;
+  list2->cmd = else_cmd;
   list2->next = NULL;
   node->kind = E_IF_ELSE;
-  node->if_else_type.bexpr = bexpr;
-  node->if_else_type.list = list;
-  node->if_else_type.else_list = list2;
+  node->content.if_else_type.bexpr = bexpr;
+  node->content.if_else_type.list = list;
+  node->content.if_else_type.else_list = list2;
   return node;
 }
 
 IFexpression* if_commands_else_commands(BoolExpr* bexpr, CommandList* list, CommandList* else_list) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   node->kind = E_IF_ELSE;
-  node->if_else_type.bexpr = bexpr;
-  node->if_else_type.list = list;
-  node->if_else_type.else_list = else_list;
+  node->content.if_else_type.bexpr = bexpr;
+  node->content.if_else_type.list = list;
+  node->content.if_else_type.else_list = else_list;
   return node;
 }
 
 IFexpression* if_command_else_commands(BoolExpr* bexpr, Command* cmd, CommandList* else_list) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   CommandList* list = (CommandList*) malloc(sizeof(CommandList));
-  list->expr = cmd;
+  list->cmd = cmd;
   list->next = NULL;
   node->kind = E_IF_ELSE;
-  node->if_else_type.bexpr = bexpr;
-  node->if_else_type.list = list;
-  node->if_else_type.else_list = else_list;
+  node->content.if_else_type.bexpr = bexpr;
+  node->content.if_else_type.list = list;
+  node->content.if_else_type.else_list = else_list;
   return node;
 }
 
@@ -129,7 +129,7 @@ IFexpression* if_command_else_commands(BoolExpr* bexpr, Command* cmd, CommandLis
 WHILEexpression* while_command(BoolExpr* bexpr, Command* cmd) {
   WHILEexpression* node = (WHILEexpression*) malloc(sizeof(WHILEexpression));
   CommandList* list = (CommandList*) malloc(sizeof(CommandList));
-  list->expr = cmd;
+  list->cmd = cmd;
   list->next = NULL;
   node->bexpr = bexpr;
   node->list = list;
@@ -184,7 +184,7 @@ varList* ast_varlist(int type, DeclarationList* next) {
 DeclarationList* ast_declaration(DECL* decl, DeclarationList* next) {
   DeclarationList* node = (DeclarationList*) malloc(sizeof(DeclarationList));
   node->type = E_DECLARATION;
-  node->declaration = decl;
+  node->content.declaration = decl;
   node->next = next;
   return node;
 }
@@ -192,7 +192,7 @@ DeclarationList* ast_declaration(DECL* decl, DeclarationList* next) {
 DeclarationList* ast_assignment(ASG* asg, DeclarationList* next) {
   DeclarationList* node = (DeclarationList*) malloc(sizeof(DeclarationList));
   node->type = E_ASSIGNMENT;
-  node->assignment = asg;
+  node->content.assignment = asg;
   node->next = next;
   return node;
 }
@@ -220,14 +220,14 @@ AsgList* ast_assignmentList(ASG* asg, AsgList* next) {
 //------- Expressions functions -------------
 NUMBER* ast_integer(int v) {
   NUMBER* node = (NUMBER*) malloc(sizeof(NUMBER));
-  node->valuei = v;
+  node->content.valuei = v;
   node->type = E_INTEGER;
   return node;
 }
 
 NUMBER* ast_float(float v) {
   NUMBER* node = (NUMBER*) malloc(sizeof(NUMBER));
-  node->valuef = v;
+  node->content.valuef = v;
   node->type = E_FLOAT;
   return node;
 }
@@ -241,7 +241,7 @@ Expr* ast_number(NUMBER* m) {
 
 Expr* ast_operation(int operator, Expr* left, Expr* right) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
-  node->parenthesis = E_HASNOT;
+  node->parenthesis = E_HAS_NOT;
   node->kind = E_OPERATION;
   node->attr.op.operator = operator;
   node->attr.op.left = left;

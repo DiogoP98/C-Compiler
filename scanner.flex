@@ -14,12 +14,12 @@ int yyline = 1;
 #.*\n { yyline++; }
 \n { yyline++; }
 
-\-?[0-9]+ {
+[0-9]+ {
    yylval.intValue = atoi(yytext);
    return INT;
 }
 
-[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+) {
+([0-9]+([.][0-9]*)?|[.][0-9]+) {
 	yylval.floatValue = atof(yytext);
 	return FLOAT;
 }

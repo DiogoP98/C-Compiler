@@ -350,8 +350,24 @@ num:
     $$ = ast_integer($1);
   }
   |
+  PLUS INT {
+    $$ = ast_integer($2);
+  }
+  |
+  SUB INT {
+    $$ = ast_integer(-$2);
+  }
+  |
   FLOAT {
     $$ = ast_float($1);
+  }
+  |
+  PLUS FLOAT {
+    $$ = ast_float($2);
+  }
+  |
+  SUB FLOAT {
+    $$ = ast_float(-$2);
   }
 ;
 %%

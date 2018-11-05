@@ -62,10 +62,10 @@ void printNumber(NUMBER* n, int spaces) {
   }
 
   if(n->type == E_INTEGER)
-    printf ("%d\n", n->valuei);
+    printf ("%d\n", n->content.valuei);
   
   else 
-    printf("%f\n", n->valuef);
+    printf("%f\n", n->content.valuef);
 }
 
 void printBoolExpr(BoolExpr* expr, int spaces) {
@@ -177,23 +177,23 @@ void printCommand(Command* cmd, int spaces) {
   else {
     switch (cmd->kind) {
       case E_IF:
-        printIf(cmd->ifnext, spaces+1);
+        printIf(cmd->content.ifnext, spaces+1);
         break;
       case E_WHILE:
-        printWhile(cmd->whilenext, spaces+1);
+        printWhile(cmd->content.whilenext, spaces+1);
         break;
       case E_VAR:
-        printvarList(cmd->list, spaces+1);
+        printvarList(cmd->content.list, spaces+1);
         break;
       case E_ASG:
         printf("Assignment:\n");
-        printAssignmentList(cmd->asg_list, spaces+1);
+        printAssignmentList(cmd->content.asg_list, spaces+1);
         break;
       case E_PRINT:
-        printPrintf(cmd->printnext, spaces+1);
+        printPrintf(cmd->content.printnext, spaces+1);
         break;
       case E_SCAN:
-        printScanf(cmd->scannext, spaces+1);
+        printScanf(cmd->content.scannext, spaces+1);
         break;
       default:
         printf("Undefined\n");
@@ -229,10 +229,10 @@ void printDeclarationList(DeclarationList* declList, int spaces){
 
   switch (declList->type) {
     case E_ASSIGNMENT:
-      printAssignment(declList->assignment, spaces+1);
+      printAssignment(declList->content.assignment, spaces+1);
       break;
     case E_DECLARATION:
-      printDeclaration(declList->declaration, spaces+1);
+      printDeclaration(declList->content.declaration, spaces+1);
       break;
     default:
       printf("Undefined\n");
@@ -261,27 +261,27 @@ void printIf(IFexpression* ifExpr, int spaces) {
     switch (ifExpr->kind) {
       case E_IF_EXPR:
         printf("IF:\n");
-        printBoolExpr(ifExpr->if_type.bexpr, spaces+1);
-        cmdList = ifExpr->if_type.list;
+        printBoolExpr(ifExpr->content.if_type.bexpr, spaces+1);
+        cmdList = ifExpr->content.if_type.list;
         while(cmdList != NULL){
-          printCommand(cmdList->expr, spaces + 1);
+          printCommand(cmdList->cmd, spaces + 1);
           cmdList = cmdList->next;
         }
         break;
       case E_IF_ELSE:
         printf("IF:\n");
-        printBoolExpr(ifExpr->if_else_type.bexpr, spaces+1);
-        cmdList = ifExpr->if_else_type.list;
+        printBoolExpr(ifExpr->content.if_else_type.bexpr, spaces+1);
+        cmdList = ifExpr->content.if_else_type.list;
         while(cmdList != NULL){
-          printCommand(cmdList->expr, spaces + 1);
+          printCommand(cmdList->cmd, spaces + 1);
           cmdList = cmdList->next;
         }
         for(int i = 0; i < spaces; i++)
           printf(" ");
         printf("ELSE:\n");
-        cmdList = ifExpr->if_else_type.else_list;
+        cmdList = ifExpr->content.if_else_type.else_list;
         while(cmdList != NULL){
-          printCommand(cmdList->expr, spaces + 1);
+          printCommand(cmdList->cmd, spaces + 1);
           cmdList = cmdList->next;
         }
         break;
@@ -306,7 +306,7 @@ void printWhile(WHILEexpression* whileExpr, int spaces) {
 
   CommandList* cmdList = whileExpr->list;
   while(cmdList != NULL){
-    printCommand(cmdList->expr, spaces + 1);
+    printCommand(cmdList->cmd, spaces + 1);
     cmdList = cmdList->next;
   }
 }
@@ -383,7 +383,7 @@ int main(int argc, char** argv) {
   } //  yyin = stdin
   if (yyparse() == 0) {
     while(root != NULL) {
-      printCommand(root->expr, 0);
+      printCommand(root->cmd, 0);
       root = root->next;
     }
   }

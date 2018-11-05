@@ -4,7 +4,7 @@
 #define __ast_h__
 
 struct _CommandList {
-    struct _Command* expr;
+    struct _Command* cmd;
     struct _CommandList* next;
 };
 
@@ -18,12 +18,14 @@ struct _Command {
     E_SCAN
   } kind;
 
-  struct _VarList* list;
-  struct _AsgList* asg_list;
-  struct _IFexpression* ifnext;
-  struct _WHILEexpression* whilenext;
-  struct _PRINTF_EXP* printnext;
-  struct _SCANF_EXP* scannext;
+  union {
+    struct _VarList* list;
+    struct _AsgList* asg_list;
+    struct _IFexpression* ifnext;
+    struct _WHILEexpression* whilenext;
+    struct _PRINTF_EXP* printnext;
+    struct _SCANF_EXP* scannext;
+  } content;
 };
 
 struct _IFexpression {
@@ -32,16 +34,18 @@ struct _IFexpression {
     E_IF_ELSE
   } kind;
 
-  struct {
-    struct _BoolExpr* bexpr;
-    struct _CommandList* list;
-  } if_type;
-  
-  struct {
-    struct _BoolExpr* bexpr;
-    struct _CommandList* list;
-    struct _CommandList* else_list;
-  } if_else_type;
+  union {
+    struct {
+      struct _BoolExpr* bexpr;
+      struct _CommandList* list;
+    } if_type;
+    
+    struct {
+      struct _BoolExpr* bexpr;
+      struct _CommandList* list;
+      struct _CommandList* else_list;
+    } if_else_type;
+  } content;
 };
 
 struct _WHILEexpression {
@@ -54,8 +58,12 @@ struct _DeclarationList {
     E_ASSIGNMENT,
     E_DECLARATION
   } type;
-  struct _ASG* assignment;
-  struct _DECL* declaration;
+
+  union {
+    struct _ASG* assignment;
+    struct _DECL* declaration;
+  } content;
+  
   struct _DeclarationList* next;
 };
 
@@ -106,7 +114,7 @@ struct _Expr {
 
   enum {
     E_HAS,
-    E_HASNOT
+    E_HAS_NOT
   } parenthesis;
 
   union {
@@ -124,6 +132,7 @@ struct _BoolExpr {
     E_BOOL,
     E_RELOP
   } kind;
+
   union {
     struct _NUMBER* value; // for boolean values
     struct { 
@@ -142,8 +151,10 @@ struct _NUMBER {
     E_FLOAT,
   } type;
 
-  int valuei;
-  float valuef;
+  union {
+    int valuei;
+    float valuef;
+  } content;
 };
 
 
