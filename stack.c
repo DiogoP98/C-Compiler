@@ -19,13 +19,10 @@ Instr_List* tail(Instr_List* l) {
 }
 
 Instr_List* append(Instr_List* l1, Instr_List* l2) {
-    Instr_List* node = (Instr_List*) malloc(sizeof(Instr_List));
-    node->instruction =  head(l1);
-    if(tail(l1) != NULL) 
-        node -> next = append(tail(l1), l2);
-    else
-        node = append(l2,node);
-    return node;
+    if(l1 == NULL)
+        return l2; 
+    
+    return mkList(head(l1), append(tail(l1),l2));
 }
 
 Instr_List* mkList(Instr* code, Instr_List* l) {
@@ -78,15 +75,15 @@ Instr_List* compileExpression(Expr* expr){
     else if (expr->kind == E_OPERATION) {
         switch (expr->attr.op.operator) {
             case PLUS:
-                l1 = append(compile(expr->attr.op.left), compile(expr->attr.op.right));
+                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l2 = append(l1, mkList(mkInstr(ADI,0),NULL));
                 break;
             case SUB:
-                l1 = append(compile(expr->attr.op.left), compile(expr->attr.op.right));
+                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l2 = append(l1, mkList(mkInstr(SBI,0),NULL));
                 break;
             case MUL:                
-                l1 = append(compile(expr->attr.op.left), compile(expr->attr.op.right));
+                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l2 = append(l1, mkList(mkInstr(MPI,0),NULL));
                 break;
             default:
@@ -98,11 +95,45 @@ Instr_List* compileExpression(Expr* expr){
 }
 
 Instr_List* compileCmd(Command* cmd) {
-    
+    Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
+
+    if(cmd == NULL) return NULL;
+
+    switch (cmd->kind) {
+      case E_IF:
+        printIf(cmd->content.ifnext, spaces+1);
+        break;
+      case E_WHILE:
+        printWhile(cmd->content.whilenext, spaces+1);
+        break;
+      case E_VAR:
+        printvarList(cmd->content.list, spaces+1);
+        break;
+      case E_ASG:
+        printf("Assignment:\n");
+        printAssignmentList(cmd->content.asg_list, spaces+1);
+        break;
+      case E_PRINT:
+        printPrintf(cmd->content.printnext, spaces+1);
+        break;
+      case E_SCAN:
+        printScanf(cmd->content.scannext, spaces+1);
+        break;
+    }
 }
 
 Instr_List* compile(CommandList* list) {
+    Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
+    if(list->cmd == NULL) 
+        return NULL;
+
+    l1 = compileCmd(list->cmd);
+
+    while(list->next != NULL) { 
+        list = list->next;
+        append(l1, compileCmd(list->cmd));
+    }
 }
 
 int main(int argc, char** argv) {

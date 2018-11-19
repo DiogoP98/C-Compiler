@@ -3,7 +3,7 @@
 
 #include "ast.h"
 
-typedef enum {LDC, ADI, SBI, MPI} IKind;
+typedef enum {LDC, ADI, SBI, MPI, LOD, STO, RDI, FJP, GRT, WRI, UJP, LABEL, EQU, NEQ, LDA} IKind;
 
 typedef struct _Instr{
     IKind kind;
