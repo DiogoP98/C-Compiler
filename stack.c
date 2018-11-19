@@ -94,6 +94,45 @@ Instr_List* compileExpression(Expr* expr){
     return l2;
 }
 
+Instr* compileDeclaration(DECL* declaration) {
+    if (declaration == NULL) {
+        yyerror("Null assignment!!");
+        return NULL;
+    }
+
+    Instr* l1 = (Instr*)malloc(sizeof(Instr));
+    l1 = mkInstr(LOD, declaration->name);
+
+    return l1;
+}
+
+Instr_list* compileAssignment(ASG* asg) {
+    if (asg == NULL) {
+        yyerror("Null assignment!!");
+        return NULL;
+    }
+
+    Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
+    l1->instruction = compileDeclaration(asg->name);
+    l1 = append(l1, compileExpression(asg->value));
+    l1 = append(l1, mkInstr(STO, NULL));
+
+    return l1;
+} 
+
+Instr_list* compileAssignmentList(AsgList* asg_list) {
+    AsgList* assignmentList = asg_list;
+
+    Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
+
+    while(assignmentList != NULL) {
+        append(l1, compileAssignment(assignmentList->assignment));
+        assignmentList = assignmentList->next;
+    }
+
+    return l1;
+}
+
 Instr_List* compileCmd(Command* cmd) {
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
@@ -101,25 +140,26 @@ Instr_List* compileCmd(Command* cmd) {
 
     switch (cmd->kind) {
       case E_IF:
-        printIf(cmd->content.ifnext, spaces+1);
+        //l1 = cmdIf(cmd->content.ifnext);
         break;
       case E_WHILE:
-        printWhile(cmd->content.whilenext, spaces+1);
+        //l1 = cmdWhile(cmd->content.whilenext);
         break;
       case E_VAR:
-        printvarList(cmd->content.list, spaces+1);
+        //l1 = cmdVarList(cmd->content.list);
         break;
       case E_ASG:
-        printf("Assignment:\n");
-        printAssignmentList(cmd->content.asg_list, spaces+1);
+        l1 = cmdAssignmentList(cmd->content.asg_list);
         break;
       case E_PRINT:
-        printPrintf(cmd->content.printnext, spaces+1);
+        //l1 = cmdPrintf(cmd->content.printnext);
         break;
       case E_SCAN:
-        printScanf(cmd->content.scannext, spaces+1);
+        //l1 = cmdScanf(cmd->content.scannext);
         break;
     }
+
+    return l1;
 }
 
 Instr_List* compile(CommandList* list) {
