@@ -64,7 +64,7 @@ void printListIntrs(Instr_List* list) {
     if(tail(list) != NULL) printListIntrs(tail(list));
 }
 
-Instr_List* compile(Expr* expr){
+Instr_List* compileExpression(Expr* expr){
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
     Instr_List* l2 = (Instr_List*)malloc(sizeof(Instr_List));
 
@@ -97,10 +97,16 @@ Instr_List* compile(Expr* expr){
     return l2;
 }
 
+Instr_List* compileCmd(Command* cmd) {
+    
+}
+
+Instr_List* compile(CommandList* list) {
+
+}
+
 int main(int argc, char** argv) {
-    printf("here2\n");
     yyparse();
-    printf("here");
     Instr_List* l = compile(root);
     printListIntrs(l);
     return 0;
