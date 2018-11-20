@@ -1,7 +1,7 @@
 
-OBJS=scanner.o parser.o ast.o printAbsTree.o
+OBJS=scanner.o parser.o ast.o stack.o
 INTERM=scanner.c parser.c parser.h 
-PROGRAM=./printAbsTree
+PROGRAM=./stack
 CFLAGS=-g
 LDFLAGS=-fsanitize=address -lm
 

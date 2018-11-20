@@ -10,7 +10,7 @@
   OR
   AND
   NOT
-  EQU
+  IGU
   DIF
   LES
   LOQ
@@ -35,7 +35,7 @@
   TYPES
 
 // Operator associativity & precedence
-%left EQU DIF LES LOQ GRE GOQ
+%left IGU DIF LES LOQ GRE GOQ
 %left PLUS SUB
 %left MUL DIV MOD
 %left OPENPARENTHESIS CLOSEPARENTHESIS
@@ -320,8 +320,8 @@ bexpr:
     $$ = ast_boolOperation(NOT,$2, NULL);
   }
   |
-  expr EQU expr {
-    $$ = ast_boolOperation2(EQU, $1, $3);
+  expr IGU expr {
+    $$ = ast_boolOperation2(IGU, $1, $3);
   }
   |
   expr DIF expr {

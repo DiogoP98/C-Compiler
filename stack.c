@@ -5,8 +5,25 @@
 
 Instr* mkInstr(IKind kind, int n) {
     Instr* node = (Instr*) malloc(sizeof(Instr)); 
+    node->type = E_INT2;
     node->kind = kind;
-    node->arg = n;
+    node->arg.argi = n;
+    return node;
+}
+
+Instr* mkInstr2(IKind kind, char* name) {
+    Instr* node = (Instr*) malloc(sizeof(Instr)); 
+    node->type = E_NAME;
+    node->kind = kind;
+    node->arg.name = name;
+    return node;
+}
+
+Instr* mkInstr3(IKind kind, float n) {
+    Instr* node = (Instr*) malloc(sizeof(Instr)); 
+    node->type = E_FLOAT2;
+    node->kind = kind;
+    node->arg.argf = n;
     return node;
 }
 
@@ -40,7 +57,10 @@ void printInstr(Instr* instr) {
     
     switch(instr->kind){
         case LDC:
-            printf("LDC %d\n", instr->arg);
+            if(instr->type == E_NAME)
+                printf("LDC %s\n", instr->arg.name);
+            else
+               printf("LDC %d\n", instr->arg.argi); 
             break;
         case ADI:
             printf("ADI\n");
@@ -70,7 +90,14 @@ Instr_List* compileExpression(Expr* expr){
         return NULL;
     }
     
-    if (expr->kind == E_INTEGER) return mkList(mkInstr(LDC, expr->attr.value), NULL);
+    if (expr->kind == E_NUM) {
+        NUMBER* n = expr->attr.number;
+        if(n->type == E_INTEGER)
+            return mkList(mkInstr(LDC, n->content.valuei), NULL);
+        else
+            return mkList(mkInstr3(LDC, n->content.valuef), NULL);
+        
+    }
         
     else if (expr->kind == E_OPERATION) {
         switch (expr->attr.op.operator) {
@@ -95,32 +122,28 @@ Instr_List* compileExpression(Expr* expr){
 }
 
 Instr* compileDeclaration(DECL* declaration) {
-    if (declaration == NULL) {
-        yyerror("Null assignment!!");
+    if (declaration == NULL) 
         return NULL;
-    }
 
     Instr* l1 = (Instr*)malloc(sizeof(Instr));
-    l1 = mkInstr(LOD, declaration->name);
+    l1 = mkInstr2(LOD, declaration->name);
 
     return l1;
 }
 
-Instr_list* compileAssignment(ASG* asg) {
-    if (asg == NULL) {
-        yyerror("Null assignment!!");
+Instr_List* compileAssignment(ASG* asg) {
+    if (asg == NULL)
         return NULL;
-    }
 
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
     l1->instruction = compileDeclaration(asg->name);
     l1 = append(l1, compileExpression(asg->value));
-    l1 = append(l1, mkInstr(STO, NULL));
+    l1 = append(l1, mkList(mkInstr(STO, NULL),NULL));
 
     return l1;
 } 
 
-Instr_list* compileAssignmentList(AsgList* asg_list) {
+Instr_List* compileAssignmentList(AsgList* asg_list) {
     AsgList* assignmentList = asg_list;
 
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
@@ -149,7 +172,7 @@ Instr_List* compileCmd(Command* cmd) {
         //l1 = cmdVarList(cmd->content.list);
         break;
       case E_ASG:
-        l1 = cmdAssignmentList(cmd->content.asg_list);
+        l1 = compileAssignmentList(cmd->content.asg_list);
         break;
       case E_PRINT:
         //l1 = cmdPrintf(cmd->content.printnext);
@@ -174,6 +197,8 @@ Instr_List* compile(CommandList* list) {
         list = list->next;
         append(l1, compileCmd(list->cmd));
     }
+
+    return l1;
 }
 
 int main(int argc, char** argv) {
