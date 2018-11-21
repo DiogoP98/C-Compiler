@@ -1,1 +1,6 @@
 *.o
+./stack
+./printAbsTree
+scanner.c
+parser.c
+parser.h
