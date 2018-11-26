@@ -57,10 +57,7 @@ void printInstr(Instr* instr) {
     
     switch(instr->kind){
         case LDC:
-            if(instr->type == E_NAME)
-                printf("LDC %s\n", instr->arg.name);
-            else
-               printf("LDC %d\n", instr->arg.argi); 
+            printf("LDC %d\n", instr->arg.argi); 
             break;
         case ADI:
             printf("ADI\n");
@@ -70,6 +67,12 @@ void printInstr(Instr* instr) {
             break;
         case MPI:
             printf("MPI\n");
+            break;
+        case STO:
+            printf("STO\n");
+            break;
+        case LOD:
+            printf("LOD %s\n", instr->arg.name);
             break;
         default:
             printf("Undefined instruction kind %d\n", instr->kind);
@@ -193,6 +196,41 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
     return l1;
 }
 
+Instr_List* compileWhile(WHILEexpression* while_expr){
+    Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
+
+    l1 = mkList(mkInstr(LABEL, LABEL_COUNT), NULL);
+    LABEL_COUNT++;
+    l1 = append(l1, compileBoolExpr(while_expr->bexpr));
+    l1 = append(l1, mkList(mkInstr(FJP, LABEL_COUNT), NULL));
+    l1 = append(l1, compile(while_expr->list));
+    l1 = append(l1, mkList(mkInstr(UJP, LABEL_COUNT-1), NULL));
+    l1 = append(l1, mkList(mkInstr(LABEL, LABEL_COUNT), NULL));
+
+    return l1;
+}
+
+Instr_List* compileBoolExpr(BoolExpr* bexpr){
+    Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
+
+    switch(bexpr->kind){
+        case E_RELOP:
+            l1 = compileBoolExpr(bexpr->attr_bool.relop.bleft);
+            l1 = append(l1, mkList(mkInstr(), NULL));
+            l1 = append(l1, compileBoolExpr(bexpr->attr_bool.relop.bright));
+            break;
+        case E_EXPR:
+            l1 = compileExpression(bexpr->attr_bool.rel_expr.left);
+            l1 = append(l1, mkList(mkInstr(), NULL));
+            l1 = append(l1, compileBoolExpr(bexpr->attr_bool.relop.bright)); 
+        case E_EXPR:
+            l1 = compileExpression(bexpr->attr_bool.single_expr.expr);
+    }
+
+
+    return l1;
+}
+
 Instr_List* compileCmd(Command* cmd) {
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
@@ -203,10 +241,10 @@ Instr_List* compileCmd(Command* cmd) {
 
     switch (cmd->kind) {
         case E_IF:
-            //l1 = cmdIf(cmd->content.ifnext);
+            //l1 = compileIf(cmd->content.ifnext);
             break;
         case E_WHILE:
-            //l1 = cmdWhile(cmd->content.whilenext);
+            l1 = compileWhile(cmd->content.whilenext);
             break;
         case E_VAR:
             l1 = compileVarList(cmd->content.list);
@@ -243,6 +281,7 @@ Instr_List* compile(CommandList* list) {
 
 int main(int argc, char** argv) {
     yyparse();
+    LABEL_COUNT = 0;
     Instr_List* l = compile(root);
     printListIntrs(l);
     return 0;

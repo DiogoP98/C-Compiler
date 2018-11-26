@@ -3,7 +3,7 @@
 
 #include "ast.h"
 
-typedef enum {LDC, ADI, SBI, MPI, LOD, STO, RDI, FJP, GRT, WRI, UJP, LABEL, EQU, NEQ, LDA} IKind;
+typedef enum {LDC, ADI, SBI, MPI, LOD, STO, RDI, FJP, GRT, WRI, UJP, LABEL, EQU, NEQ, LDA, IOR, NOT} IKind;
 
 typedef struct _Instr{
     enum {
@@ -24,6 +24,8 @@ typedef struct _Instr_List{
     struct _Instr_List* next;
 } Instr_List;
 
+unsigned int LABEL_COUNT;
+
 Instr* mkInstr(IKind kind, int n);
 Instr* mkInstr2(IKind kind, char* name);
 Instr* mkInstr3(IKind kind, float n);
@@ -39,6 +41,7 @@ Instr_List* compile(CommandList* list);
 Instr_List* compileDeclarationList(DeclarationList* decl_list);
 Instr_List* compileAssignmentList(AsgList* asg_list);
 Instr_List* compileVarList(varList* list);
+Instr_List* compileWhile(WHILEexpression* while_expr);
 
 
 void printInstr(Instr* instr);
