@@ -102,7 +102,7 @@ void printBoolExpr(BoolExpr* expr, int spaces) {
 
   else if(expr->kind == E_EXPR) {
     switch (expr->attr_bool.relop.operator) {
-      case EQU:
+      case EQUAL:
         printf("==:\n");
         break;
       case DIF:
@@ -192,7 +192,6 @@ void printCommand(Command* cmd, int spaces) {
         printvarList(cmd->content.list, spaces+1);
         break;
       case E_ASG:
-        printf("Assignment:\n");
         printAssignmentList(cmd->content.asg_list, spaces+1);
         break;
       case E_PRINT:

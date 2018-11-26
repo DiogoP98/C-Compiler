@@ -1,8 +1,3 @@
 int main() {
-    int a = (((2 +3))) * 2, b;
-    if(((0 == 0)))
-        int ola;
-    
-    while(1 == (1+1)) 
-        printf("%d", ola);
+    int a = 2 + 2;
 }

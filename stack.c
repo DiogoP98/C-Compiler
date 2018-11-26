@@ -72,13 +72,19 @@ void printInstr(Instr* instr) {
             printf("MPI\n");
             break;
         default:
-            printf("Undefined instruction kind\n");
+            printf("Undefined instruction kind %d\n", instr->kind);
     }
 }
 
 void printListIntrs(Instr_List* list) {
+    if(head(list) == NULL){
+        return;
+    }
+
     printInstr(head(list));
-    if(tail(list) != NULL) printListIntrs(tail(list));
+    
+    if(tail(list) != NULL)
+        printListIntrs(tail(list));
 }
 
 Instr_List* compileExpression(Expr* expr){
@@ -89,7 +95,7 @@ Instr_List* compileExpression(Expr* expr){
         yyerror("Null expression!!");
         return NULL;
     }
-    
+
     if (expr->kind == E_NUM) {
         NUMBER* n = expr->attr.number;
         if(n->type == E_INTEGER)
@@ -121,12 +127,12 @@ Instr_List* compileExpression(Expr* expr){
     return l2;
 }
 
-Instr* compileDeclaration(DECL* declaration) {
+Instr_List* compileDeclaration(DECL* declaration) {
     if (declaration == NULL) 
         return NULL;
 
-    Instr* l1 = (Instr*)malloc(sizeof(Instr));
-    l1 = mkInstr2(LOD, declaration->name);
+    Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
+    l1 = mkList(mkInstr2(LOD, declaration->name),NULL);
 
     return l1;
 }
@@ -134,14 +140,24 @@ Instr* compileDeclaration(DECL* declaration) {
 Instr_List* compileAssignment(ASG* asg) {
     if (asg == NULL)
         return NULL;
-
+    
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
-    l1->instruction = compileDeclaration(asg->name);
+    l1 = compileDeclaration(asg->name);
     l1 = append(l1, compileExpression(asg->value));
     l1 = append(l1, mkList(mkInstr(STO, NULL),NULL));
 
     return l1;
 } 
+
+Instr_List* compileVarList(varList* list) {
+    varList* varList = list;
+
+    Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
+
+    l1 = compileDeclarationList(list->list);
+
+    return l1;
+}
 
 Instr_List* compileAssignmentList(AsgList* asg_list) {
     AsgList* assignmentList = asg_list;
@@ -149,8 +165,29 @@ Instr_List* compileAssignmentList(AsgList* asg_list) {
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
     while(assignmentList != NULL) {
-        append(l1, compileAssignment(assignmentList->assignment));
+        l1 = append(l1, compileAssignment(assignmentList->assignment));
         assignmentList = assignmentList->next;
+    }
+
+    return l1;
+}
+
+Instr_List* compileDeclarationList(DeclarationList* decl_list) {
+    DeclarationList* declList = decl_list;
+
+    Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
+
+    while(declList != NULL) {
+        switch(declList->type) {
+            case E_ASSIGNMENT:
+                l1 = compileAssignment(declList->content.assignment);
+                break;
+            case E_DECLARATION:
+                l1 = compileDeclaration(declList->content.declaration);
+                break;
+        } 
+
+        declList = declList->next;
     }
 
     return l1;
@@ -159,27 +196,30 @@ Instr_List* compileAssignmentList(AsgList* asg_list) {
 Instr_List* compileCmd(Command* cmd) {
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
-    if(cmd == NULL) return NULL;
+    if(cmd == NULL) {
+        printf("compiling null\n");
+        return NULL;
+    }
 
     switch (cmd->kind) {
-      case E_IF:
-        //l1 = cmdIf(cmd->content.ifnext);
-        break;
-      case E_WHILE:
-        //l1 = cmdWhile(cmd->content.whilenext);
-        break;
-      case E_VAR:
-        //l1 = cmdVarList(cmd->content.list);
-        break;
-      case E_ASG:
-        l1 = compileAssignmentList(cmd->content.asg_list);
-        break;
-      case E_PRINT:
-        //l1 = cmdPrintf(cmd->content.printnext);
-        break;
-      case E_SCAN:
-        //l1 = cmdScanf(cmd->content.scannext);
-        break;
+        case E_IF:
+            //l1 = cmdIf(cmd->content.ifnext);
+            break;
+        case E_WHILE:
+            //l1 = cmdWhile(cmd->content.whilenext);
+            break;
+        case E_VAR:
+            l1 = compileVarList(cmd->content.list);
+            break;
+        case E_ASG:
+            l1 = compileAssignmentList(cmd->content.asg_list);
+            break;
+        case E_PRINT:
+            //l1 = cmdPrintf(cmd->content.printnext);
+            break;
+        case E_SCAN:
+            //l1 = cmdScanf(cmd->content.scannext);
+            break;
     }
 
     return l1;
@@ -195,7 +235,7 @@ Instr_List* compile(CommandList* list) {
 
     while(list->next != NULL) { 
         list = list->next;
-        append(l1, compileCmd(list->cmd));
+        l1 = append(l1, compileCmd(list->cmd));
     }
 
     return l1;
