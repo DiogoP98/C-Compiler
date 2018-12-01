@@ -9,7 +9,7 @@
   DIV
   OR
   AND
-  NOT
+  NOTOP
   IGU
   DIF
   LES
@@ -40,7 +40,7 @@
 %left MUL DIV MOD
 %left OPENPARENTHESIS CLOSEPARENTHESIS
 %left INT FLOAT
-%left AND OR NOT
+%left AND OR NOTOP
 %left IF WHILE
 %nonassoc NO_ELSE
 %nonassoc ELSE
@@ -316,8 +316,8 @@ bexpr:
     $$ = ast_boolOperation(AND, $1, $3);
   }
   |
-  NOT bexpr {
-    $$ = ast_boolOperation(NOT,$2, NULL);
+  NOTOP bexpr {
+    $$ = ast_boolOperation(NOTOP,$2, NULL);
   }
   |
   expr IGU expr {

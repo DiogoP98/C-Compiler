@@ -74,6 +74,15 @@ void printInstr(Instr* instr) {
         case LOD:
             printf("LOD %s\n", instr->arg.name);
             break;
+        case LABEL:
+            printf("LABEL L%d\n", instr->arg.argi);
+            break;
+        case FJP: 
+            printf("FJP L%d\n", instr->arg.argi);
+            break;
+        case UJP:
+            printf("UJP L%d\n", instr->arg.argi);
+            break;
         default:
             printf("Undefined instruction kind %d\n", instr->kind);
     }
@@ -216,18 +225,41 @@ Instr_List* compileBoolExpr(BoolExpr* bexpr){
     switch(bexpr->kind){
         case E_RELOP:
             l1 = compileBoolExpr(bexpr->attr_bool.relop.bleft);
-            l1 = append(l1, mkList(mkInstr(), NULL));
+            //TODO ver como fazer as operações lógicas
+            switch(bexpr->attr_bool.relop.operator) {
+                case OR:
+                    printf("||:\n");
+                case AND:
+                    printf("&&:\n");
+                case NOT:
+                    printf("!:\n");
+            }
             l1 = append(l1, compileBoolExpr(bexpr->attr_bool.relop.bright));
             break;
         case E_EXPR:
             l1 = compileExpression(bexpr->attr_bool.rel_expr.left);
-            l1 = append(l1, mkList(mkInstr(), NULL));
-            l1 = append(l1, compileBoolExpr(bexpr->attr_bool.relop.bright)); 
-        case E_EXPR:
+            //TODO ver como fazer as operações lógicas
+            switch (bexpr->attr_bool.relop.operator) {
+                case EQUAL:
+                    printf("==:\n");
+                case DIF:
+                    printf("!=:\n");
+                case LES:
+                    printf("<:\n");
+                case LOQ:
+                    printf("<=:\n");
+                case GRE:
+                    printf(">:\n");
+                case GOQ:
+                    printf(">=:\n");
+            }
+            l1 = append(l1, compileExpression(bexpr->attr_bool.rel_expr.right)); 
+            break;
+        case E_BOOL:
             l1 = compileExpression(bexpr->attr_bool.single_expr.expr);
+            break;
     }
-
-
+    
     return l1;
 }
 

@@ -88,7 +88,7 @@ void printBoolExpr(BoolExpr* expr, int spaces) {
       case AND:
         printf("&&:\n");
         break;
-      case NOT:
+      case NOTOP:
         printf("!:\n");
         break;
       default:

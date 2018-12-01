@@ -63,7 +63,7 @@ int yyline = 1;
 "%"  { return MOD;  }
 "||" { return OR;   }
 "&&" { return AND;  }
-"!"  { return NOT;  }
+"!"  { return NOTOP;  }
 "==" { return IGU;  }
 "!=" { return DIF;  }
 "<"  { return LES;	}
