@@ -44,7 +44,6 @@
 %left IF WHILE
 %nonassoc NO_ELSE
 %nonassoc ELSE
-%expect 1
 
 
 // Root-level grammar symbol
@@ -70,7 +69,6 @@
   ASG* assignment;
   DECL* declaration;
   Expr* exprValue;
-  BoolExpr* boolExpr;
   NUMBER* number;
 }
 
@@ -81,7 +79,6 @@
 %type <cmdType> cmd
 %type <commandList> list
 %type <exprValue> expr
-%type <boolExpr> bexpr
 %type <ifExpression> if_expr
 %type <whileExpression> while_expr
 %type <list_decl> list_var
@@ -175,37 +172,37 @@ string:
   ;
 
 if_expr:
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd %prec NO_ELSE {
+  IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd %prec NO_ELSE {
     $$ = if_command($3, $5);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd ELSE cmd {
+  IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE cmd {
     $$ = if_command_else_command($3, $5, $7);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list %prec NO_ELSE CLOSECURLYBRACKETS {
+  IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list %prec NO_ELSE CLOSECURLYBRACKETS {
     $$ = if_commands($3,$6);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE cmd {
+  IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE cmd {
     $$ = if_commands_else_command($3, $6, $9);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
+  IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
     $$ = if_commands_else_commands($3, $6, $10);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
+  IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
     $$ = if_command_else_commands($3, $5, $8);
   }
   ;
 
 while_expr:
-  WHILE OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd{
+  WHILE OPENPARENTHESIS expr CLOSEPARENTHESIS cmd{
     $$ = while_command($3, $5);
   }
   |
-  WHILE OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
+  WHILE OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
     $$ = while_commands($3, $6);
   } 
   ;
@@ -297,53 +294,43 @@ expr:
   |
   expr MOD expr {
     $$ = ast_operation(MOD, $1, $3);
-  };
-  
-bexpr:
-  expr {
-    $$ = ast_singleExpr($1);
   }
   |
-  OPENPARENTHESIS bexpr CLOSEPARENTHESIS {
-    $$ = ast_pbexpr($2);
+  expr OR expr {
+    $$ = ast_operation(OR, $1, $3);
   }
   |
-  bexpr OR bexpr {
-    $$ = ast_boolOperation(OR, $1, $3);
+  expr AND expr {
+    $$ = ast_operation(AND, $1, $3);
   }
   |
-  bexpr AND bexpr {
-    $$ = ast_boolOperation(AND, $1, $3);
-  }
-  |
-  NOTOP bexpr {
-    $$ = ast_boolOperation(NOTOP,$2, NULL);
+  NOTOP expr {
+    $$ = ast_operation(NOTOP,$2, NULL);
   }
   |
   expr IGU expr {
-    $$ = ast_boolOperation2(IGU, $1, $3);
+    $$ = ast_operation(IGU, $1, $3);
   }
   |
   expr DIF expr {
-    $$ = ast_boolOperation2(DIF, $1, $3);
+    $$ = ast_operation(DIF, $1, $3);
   }
   |
   expr LES expr {
-    $$ = ast_boolOperation2(LES, $1, $3);
+    $$ = ast_operation(LES, $1, $3);
   }
   |
   expr LOQ expr {
-    $$ = ast_boolOperation2(LOQ, $1, $3);
+    $$ = ast_operation(LOQ, $1, $3);
   }
   |
   expr GRE expr {
-    $$ = ast_boolOperation2(GRE, $1, $3);
+    $$ = ast_operation(GRE, $1, $3);
   }
   |
   expr GOQ expr {
-    $$ = ast_boolOperation2(GOQ, $1, $3);
-  }
-  ;
+    $$ = ast_operation(GOQ, $1, $3);
+  };
 
 num: 
   INT {

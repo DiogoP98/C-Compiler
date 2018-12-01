@@ -41,7 +41,6 @@ Instr_List* compile(CommandList* list);
 Instr_List* compileDeclarationList(DeclarationList* decl_list);
 Instr_List* compileAssignmentList(AsgList* asg_list);
 Instr_List* compileVarList(varList* list);
-Instr_List* compileBoolExpr(BoolExpr* bexpr);
 Instr_List* compileWhile(WHILEexpression* while_expr);
 
 

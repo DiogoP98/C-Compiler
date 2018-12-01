@@ -36,12 +36,12 @@ struct _IFexpression {
 
   union {
     struct {
-      struct _BoolExpr* bexpr;
+      struct _Expr* expr;
       struct _CommandList* list;
     } if_type;
     
     struct {
-      struct _BoolExpr* bexpr;
+      struct _Expr* expr;
       struct _CommandList* list;
       struct _CommandList* else_list;
     } if_else_type;
@@ -49,7 +49,7 @@ struct _IFexpression {
 };
 
 struct _WHILEexpression {
-  struct _BoolExpr* bexpr;
+  struct _Expr* expr;
   struct _CommandList* list;
 };
 
@@ -120,38 +120,11 @@ struct _Expr {
   union {
     struct _NUMBER* number;
     struct { 
-      int operator; // PLUS, MINUS, etc 
+      int operator;
       struct _Expr* left;
       struct _Expr* right;
-    } op; // for binary expressions
+    } op;
   } attr;
-};
-
-struct _BoolExpr {
-  enum { 
-    E_BOOL,
-    E_RELOP,
-    E_EXPR
-  } kind;
-
-  union {
-    struct { 
-      int operator;
-      struct _BoolExpr* bleft;
-      struct _BoolExpr* bright;
-    } relop;
-    
-    struct {
-      int operator;
-      struct _Expr* right;
-      struct _Expr* left;
-    } rel_expr; // for binary expressions
-
-    struct {
-      struct _Expr* expr;
-    } single_expr;
-
-  } attr_bool;
 };
 
 struct _NUMBER {
@@ -177,8 +150,6 @@ typedef struct _DECL DECL;
 typedef struct _PRINTF_EXP PRINTF_EXP;
 typedef struct _SCANF_EXP SCANF_EXP;
 typedef struct _Expr Expr; 
-typedef struct _BoolExpr BoolExpr;
-typedef struct _BoolExprList BoolExprList;
 typedef struct _ScanDeclarationList ScanDeclarationList;
 typedef struct _VarList varList;
 typedef struct _TYPES TYPES_STR;
@@ -197,16 +168,16 @@ Command* scanf_declaration(SCANF_EXP* scannext);
 Command* assignment_declaration(AsgList* asg_list);
 
 //------- IF expressions ----------------
-IFexpression* if_command(BoolExpr* bexpr, Command* cmd);
-IFexpression* if_command_else_command(BoolExpr* bexpr, Command* cmd, Command* else_cmd);
-IFexpression* if_commands(BoolExpr* bexpr, CommandList* list);
-IFexpression* if_commands_else_command(BoolExpr* bexpr, CommandList* list, Command* else_cmd);
-IFexpression* if_commands_else_commands(BoolExpr* bexpr, CommandList* list, CommandList* else_list);
-IFexpression* if_command_else_commands(BoolExpr* bexpr, Command* cmd, CommandList* else_list);
+IFexpression* if_command(Expr* expr, Command* cmd);
+IFexpression* if_command_else_command(Expr* expr, Command* cmd, Command* else_cmd);
+IFexpression* if_commands(Expr* expr, CommandList* list);
+IFexpression* if_commands_else_command(Expr* expr, CommandList* list, Command* else_cmd);
+IFexpression* if_commands_else_commands(Expr* expr, CommandList* list, CommandList* else_list);
+IFexpression* if_command_else_commands(Expr* expr, Command* cmd, CommandList* else_list);
 
 //------- WHILE expressions ----------------
-WHILEexpression* while_command(BoolExpr* bexpr, Command* cmd);
-WHILEexpression* while_commands(BoolExpr* bexpr, CommandList* list);
+WHILEexpression* while_command(Expr* expr, Command* cmd);
+WHILEexpression* while_commands(Expr* expr, CommandList* list);
 
 //------- INPUT/OUTPUT expressions ----------------
 TYPES_STR* ast_string_of_types(char* type);
@@ -228,12 +199,5 @@ NUMBER* ast_float(float v);
 Expr* ast_number(NUMBER* m);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
 Expr* ast_pexpr(Expr* expr);
-
-//------- Bool Expressions functions -------------
-BoolExpr* ast_bool(NUMBER* v);
-BoolExpr* ast_pbexpr(BoolExpr* bexpr);
-BoolExpr* ast_boolOperation(int operator, BoolExpr* left, BoolExpr* right);
-BoolExpr* ast_boolOperation2(int operator, Expr* left, Expr* right);
-BoolExpr* ast_singleExpr(Expr* expr);
 
 #endif

@@ -210,56 +210,12 @@ Instr_List* compileWhile(WHILEexpression* while_expr){
 
     l1 = mkList(mkInstr(LABEL, LABEL_COUNT), NULL);
     LABEL_COUNT++;
-    l1 = append(l1, compileBoolExpr(while_expr->bexpr));
+    l1 = append(l1, compileExpression(while_expr->expr));
     l1 = append(l1, mkList(mkInstr(FJP, LABEL_COUNT), NULL));
     l1 = append(l1, compile(while_expr->list));
     l1 = append(l1, mkList(mkInstr(UJP, LABEL_COUNT-1), NULL));
     l1 = append(l1, mkList(mkInstr(LABEL, LABEL_COUNT), NULL));
 
-    return l1;
-}
-
-Instr_List* compileBoolExpr(BoolExpr* bexpr){
-    Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
-
-    switch(bexpr->kind){
-        case E_RELOP:
-            l1 = compileBoolExpr(bexpr->attr_bool.relop.bleft);
-            //TODO ver como fazer as operações lógicas
-            switch(bexpr->attr_bool.relop.operator) {
-                case OR:
-                    printf("||:\n");
-                case AND:
-                    printf("&&:\n");
-                case NOT:
-                    printf("!:\n");
-            }
-            l1 = append(l1, compileBoolExpr(bexpr->attr_bool.relop.bright));
-            break;
-        case E_EXPR:
-            l1 = compileExpression(bexpr->attr_bool.rel_expr.left);
-            //TODO ver como fazer as operações lógicas
-            switch (bexpr->attr_bool.relop.operator) {
-                case EQUAL:
-                    printf("==:\n");
-                case DIF:
-                    printf("!=:\n");
-                case LES:
-                    printf("<:\n");
-                case LOQ:
-                    printf("<=:\n");
-                case GRE:
-                    printf(">:\n");
-                case GOQ:
-                    printf(">=:\n");
-            }
-            l1 = append(l1, compileExpression(bexpr->attr_bool.rel_expr.right)); 
-            break;
-        case E_BOOL:
-            l1 = compileExpression(bexpr->attr_bool.single_expr.expr);
-            break;
-    }
-    
     return l1;
 }
 
