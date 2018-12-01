@@ -1,5 +1,7 @@
 int main() {
-    while(1+1) {
+    if(1+1) {
         int a = 0;
     }
+    else
+        int b = 0;
 }

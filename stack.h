@@ -42,6 +42,7 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list);
 Instr_List* compileAssignmentList(AsgList* asg_list);
 Instr_List* compileVarList(varList* list);
 Instr_List* compileWhile(WHILEexpression* while_expr);
+Instr_List* compileIf(IFexpression* if_expr);
 
 
 void printInstr(Instr* instr);

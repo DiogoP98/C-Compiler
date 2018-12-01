@@ -131,6 +131,40 @@ Instr_List* compileExpression(Expr* expr){
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l2 = append(l1, mkList(mkInstr(MPI,0),NULL));
                 break;
+            //TODO ver como tratar de operadores logicos
+            case DIV:
+                printf("/:\n");
+                break;
+            case MOD:
+                printf("%%:\n");
+                break;
+                case EQUAL:
+                printf("==:\n");
+                break;
+            case DIF:
+                printf("!=:\n");
+                break;
+            case LES:
+                printf("<:\n");
+                break;
+            case LOQ:
+                printf("<=:\n");
+                break;
+            case GRE:
+                printf(">:\n");
+                break;
+            case GOQ:
+                printf(">=:\n");
+                break;
+            case OR:
+                printf("||:\n");
+                break;
+            case AND:
+                printf("&&:\n");
+                break;
+            case NOTOP:
+                printf("!:\n");
+                break;
             default:
                 printf("Undefined operation\n");
         }
@@ -205,6 +239,30 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
     return l1;
 }
 
+Instr_List* compileIf(IFexpression* if_expr) {
+    Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
+
+    if(if_expr->kind == E_IF_EXPR) {
+        l1 = compileExpression(if_expr->content.if_type.expr);
+        l1 = append(l1, mkList(mkInstr(FJP, LABEL_COUNT), NULL));
+        l1 = append(l1, compile(if_expr->content.if_type.list));
+        l1 = append(l1, mkList(mkInstr(LABEL, LABEL_COUNT), NULL));
+    }
+    else {
+        l1 = compileExpression(if_expr->content.if_else_type.expr);
+        l1 = append(l1, mkList(mkInstr(FJP, LABEL_COUNT), NULL));
+        l1 = append(l1, compile(if_expr->content.if_else_type.list));
+        l1 = append(l1, mkList(mkInstr(UJP, LABEL_COUNT+1), NULL)); 
+        l1 = append(l1, mkList(mkInstr(LABEL,LABEL_COUNT), NULL));
+        LABEL_COUNT++;
+        l1 = append(l1, compile(if_expr->content.if_else_type.else_list));
+        l1 = append(l1, mkList(mkInstr(LABEL,LABEL_COUNT), NULL));
+        LABEL_COUNT++;
+    }
+
+    return l1;
+}
+
 Instr_List* compileWhile(WHILEexpression* while_expr){
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
@@ -229,7 +287,7 @@ Instr_List* compileCmd(Command* cmd) {
 
     switch (cmd->kind) {
         case E_IF:
-            //l1 = compileIf(cmd->content.ifnext);
+            l1 = compileIf(cmd->content.ifnext);
             break;
         case E_WHILE:
             l1 = compileWhile(cmd->content.whilenext);
