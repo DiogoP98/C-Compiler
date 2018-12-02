@@ -4,4 +4,7 @@ int main() {
     }
     else
         int b = 0;
+
+    scanf("%d", &a);
+    printf("Variavel a: %d", a);
 }

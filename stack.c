@@ -83,6 +83,12 @@ void printInstr(Instr* instr) {
         case UJP:
             printf("UJP L%d\n", instr->arg.argi);
             break;
+        case MST:
+            printf("MST %d\n", instr->arg.argi);
+            break;
+        case CUP:
+            printf("CUP 0 L %s\n", instr->arg.name);
+            break;
         default:
             printf("Undefined instruction kind %d\n", instr->kind);
     }
@@ -277,6 +283,32 @@ Instr_List* compileWhile(WHILEexpression* while_expr){
     return l1;
 }
 
+Instr_List* compilePrintf(PRINTF_EXP* printf_expr){
+    Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
+
+    l1 = mkList(mkInstr(MST, 0), NULL);
+    l1 = append(l1, mkList(mkInstr2(LOD, printf_expr->string_of_types->types), NULL));
+    l1 = append(l1, compileDeclarationList(printf_expr->vars));
+    l1 = append(l1, mkList(mkInstr2(CUP, "PRINTF"), NULL));
+
+    return l1;
+}
+
+Instr_List* compileScanf(SCANF_EXP* scanf_expr){
+    Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
+
+    l1 = mkList(mkInstr(MST, 0), NULL);
+    l1 = append(l1, mkList(mkInstr2(LOD, scanf_expr->string_of_types->types), NULL));
+    ScanDeclarationList *scanDecList = scanf_expr->vars;
+    while(scanDecList != NULL){
+        l1 = append(l1, compileDeclaration(scanDecList->declaration));
+        scanDecList = scanDecList->next;
+    }
+    l1 = append(l1, mkList(mkInstr2(CUP, "SCANF"), NULL));
+
+    return l1;
+}
+
 Instr_List* compileCmd(Command* cmd) {
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
@@ -299,10 +331,10 @@ Instr_List* compileCmd(Command* cmd) {
             l1 = compileAssignmentList(cmd->content.asg_list);
             break;
         case E_PRINT:
-            //l1 = cmdPrintf(cmd->content.printnext);
+            l1 = compilePrintf(cmd->content.printnext);
             break;
         case E_SCAN:
-            //l1 = cmdScanf(cmd->content.scannext);
+            l1 = compileScanf(cmd->content.scannext);
             break;
     }
 
