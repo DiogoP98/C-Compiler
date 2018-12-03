@@ -57,7 +57,7 @@ void printInstr(Instr* instr) {
     
     switch(instr->kind){
         case LDC:
-            printf("LDC %d\n", instr->arg.argi); 
+            printf("LDC %d\n", instr->arg.argi);
             break;
         case ADI:
             printf("ADI\n");
@@ -74,6 +74,9 @@ void printInstr(Instr* instr) {
         case LOD:
             printf("LOD %s\n", instr->arg.name);
             break;
+        case LDA:
+            printf("LDA %s\n", instr->arg.name);
+            break;
         case LABEL:
             printf("LABEL L%d\n", instr->arg.argi);
             break;
@@ -83,11 +86,11 @@ void printInstr(Instr* instr) {
         case UJP:
             printf("UJP L%d\n", instr->arg.argi);
             break;
-        case MST:
-            printf("MST %d\n", instr->arg.argi);
+        case WRI:
+            printf("WRI %s\n", instr->arg.name);
             break;
-        case CUP:
-            printf("CUP 0 L %s\n", instr->arg.name);
+        case SCANF:
+            printf("SCANF %s\n", instr->arg.name);
             break;
         default:
             printf("Undefined instruction kind %d\n", instr->kind);
@@ -115,12 +118,17 @@ Instr_List* compileExpression(Expr* expr){
     }
 
     if (expr->kind == E_NUM) {
-        NUMBER* n = expr->attr.number;
+        NUMBER* n = expr->attr.arguments.number;
         if(n->type == E_INTEGER)
             return mkList(mkInstr(LDC, n->content.valuei), NULL);
         else
             return mkList(mkInstr3(LDC, n->content.valuef), NULL);
         
+    }
+
+    else if(expr->kind == E_VARIABLE) {
+        char* variable = expr->attr.arguments.variable;
+        return mkList(mkInstr2(LOD, variable), NULL);
     }
         
     else if (expr->kind == E_OPERATION) {
@@ -184,7 +192,7 @@ Instr_List* compileDeclaration(DECL* declaration) {
         return NULL;
 
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
-    l1 = mkList(mkInstr2(LOD, declaration->name),NULL);
+    l1 = mkList(mkInstr2(LDA, declaration->name),NULL);
 
     return l1;
 }
@@ -286,10 +294,7 @@ Instr_List* compileWhile(WHILEexpression* while_expr){
 Instr_List* compilePrintf(PRINTF_EXP* printf_expr){
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
-    l1 = mkList(mkInstr(MST, 0), NULL);
-    l1 = append(l1, mkList(mkInstr2(LOD, printf_expr->string_of_types->types), NULL));
-    l1 = append(l1, compileDeclarationList(printf_expr->vars));
-    l1 = append(l1, mkList(mkInstr2(CUP, "PRINTF"), NULL));
+    l1 = mkList(mkInstr2(WRI, printf_expr->string_of_types->types), NULL);
 
     return l1;
 }
@@ -297,14 +302,7 @@ Instr_List* compilePrintf(PRINTF_EXP* printf_expr){
 Instr_List* compileScanf(SCANF_EXP* scanf_expr){
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
-    l1 = mkList(mkInstr(MST, 0), NULL);
-    l1 = append(l1, mkList(mkInstr2(LOD, scanf_expr->string_of_types->types), NULL));
-    ScanDeclarationList *scanDecList = scanf_expr->vars;
-    while(scanDecList != NULL){
-        l1 = append(l1, compileDeclaration(scanDecList->declaration));
-        scanDecList = scanDecList->next;
-    }
-    l1 = append(l1, mkList(mkInstr2(CUP, "SCANF"), NULL));
+    l1 = mkList(mkInstr2(SCANF, scanf_expr->string_of_types->types), NULL);
 
     return l1;
 }

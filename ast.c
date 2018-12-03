@@ -234,8 +234,15 @@ NUMBER* ast_float(float v) {
 
 Expr* ast_number(NUMBER* m) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
-  node->attr.number = m;
+  node->attr.arguments.number = m;
   node->kind = E_NUM;
+  return node;
+}
+
+Expr* ast_variable(char* v) {
+  Expr* node = (Expr*) malloc(sizeof(Expr));
+  node->attr.arguments.variable = strdup(v);
+  node->kind = E_VARIABLE;
   return node;
 }
 

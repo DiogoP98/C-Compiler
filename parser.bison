@@ -272,6 +272,10 @@ expr:
     $$ = ast_number($1);
   }
   |
+  VAR {
+    $$ = ast_variable($1);
+  }
+  |
   OPENPARENTHESIS expr CLOSEPARENTHESIS {
     $$ = ast_pexpr($2);
   }

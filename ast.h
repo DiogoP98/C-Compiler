@@ -109,6 +109,7 @@ struct _TYPES {
 struct _Expr {
   enum { 
     E_OPERATION,
+    E_VARIABLE,
     E_NUM,
   } kind;
 
@@ -118,7 +119,12 @@ struct _Expr {
   } parenthesis;
 
   union {
-    struct _NUMBER* number;
+
+    union{
+      struct _NUMBER* number;
+      char* variable;
+    } arguments;
+
     struct { 
       int operator;
       struct _Expr* left;
@@ -197,6 +203,7 @@ ASG* var_assignment(DECL* s, Expr* expr);
 NUMBER* ast_integer(int v);
 NUMBER* ast_float(float v);
 Expr* ast_number(NUMBER* m);
+Expr* ast_variable(char* v);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
 Expr* ast_pexpr(Expr* expr);
 
