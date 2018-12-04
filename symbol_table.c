@@ -9,19 +9,19 @@ DataItem* createItem(char* name, int type, int endr) {
     return node;
 }
 
-bool checkExistence(char* name, ItemsList* list) {
+DataItem* checkExistence(char* name, ItemsList* list) {
     DataItem* item = (DataItem*) malloc(sizeof(DataItem));
 
     item = head(list);
 
     while(item != NULL) {
-        if(item->key == name) return true;
+        if(item->key == name) return item;
 
         list = tail(list);
         item = head(list);
     }
 
-    return false;
+    return NULL;
 }
 
 DataItem* head(ItemsList* l) {
@@ -30,6 +30,13 @@ DataItem* head(ItemsList* l) {
 
 ItemsList* tail(ItemsList* l) {
     return l->next;
+}
+
+ItemsList* mkList(DataItem* item, ItemsList* list) {
+    ItemsList* node = (ItemsList*) malloc(sizeof(ItemsList));
+    node->instruction = item;
+    node->next = l;
+    return node;
 }
 
 
