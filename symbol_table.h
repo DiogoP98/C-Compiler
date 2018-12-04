@@ -1,5 +1,5 @@
-#ifndef __ast_h__
-#define __ast_h__
+#ifndef __sym_h__
+#define __sym_h__
 
 #include <stdio.h>
 #include <string.h>
@@ -13,6 +13,8 @@ struct DataItem {
         int key;
         char ckey;
     } keys;
+
+    int type; //int,float, char,....
 };
 
 struct DataItem* array; 
