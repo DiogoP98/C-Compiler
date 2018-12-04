@@ -6,24 +6,22 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-struct DataItem {
-   int data; 
-
-    union {  
-        int key;
-        char ckey;
-    } keys;
-
-    int type; //int,float, char,....
+struct _DataItem {
+   char* key;
+   int type; //int,float, char,....
 };
 
-struct DataItem* array; 
-struct DataItem* dummyItem;
-struct DataItem* item;
+struct _ItemsList {
+    struct _DataItem* item;
+    struct _ItemsList* next;
+};
 
-int hashCode(int key);
-struct DataItem* search(int key);
-void insert(int key,int data);
-struct DataItem* deleteItem(struct DataItem* item);
+typedef struct _DataItem DataItem;
+typedef struct _ItemsList ItemsList;
+
+DataItem* createItem(char* name, int type, int endr);
+bool checkExistence(char* name, ItemsList* list);
+DataItem* head(ItemsList* l);
+ItemsList* tail(ItemsList* l);
 
 #endif
