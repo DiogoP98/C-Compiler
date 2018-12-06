@@ -213,13 +213,13 @@ while_expr:
 
 list_scan_var:
   '&' VAR COMMA list_scan_var {
-    if(checkExistence(list, $2) == -1) yyerror("Variable not declared!");
+    if(checkExistence($2, list) == -1) yyerror("Variable not declared!");
 
     $$ = ast_scanlist($2,$4);
   }
   |
   '&' VAR {
-    if(checkExistence(list, $2) == -1) yyerror("Variable not declared!");
+    if(checkExistence($2, list) == -1) yyerror("Variable not declared!");
 
     $$ = ast_scanlist($2,NULL);
   }
@@ -228,7 +228,7 @@ list_scan_var:
 var_dec: 
   INTD list_var SEMICOLON{
     createItem(list, $2->content.name, INT);
-    
+
     $$ = ast_varlist(INTD, $2);
   }
   |
@@ -269,13 +269,13 @@ list_asg:
 
 list_print:
   VAR COMMA list_print {
-    if(checkExistence(list, $1) == -1) yyerror("Variable not declared!");
+    if(checkExistence($1, list) == -1) yyerror("Variable not declared!");
 
     $$ = ast_printlist($1, $3);
   }
   |
   VAR {
-    if(checkExistence(list, $1) == -1) yyerror("Variable not declared!");
+    if(checkExistence($1, list) == -1) yyerror("Variable not declared!");
 
     $$ = ast_printlist($1, NULL);
   }
