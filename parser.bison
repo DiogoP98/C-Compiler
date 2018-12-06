@@ -91,6 +91,7 @@
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
 %code requires {
+  
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"

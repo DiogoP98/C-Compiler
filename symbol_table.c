@@ -7,7 +7,7 @@ ItemsList* createItem(ItemsList* list, char* name, int type) {
     item->key = strdup(name);
     item->type = type;
 
-    node = mklist(item, list);
+    node = mkList2(item, list);
 
     return node;
 }
@@ -15,30 +15,30 @@ ItemsList* createItem(ItemsList* list, char* name, int type) {
 int checkExistence(char* name, ItemsList* list) {
     DataItem* item = (DataItem*) malloc(sizeof(DataItem));
 
-    item = head(list);
+    item = head2(list);
 
     while(item != NULL) {
         if(strcmp(item->key,name)==0) return item->type;
 
-        list = tail(list);
-        item = head(list);
+        list = tail2(list);
+        item = head2(list);
     }
 
     return -1;
 }
 
-DataItem* head(ItemsList* l) {
+DataItem* head2(ItemsList* l) {
     return l->item;
 }
 
-ItemsList* tail(ItemsList* l) {
+ItemsList* tail2(ItemsList* l) {
     return l->next;
 }
 
-ItemsList* mkList(DataItem* item, ItemsList* list) {
+ItemsList* mkList2(DataItem* item, ItemsList* list) {
     ItemsList* node = (ItemsList*) malloc(sizeof(ItemsList));
-    node->instruction = item;
-    node->next = l;
+    node->item = item;
+    node->next = list;
     return node;
 }
 

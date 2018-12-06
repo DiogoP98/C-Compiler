@@ -21,8 +21,8 @@ typedef struct _ItemsList ItemsList;
 
 ItemsList* createItem(ItemsList* list, char* name, int type);
 int checkExistence(char* name, ItemsList* list);
-DataItem* head(ItemsList* l);
-ItemsList* tail(ItemsList* l);
-ItemsList* mkList(DataItem* item, ItemsList* list);
+DataItem* head2(ItemsList* l);
+ItemsList* tail2(ItemsList* l);
+ItemsList* mkList2(DataItem* item, ItemsList* list);
 
 #endif
