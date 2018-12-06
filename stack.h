@@ -45,6 +45,38 @@ Instr_List* compileWhile(WHILEexpression* while_expr);
 Instr_List* compileIf(IFexpression* if_expr);
 
 
+
+typedef struct _StackNode { 
+    int data;
+    struct _StackNode* next; 
+} StackNode;
+
+StackNode* newNode(int data);
+int isEmpty(struct StackNode *root);
+void push(StackNode** root, int data);
+int pop(struct StackNode** root);
+int peek(struct StackNode* root);
+
+
+typedef struct _MipsInstr {
+    enum {
+        E_R,
+        E_I,
+        E_J,
+        E_FR,
+        E_FI
+    } kind;
+    enum {
+        
+    } MipsKind;
+    union {
+        int addrs[3];
+
+
+    } 
+} MipsInstr;
+
+
 void printInstr(Instr* instr);
 void printListIntrs(Instr_List* list);
 

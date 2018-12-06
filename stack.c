@@ -3,6 +3,52 @@
 #include <stdio.h>
 #include "parser.h"
 
+
+  
+StackNode* newNode(int data) { 
+    StackNode* stackNode = (StackNode*)malloc(sizeof(StackNode));
+
+    stackNode->data = data;
+    stackNode->next = NULL;
+    
+    return stackNode;
+}
+
+int isEmpty(struct StackNode *root) {
+    return !root;
+}
+  
+void push(StackNode** root, int data) {
+    StackNode* stackNode = newNode(data);
+
+    stackNode->next = *root;
+    *root = stackNode;
+    
+    //printf("%d pushed to stack\n", data);
+}
+  
+int pop(struct StackNode** root) {
+    if (isEmpty(*root))
+        return INT_MIN;
+
+    StackNode* temp = *root;
+
+    *root = (*root)->next;
+    int popped = temp->data;
+    
+    free(temp);
+  
+    return popped;
+}
+  
+int peek(struct StackNode* root) {
+    if (isEmpty(root))
+        return INT_MIN;
+
+    return root->data;
+}
+
+
 Instr* mkInstr(IKind kind, int n) {
     Instr* node = (Instr*) malloc(sizeof(Instr)); 
     node->type = E_INT2;
@@ -98,9 +144,8 @@ void printInstr(Instr* instr) {
 }
 
 void printListIntrs(Instr_List* list) {
-    if(head(list) == NULL){
+    if(head(list) == NULL)
         return;
-    }
 
     printInstr(head(list));
     
@@ -110,7 +155,6 @@ void printListIntrs(Instr_List* list) {
 
 Instr_List* compileExpression(Expr* expr){
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
-    Instr_List* l2 = (Instr_List*)malloc(sizeof(Instr_List));
 
     if (expr == 0) {
         yyerror("Null expression!!");
@@ -123,7 +167,6 @@ Instr_List* compileExpression(Expr* expr){
             return mkList(mkInstr(LDC, n->content.valuei), NULL);
         else
             return mkList(mkInstr3(LDC, n->content.valuef), NULL);
-        
     }
 
     else if(expr->kind == E_VARIABLE) {
@@ -135,24 +178,25 @@ Instr_List* compileExpression(Expr* expr){
         switch (expr->attr.op.operator) {
             case PLUS:
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l2 = append(l1, mkList(mkInstr(ADI,0),NULL));
+                l1 = append(l1, mkList(mkInstr(ADI,0),NULL));
                 break;
             case SUB:
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l2 = append(l1, mkList(mkInstr(SBI,0),NULL));
+                l1 = append(l1, mkList(mkInstr(SBI,0),NULL));
                 break;
             case MUL:                
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l2 = append(l1, mkList(mkInstr(MPI,0),NULL));
+                l1 = append(l1, mkList(mkInstr(MPI,0),NULL));
                 break;
             //TODO ver como tratar de operadores logicos
             case DIV:
-                printf("/:\n");
+                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+                l1 = append(l1, mkList(mkInstr(MPI,0),NULL));
                 break;
             case MOD:
                 printf("%%:\n");
                 break;
-                case EQUAL:
+            case EQUAL:
                 printf("==:\n");
                 break;
             case DIF:
@@ -184,7 +228,7 @@ Instr_List* compileExpression(Expr* expr){
         }
     }
 
-    return l2;
+    return l1;
 }
 
 Instr_List* compileDeclaration(DECL* declaration) {
@@ -355,10 +399,13 @@ Instr_List* compile(CommandList* list) {
     return l1;
 }
 
+
+
 int main(int argc, char** argv) {
     yyparse();
     LABEL_COUNT = 0;
     Instr_List* l = compile(root);
     printListIntrs(l);
+    compileMips(l);
     return 0;
 }
