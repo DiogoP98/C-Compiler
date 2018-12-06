@@ -1,27 +1,30 @@
 #include "symbol_table.h"
 
 
-DataItem* createItem(char* name, int type, int endr) {
-    DataItem* node = (DataItem*) malloc(sizeof(DataItem));
-    node->key = strdup(name);
-    node->type = type;
+ItemsList* createItem(ItemList* list, char* name, int type) {
+    DataItem* item = (DataItem*) malloc(sizeof(DataItem));
+    ItemsList* node = (ItemsList*) malloc(sizeof(ItemsList));
+    item->key = strdup(name);
+    item->type = type;
+
+    node = mklist(item, list);
 
     return node;
 }
 
-DataItem* checkExistence(char* name, ItemsList* list) {
+int checkExistence(char* name, ItemsList* list) {
     DataItem* item = (DataItem*) malloc(sizeof(DataItem));
 
     item = head(list);
 
     while(item != NULL) {
-        if(item->key == name) return item;
+        if(strcmp(item->key,name)==0) return item->type;
 
         list = tail(list);
         item = head(list);
     }
 
-    return NULL;
+    return -1;
 }
 
 DataItem* head(ItemsList* l) {

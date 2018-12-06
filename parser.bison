@@ -98,6 +98,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
+#include "symbol_table.h"
 
 extern int yylex();
 extern int yyline;
@@ -105,6 +106,7 @@ extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
 CommandList* root;
+ItemsList* list;
 }
 
 %%
@@ -362,6 +364,15 @@ num:
   }
 ;
 %%
+
+int check_var(char* name, int type) {
+  int vtype = checkExistence(name, list);
+
+  if(vtype == -1) yyerror("Variable is not defined");
+  else if(type != -1 && vtype != type) yyerror("Not the correct type");
+
+  return vtype;
+}
 
 void yyerror(const char* err) {
   printf("Line %d: %s - '%s'\n", yyline, err, yytext  );
