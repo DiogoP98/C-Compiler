@@ -151,10 +151,17 @@ TYPES_STR* ast_string_of_types(char* type) {
   return node;
 }
 
-PRINTF_EXP* ast_printf(TYPES_STR* types, DeclarationList* vars) {
+PRINTF_EXP* ast_printf(TYPES_STR* types, PrintVarsList* vars) {
   PRINTF_EXP* node = (PRINTF_EXP*) malloc(sizeof(PRINTF_EXP));
   node->string_of_types = types;
   node->vars = vars;
+  return node;
+}
+
+PrintVarsList* ast_printlist(char* var, PrintVarsList* next) {
+  PrintVarsList* node = (PrintVarsList*) malloc(sizeof(PrintVarsList));
+  node->name = var;
+  node->next = next;
   return node;
 }
 

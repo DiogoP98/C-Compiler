@@ -82,19 +82,25 @@ struct _VarList {
   struct _DeclarationList* list;
 };
 
-struct _ScanDeclarationList {
-  char* declaration;
-  struct _ScanDeclarationList* next;
-};
-
 struct _PRINTF_EXP {
   struct _TYPES* string_of_types;
-  struct _DeclarationList* vars;
+  struct _PrintList* vars;
+};
+
+struct _PrintVarsList {
+  char* name;
+  struct _PrintVarsList* next;
 };
 
 struct _SCANF_EXP {
   struct _TYPES* string_of_types;
   struct _ScanDeclarationList* vars;
+};
+
+
+struct _ScanDeclarationList {
+  char* declaration;
+  struct _ScanDeclarationList* next;
 };
 
 struct _TYPES {
@@ -148,6 +154,7 @@ typedef struct _IFexpression IFexpression;
 typedef struct _WHILEexpression WHILEexpression;
 typedef struct _DeclarationList DeclarationList;
 typedef struct _PRINTF_EXP PRINTF_EXP;
+typedef struct _PrintVarsList PrintVarsList;
 typedef struct _SCANF_EXP SCANF_EXP;
 typedef struct _Expr Expr; 
 typedef struct _ScanDeclarationList ScanDeclarationList;
@@ -181,9 +188,10 @@ WHILEexpression* while_commands(Expr* expr, CommandList* list);
 
 //------- INPUT/OUTPUT expressions ----------------
 TYPES_STR* ast_string_of_types(char* type);
-PRINTF_EXP* ast_printf(TYPES_STR* types, DeclarationList* vars);
+PRINTF_EXP* ast_printf(TYPES_STR* types, PrintVarsList* vars);
 SCANF_EXP* ast_scanf(TYPES_STR* type, ScanDeclarationList* vars);
 ScanDeclarationList* ast_scanlist(char* var, ScanDeclarationList* next);
+PrintVarsList* ast_printlist(char* var, PrintVarsList* next);
 
 //------- Declarations/Assignments expressions ----------------
 varList* ast_varlist(int type, DeclarationList* next);

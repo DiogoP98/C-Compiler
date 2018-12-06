@@ -60,6 +60,7 @@
   IFexpression* ifExpression;
   WHILEexpression* whileExpression;
   PRINTF_EXP* printf_exp;
+  PrintVarsList* printList;
   SCANF_EXP* scan_expr;
   TYPES_STR* string_types;
   varList* varList;
@@ -82,6 +83,7 @@
 %type <list_decl> list_var
 %type <scan_list> list_scan_var
 %type <printf_exp> printf
+%type <printList> list_print
 %type <scan_expr> scanf
 %type <varList> var_dec
 %type <string_types> string
@@ -91,7 +93,7 @@
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
 %code requires {
-  
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
@@ -152,7 +154,7 @@ cmd:
 
 
 printf:
-  PRINT OPENPARENTHESIS string COMMA list_var CLOSEPARENTHESIS SEMICOLON{
+  PRINT OPENPARENTHESIS string COMMA list_print CLOSEPARENTHESIS SEMICOLON{
     $$ = ast_printf($3,$5);
   }
   |
@@ -211,20 +213,28 @@ while_expr:
 
 list_scan_var:
   '&' VAR COMMA list_scan_var {
+    if(checkExistence(list, $2) == -1) yyerror("Variable not declared!");
+
     $$ = ast_scanlist($2,$4);
   }
   |
   '&' VAR {
+    if(checkExistence(list, $2) == -1) yyerror("Variable not declared!");
+
     $$ = ast_scanlist($2,NULL);
   }
 ;
 
 var_dec: 
   INTD list_var SEMICOLON{
+    createItem(list, $2->content.name, INT);
+    
     $$ = ast_varlist(INTD, $2);
   }
   |
   FLOATD list_var SEMICOLON{
+    createItem(list, $2->content.name, FLOAT);
+
     $$ = ast_varlist(FLOATD, $2);
   }
 ;
@@ -256,6 +266,19 @@ list_asg:
     $$ = ast_assignmentList($1,$3, NULL);
   }
 ;
+
+list_print:
+  VAR COMMA list_print {
+    if(checkExistence(list, $1) == -1) yyerror("Variable not declared!");
+
+    $$ = ast_printlist($1, $3);
+  }
+  |
+  VAR {
+    if(checkExistence(list, $1) == -1) yyerror("Variable not declared!");
+
+    $$ = ast_printlist($1, NULL);
+  }
 
 expr: 
   num {
