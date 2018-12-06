@@ -60,15 +60,20 @@ struct _DeclarationList {
   } type;
 
   union {
-    struct _ASG* assignment;
-    struct _DECL* declaration;
+    char* name;
+
+    union {
+      struct _Expr* expression;
+    } asg;
+
   } content;
   
   struct _DeclarationList* next;
 };
 
 struct _AsgList {
-  struct _ASG* assignment;
+  char* name;
+  struct _Expr* expression;
   struct _AsgList* next;
 };
 
@@ -78,17 +83,8 @@ struct _VarList {
 };
 
 struct _ScanDeclarationList {
-  struct _DECL* declaration;
+  char* declaration;
   struct _ScanDeclarationList* next;
-};
-
-struct _DECL {
-  char* name;
-};
-
-struct _ASG {
-  struct _DECL* name;
-  struct _Expr* value;
 };
 
 struct _PRINTF_EXP {
@@ -151,8 +147,6 @@ typedef struct _Command Command;
 typedef struct _IFexpression IFexpression;
 typedef struct _WHILEexpression WHILEexpression;
 typedef struct _DeclarationList DeclarationList;
-typedef struct _ASG ASG;
-typedef struct _DECL DECL;
 typedef struct _PRINTF_EXP PRINTF_EXP;
 typedef struct _SCANF_EXP SCANF_EXP;
 typedef struct _Expr Expr; 
@@ -189,15 +183,13 @@ WHILEexpression* while_commands(Expr* expr, CommandList* list);
 TYPES_STR* ast_string_of_types(char* type);
 PRINTF_EXP* ast_printf(TYPES_STR* types, DeclarationList* vars);
 SCANF_EXP* ast_scanf(TYPES_STR* type, ScanDeclarationList* vars);
-ScanDeclarationList* ast_scanlist(DECL* var, ScanDeclarationList* next);
+ScanDeclarationList* ast_scanlist(char* var, ScanDeclarationList* next);
 
 //------- Declarations/Assignments expressions ----------------
 varList* ast_varlist(int type, DeclarationList* next);
-DeclarationList* ast_declaration(DECL* decl, DeclarationList* next);
-DeclarationList* ast_assignment(ASG* asg, DeclarationList* next);
-AsgList* ast_assignmentList(ASG* asg, AsgList* next);
-DECL* var_declaration(char* s);
-ASG* var_assignment(DECL* s, Expr* expr);
+DeclarationList* ast_declaration(char* name, DeclarationList* next);
+DeclarationList* ast_assignment(char* name, Expr* expression, DeclarationList* next);
+AsgList* ast_assignmentList(char* name, Expr* expression, AsgList* next);
 
 //------- Expressions functions -------------
 NUMBER* ast_integer(int v);

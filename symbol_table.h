@@ -19,9 +19,10 @@ struct _ItemsList {
 typedef struct _DataItem DataItem;
 typedef struct _ItemsList ItemsList;
 
-DataItem* createItem(char* name, int type, int endr);
-bool checkExistence(char* name, ItemsList* list);
+ItemsList* createItem(ItemsList* list, char* name, int type);
+int checkExistence(char* name, ItemsList* list);
 DataItem* head(ItemsList* l);
 ItemsList* tail(ItemsList* l);
+ItemsList* mkList(DataItem* item, ItemsList* list);
 
 #endif

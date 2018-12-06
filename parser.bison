@@ -66,8 +66,6 @@
   DeclarationList* list_decl;
   AsgList* asg_list;
   ScanDeclarationList* scan_list;
-  ASG* assignment;
-  DECL* declaration;
   Expr* exprValue;
   NUMBER* number;
 }
@@ -83,8 +81,6 @@
 %type <whileExpression> while_expr
 %type <list_decl> list_var
 %type <scan_list> list_scan_var
-%type <assignment> atr
-%type <declaration> decl
 %type <printf_exp> printf
 %type <scan_expr> scanf
 %type <varList> var_dec
@@ -105,8 +101,11 @@ extern int yyline;
 extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
+
 CommandList* root;
 ItemsList* list;
+
+int checkExistence(char* name, ItemsList* list);
 }
 
 %%
@@ -209,24 +208,12 @@ while_expr:
   } 
   ;
 
-atr:
-  decl EQUAL expr {
-    $$ = var_assignment($1,$3);
-  }
-  ;
-
-decl:
-  VAR {
-    $$ = var_declaration($1);
-  }
-;
-
 list_scan_var:
-  '&' decl COMMA list_scan_var {
+  '&' VAR COMMA list_scan_var {
     $$ = ast_scanlist($2,$4);
   }
   |
-  '&' decl {
+  '&' VAR {
     $$ = ast_scanlist($2,NULL);
   }
 ;
@@ -242,30 +229,30 @@ var_dec:
 ;
 
 list_var:
-  decl {
-    $$ = ast_declaration($1, NULL);
+  VAR {
+    $$ = ast_declaration($1,NULL);
   }
   |
-  decl COMMA list_var {
-    $$ = ast_declaration($1, $3);
+  VAR COMMA list_var {
+    $$ = ast_declaration($1,$3);
   }
   |
-  atr COMMA list_var{
-    $$ = ast_assignment($1, $3);
+  VAR EQUAL expr COMMA list_var{
+    $$ = ast_assignment($1, $3, $5);
   }
   |
-  atr {
-    $$ = ast_assignment($1, NULL);
+  VAR EQUAL expr {
+    $$ = ast_assignment($1, $3, NULL);
   }
 ;
 
 list_asg: 
-  atr COMMA list_asg{
-    $$ = ast_assignmentList($1, $3);
+  VAR EQUAL expr COMMA list_asg{
+    $$ = ast_assignmentList($1, $3, $5);
   }
   |
-  atr {
-    $$ = ast_assignmentList($1, NULL);
+  VAR EQUAL expr {
+    $$ = ast_assignmentList($1,$3, NULL);
   }
 ;
 

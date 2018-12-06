@@ -1,7 +1,7 @@
 #include "symbol_table.h"
 
 
-ItemsList* createItem(ItemList* list, char* name, int type) {
+ItemsList* createItem(ItemsList* list, char* name, int type) {
     DataItem* item = (DataItem*) malloc(sizeof(DataItem));
     ItemsList* node = (ItemsList*) malloc(sizeof(ItemsList));
     item->key = strdup(name);
