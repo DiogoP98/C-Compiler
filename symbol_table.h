@@ -7,7 +7,7 @@
 #include <stdbool.h>
 
 struct _DataItem {
-   char key[10];
+   char* key;
    int type; //int,float, char,....
 };
 

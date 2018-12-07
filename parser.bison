@@ -108,10 +108,10 @@ extern void yyerror(const char* msg);
 
 
 CommandList* root;
-ItemsList* list;
+ItemsList* SYMBOL_LIST;
 
 int checkExistence(char* name, ItemsList* list);
-void printTable(ItemsList* list);
+ItemsList* createItem(ItemsList* list, char* name, int type);
 }
 
 %%
@@ -131,7 +131,6 @@ list:
 
 cmd:
   if_expr {
-    printTable(list);
     $$ = if_declaration($1);
   }
   |
@@ -217,14 +216,15 @@ while_expr:
 
 list_scan_var:
   '&' VAR COMMA list_scan_var {
-    if(checkExistence($2, list) == -1) yyerror("Variable not declared2!");
+    printf("aqui = %s\n", $2);
+    if(checkExistence(strdup($2), SYMBOL_LIST) == -1) yyerror("Variable not declared!");
 
     $$ = ast_scanlist($2,$4);
   }
   |
   '&' VAR {
-    printf("olaolaola\n");
-    if(checkExistence($2, list) == -1) yyerror("Variable not declared3!");
+    printf("aqui = %s\n", $2);
+    if(checkExistence(strdup($2), SYMBOL_LIST) == -1) yyerror("Variable not declared!");
 
     $$ = ast_scanlist($2, NULL);
   }
@@ -242,65 +242,77 @@ var_dec:
 
 list_var_int:
   VAR {
-    createItem(list, $1, 1);
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
     $$ = ast_declaration($1,NULL);
   }
   |
   VAR COMMA list_var_int {
-    createItem(list, $1, 1);
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
     $$ = ast_declaration($1,$3);
   }
   |
   VAR EQUAL expr COMMA list_var_int{
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
     $$ = ast_assignment($1, $3, $5);
   }
   |
   VAR EQUAL expr {
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
     $$ = ast_assignment($1, $3, NULL);
   }
 ;
 
 list_var_float:
   VAR {
-    createItem(list, $1, 0);
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
     $$ = ast_declaration($1,NULL);
   }
   |
   VAR COMMA list_var_float {
-    createItem(list, $1, 0);
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
     $$ = ast_declaration($1, $3);
   }
   |
   VAR EQUAL expr COMMA list_var_float{
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
     $$ = ast_assignment($1, $3, $5);
   }
   |
   VAR EQUAL expr {
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
     $$ = ast_assignment($1, $3, NULL);
   }
 ;
 
 list_asg: 
   VAR EQUAL expr COMMA list_asg{
+    if(checkExistence($1, SYMBOL_LIST) == -1) yyerror("Variable not declared!");
     $$ = ast_assignmentList($1, $3, $5);
   }
   |
   VAR EQUAL expr {
+    if(checkExistence($1, SYMBOL_LIST) == -1) yyerror("Variable not declared!");
     $$ = ast_assignmentList($1,$3, NULL);
   }
 ;
 
 list_print:
   VAR COMMA list_print {
-    printf("%s\n", $1);
-    if(checkExistence(strdup($1), list) == -1) yyerror("Variable not declared!");
+    if(checkExistence($1, SYMBOL_LIST) == -1) yyerror("Variable not declared!");
 
     $$ = ast_printlist($1, $3);
   }
   |
   VAR {
-    printf("%s\n", $1);
-    if(checkExistence(strdup($1), list) == -1) yyerror("Variable not declared!");
+    if(checkExistence($1, SYMBOL_LIST) == -1) yyerror("Variable not declared!");
 
     $$ = ast_printlist($1, NULL);
   }
@@ -311,7 +323,7 @@ expr:
   }
   |
   VAR {
-    if(checkExistence(strdup($1), list) == -1) yyerror("Variable not declared!");
+    if(checkExistence($1, SYMBOL_LIST) == -1) yyerror("Variable not declared!");
 
     $$ = ast_variable($1);
   }
@@ -403,16 +415,7 @@ num:
 ;
 %%
 
-int check_var(char* name, int type) {
-  int vtype = checkExistence(name, list);
-
-  if(vtype == -1) yyerror("Variable is not defined");
-  else if(type != -1 && vtype != type) yyerror("Not the correct type");
-
-  return vtype;
-}
-
 void yyerror(const char* err) {
-  printf("Line %d: %s - '%s'\n", yyline, err, yytext  );
+  printf("Line %d: %s - '%s'\n", yyline, err, yytext);
 }
 

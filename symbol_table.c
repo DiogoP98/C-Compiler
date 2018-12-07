@@ -5,12 +5,10 @@
 ItemsList* createItem(ItemsList* list, char* name, int type) {
     DataItem* item = (DataItem*) malloc(sizeof(DataItem));
     ItemsList* node = (ItemsList*) malloc(sizeof(ItemsList));
-    strcpy(item->key, name);
+
+    item->key = strdup(name);
     item->type = type;
-
     node = mkList2(item, list);
-
-    printf("insert %s\n", item->key);
 
     return node;
 }
@@ -21,7 +19,6 @@ int checkExistence(char* name, ItemsList* list) {
     item = head2(list);
 
     while(item != NULL) {
-        printf("procura %s\n", item->key);
         if(strcmp(item->key,name)==0) return item->type;
 
         list = tail2(list);
@@ -34,11 +31,12 @@ int checkExistence(char* name, ItemsList* list) {
 void printTable(ItemsList* list) {
     DataItem *item = list->item;
 
-    while(item != NULL){
-        printf("ola - %s\n", item->key);
-        list = list->next;
-        item = list->item;
-    }
+    //printf("aqui = %s\n", item->key);
+    //while(item != NULL){
+        //printf("ola - %s\n", item->key);
+        //list = list->next;
+        //item = list->item;
+    //}
 }
 
 DataItem* head2(ItemsList* l) {

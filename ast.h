@@ -99,7 +99,6 @@ struct _SCANF_EXP {
   struct _ScanDeclarationList* vars;
 };
 
-
 struct _ScanDeclarationList {
   char* declaration;
   struct _ScanDeclarationList* next;

@@ -5,7 +5,6 @@
 #include <limits.h>
 
 
-  
 StackNode* newNode(int data) { 
     StackNode* stackNode = (StackNode*)malloc(sizeof(StackNode));
 
@@ -60,6 +59,8 @@ Instr* mkInstr(IKind kind, int n) {
 
 Instr* mkInstr2(IKind kind, char* name) {
     Instr* node = (Instr*) malloc(sizeof(Instr)); 
+    node->arg.name = (char*)malloc(sizeof(char) * strlen(name));
+
     node->type = E_NAME;
     node->kind = kind;
     node->arg.name = name;
@@ -178,7 +179,9 @@ Instr_List* compileExpression(Expr* expr){
     }
 
     else if(expr->kind == E_VARIABLE) {
-        char* variable = expr->attr.arguments.variable;
+        char* variable = (char*)malloc(sizeof(char) * strlen(expr->attr.arguments.variable));
+        
+        variable = expr->attr.arguments.variable;
         return mkList(mkInstr2(LOD, variable), NULL);
     }
         
@@ -241,6 +244,7 @@ Instr_List* compileExpression(Expr* expr){
 
 Instr_List* compileDeclaration(char* name) {
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
+
     l1 = mkList(mkInstr2(LDA, name),NULL);
 
     return l1;
@@ -271,7 +275,7 @@ Instr_List* compileAssignmentList(AsgList* asg_list) {
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
     while(assignmentList != NULL) {
-        l1 = append(l1, compileAssignment(assignmentList->name,assignmentList->expression));
+        l1 = append(compileAssignment(assignmentList->name,assignmentList->expression),l1);
         assignmentList = assignmentList->next;
     }
 
@@ -283,13 +287,25 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
 
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
-    while(declList != NULL) {
-        switch(declList->type) {
+    switch(declList->type) {
             case E_ASSIGNMENT:
                 l1 = compileAssignment(declList->content.name, declList->content.asg.expression);
+                printf("here2\n");
                 break;
             case E_DECLARATION:
                 l1 = compileDeclaration(declList->content.name);
+                break;
+    }
+
+    declList = declList->next;
+
+    while(declList != NULL) {
+        switch(declList->type) {
+            case E_ASSIGNMENT:
+                l1 = append(l1,compileAssignment(declList->content.name, declList->content.asg.expression));
+                break;
+            case E_DECLARATION:
+                l1 = append(l1,compileDeclaration(declList->content.name));
                 break;
         } 
 

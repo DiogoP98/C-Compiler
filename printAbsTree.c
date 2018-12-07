@@ -3,8 +3,6 @@
 
 void printExpr(Expr* expr, int spaces);
 void printNumber(NUMBER* n, int spaces);
-void printDeclaration(DECL* decl, int spaces);
-void printAssignment(ASG* asg, int spaces);
 void printvarList (varList* list, int spaces);
 void printDeclarationList(DeclarationList* declList, int spaces);
 void printCommand(Command* cmd, int spaces);
@@ -26,7 +24,7 @@ void printExpr(Expr* expr, int spaces) {
   }
   
   else if (expr->kind == E_NUM)
-    printNumber(expr->attr.number, spaces+1);
+    printNumber(expr->attr.arguments.number, spaces+1);
 
   else if (expr->kind == E_OPERATION) {
     switch (expr->attr.op.operator) {
