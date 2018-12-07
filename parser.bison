@@ -80,7 +80,8 @@
 %type <exprValue> expr
 %type <ifExpression> if_expr
 %type <whileExpression> while_expr
-%type <list_decl> list_var
+%type <list_decl> list_var_int
+%type <list_decl> list_var_float
 %type <scan_list> list_scan_var
 %type <printf_exp> printf
 %type <printList> list_print
@@ -105,10 +106,12 @@ extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
 
+
 CommandList* root;
 ItemsList* list;
 
 int checkExistence(char* name, ItemsList* list);
+void printTable(ItemsList* list);
 }
 
 %%
@@ -128,6 +131,7 @@ list:
 
 cmd:
   if_expr {
+    printTable(list);
     $$ = if_declaration($1);
   }
   |
@@ -213,42 +217,61 @@ while_expr:
 
 list_scan_var:
   '&' VAR COMMA list_scan_var {
-    if(checkExistence($2, list) == -1) yyerror("Variable not declared!");
+    if(checkExistence($2, list) == -1) yyerror("Variable not declared2!");
 
     $$ = ast_scanlist($2,$4);
   }
   |
   '&' VAR {
-    if(checkExistence($2, list) == -1) yyerror("Variable not declared!");
+    printf("olaolaola\n");
+    if(checkExistence($2, list) == -1) yyerror("Variable not declared3!");
 
-    $$ = ast_scanlist($2,NULL);
+    $$ = ast_scanlist($2, NULL);
   }
 ;
 
 var_dec: 
-  INTD list_var SEMICOLON{
-    createItem(list, $2->content.name, INT);
-
+  INTD list_var_int SEMICOLON{
     $$ = ast_varlist(INTD, $2);
   }
   |
-  FLOATD list_var SEMICOLON{
-    createItem(list, $2->content.name, FLOAT);
-
+  FLOATD list_var_float SEMICOLON{
     $$ = ast_varlist(FLOATD, $2);
   }
 ;
 
-list_var:
+list_var_int:
   VAR {
+    createItem(list, $1, 1);
     $$ = ast_declaration($1,NULL);
   }
   |
-  VAR COMMA list_var {
+  VAR COMMA list_var_int {
+    createItem(list, $1, 1);
     $$ = ast_declaration($1,$3);
   }
   |
-  VAR EQUAL expr COMMA list_var{
+  VAR EQUAL expr COMMA list_var_int{
+    $$ = ast_assignment($1, $3, $5);
+  }
+  |
+  VAR EQUAL expr {
+    $$ = ast_assignment($1, $3, NULL);
+  }
+;
+
+list_var_float:
+  VAR {
+    createItem(list, $1, 0);
+    $$ = ast_declaration($1,NULL);
+  }
+  |
+  VAR COMMA list_var_float {
+    createItem(list, $1, 0);
+    $$ = ast_declaration($1, $3);
+  }
+  |
+  VAR EQUAL expr COMMA list_var_float{
     $$ = ast_assignment($1, $3, $5);
   }
   |
@@ -269,13 +292,15 @@ list_asg:
 
 list_print:
   VAR COMMA list_print {
-    if(checkExistence($1, list) == -1) yyerror("Variable not declared!");
+    printf("%s\n", $1);
+    if(checkExistence(strdup($1), list) == -1) yyerror("Variable not declared!");
 
     $$ = ast_printlist($1, $3);
   }
   |
   VAR {
-    if(checkExistence($1, list) == -1) yyerror("Variable not declared!");
+    printf("%s\n", $1);
+    if(checkExistence(strdup($1), list) == -1) yyerror("Variable not declared!");
 
     $$ = ast_printlist($1, NULL);
   }
@@ -286,6 +311,8 @@ expr:
   }
   |
   VAR {
+    if(checkExistence(strdup($1), list) == -1) yyerror("Variable not declared!");
+
     $$ = ast_variable($1);
   }
   |

@@ -1,10 +1,14 @@
 int main() {
+    int a, b, c;
+    
     if(1+1) {
         int a = b + c;
     }
-    else
+    else {
         int b = 0;
+    }
 
+    int a;
     scanf("%d", &a);
     printf("Variavel a: %d", a);
 }

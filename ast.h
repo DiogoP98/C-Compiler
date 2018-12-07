@@ -54,10 +54,12 @@ struct _WHILEexpression {
 };
 
 struct _DeclarationList {
+  int type;
+
   enum {
     E_ASSIGNMENT,
     E_DECLARATION
-  } type;
+  } op;
 
   union {
     char* name;
@@ -84,7 +86,7 @@ struct _VarList {
 
 struct _PRINTF_EXP {
   struct _TYPES* string_of_types;
-  struct _PrintList* vars;
+  struct _PrintVarsList* vars;
 };
 
 struct _PrintVarsList {

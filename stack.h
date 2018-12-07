@@ -30,12 +30,12 @@ Instr* mkInstr(IKind kind, int n);
 Instr* mkInstr2(IKind kind, char* name);
 Instr* mkInstr3(IKind kind, float n);
 Instr* head(Instr_List* l);
-Instr_List* compileDeclaration(DECL* declaration);
+Instr_List* compileDeclaration(char* name);
 Instr_List* tail(Instr_List* l);
 Instr_List* append(Instr_List* l1, Instr_List* l2);
 Instr_List* mkList(Instr* code, Instr_List* l2);
 Instr_List* compileExpression(Expr* expr);
-Instr_List* compileAssignment(ASG* asg);
+Instr_List* compileAssignment(char* name, Expr* expression);
 Instr_List* compileCmd(Command* cmd);
 Instr_List* compile(CommandList* list);
 Instr_List* compileDeclarationList(DeclarationList* decl_list);
@@ -52,10 +52,10 @@ typedef struct _StackNode {
 } StackNode;
 
 StackNode* newNode(int data);
-int isEmpty(struct StackNode *root);
+int isEmpty(StackNode *root);
 void push(StackNode** root, int data);
-int pop(struct StackNode** root);
-int peek(struct StackNode* root);
+int pop(StackNode** root);
+int peek(StackNode* root);
 
 
 typedef struct _MipsInstr {
@@ -66,14 +66,27 @@ typedef struct _MipsInstr {
         E_FR,
         E_FI
     } kind;
+    
     enum {
-        
+        ADD,
+        ADDI
     } MipsKind;
+
     union {
         int addrs[3];
+        
+        struct {
+            int addrs[2];
+            int val;
+        } IntInstr;
+        
+        char *label;
 
-
-    } 
+        struct {
+            int addrs[2];
+            float val;
+        } FloatInstr;
+    } vars;
 } MipsInstr;
 
 

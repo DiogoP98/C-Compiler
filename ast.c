@@ -160,7 +160,7 @@ PRINTF_EXP* ast_printf(TYPES_STR* types, PrintVarsList* vars) {
 
 PrintVarsList* ast_printlist(char* var, PrintVarsList* next) {
   PrintVarsList* node = (PrintVarsList*) malloc(sizeof(PrintVarsList));
-  node->name = var;
+  node->name = strdup(var);
   node->next = next;
   return node;
 }
@@ -174,7 +174,7 @@ SCANF_EXP* ast_scanf(TYPES_STR* types, ScanDeclarationList* vars) {
 
 ScanDeclarationList* ast_scanlist(char* var, ScanDeclarationList* next) {
   ScanDeclarationList* node = (ScanDeclarationList*) malloc(sizeof(ScanDeclarationList));
-  node->declaration = var;
+  node->declaration = strdup(var);
   node->next = next;
   return node;
 }
@@ -191,7 +191,7 @@ varList* ast_varlist(int type, DeclarationList* next) {
 DeclarationList* ast_declaration(char* name, DeclarationList* next) {
   DeclarationList* node = (DeclarationList*) malloc(sizeof(DeclarationList));
   node->type = E_DECLARATION;
-  node->content.name = name;
+  node->content.name = strdup(name);
   node->next = next;
   return node;
 }
@@ -199,7 +199,7 @@ DeclarationList* ast_declaration(char* name, DeclarationList* next) {
 DeclarationList* ast_assignment(char* name, Expr* expression, DeclarationList* next) {
   DeclarationList* node = (DeclarationList*) malloc(sizeof(DeclarationList));
   node->type = E_ASSIGNMENT;
-  node->content.name = name;
+  node->content.name = strdup(name);
   node->content.asg.expression = expression;
   node->next = next;
   return node;
@@ -207,7 +207,7 @@ DeclarationList* ast_assignment(char* name, Expr* expression, DeclarationList* n
 
 AsgList* ast_assignmentList(char* name, Expr* expression, AsgList* next) {
   AsgList* node = (AsgList*) malloc(sizeof(AsgList));
-  node->name = name;
+  node->name = strdup(name);
   node->expression = expression;
   node->next = next;
   return node;

@@ -2,6 +2,7 @@
 #include "stack.h"
 #include <stdio.h>
 #include "parser.h"
+#include <limits.h>
 
 
   
@@ -14,7 +15,7 @@ StackNode* newNode(int data) {
     return stackNode;
 }
 
-int isEmpty(struct StackNode *root) {
+int isEmpty(StackNode *root) {
     return !root;
 }
   
@@ -27,7 +28,7 @@ void push(StackNode** root, int data) {
     //printf("%d pushed to stack\n", data);
 }
   
-int pop(struct StackNode** root) {
+int pop(StackNode** root) {
     if (isEmpty(*root))
         return INT_MIN;
 
@@ -41,7 +42,7 @@ int pop(struct StackNode** root) {
     return popped;
 }
   
-int peek(struct StackNode* root) {
+int peek(StackNode* root) {
     if (isEmpty(root))
         return INT_MIN;
 
@@ -103,7 +104,14 @@ void printInstr(Instr* instr) {
     
     switch(instr->kind){
         case LDC:
-            printf("LDC %d\n", instr->arg.argi);
+            switch(instr->type){
+                case E_INT2:
+                    printf("LDC %d\n", instr->arg.argi);
+                    break;
+                case E_FLOAT2:
+                    printf("LDC %f\n", instr->arg.argf);
+                    break;
+            }
             break;
         case ADI:
             printf("ADI\n");
@@ -231,23 +239,17 @@ Instr_List* compileExpression(Expr* expr){
     return l1;
 }
 
-Instr_List* compileDeclaration(DECL* declaration) {
-    if (declaration == NULL) 
-        return NULL;
-
+Instr_List* compileDeclaration(char* name) {
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
-    l1 = mkList(mkInstr2(LDA, declaration->name),NULL);
+    l1 = mkList(mkInstr2(LDA, name),NULL);
 
     return l1;
 }
 
-Instr_List* compileAssignment(ASG* asg) {
-    if (asg == NULL)
-        return NULL;
-    
+Instr_List* compileAssignment(char* name, Expr* expression) {    
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
-    l1 = compileDeclaration(asg->name);
-    l1 = append(l1, compileExpression(asg->value));
+    l1 = mkList(mkInstr2(LDA, name),NULL);
+    l1 = append(l1, compileExpression(expression));
     l1 = append(l1, mkList(mkInstr(STO, NULL),NULL));
 
     return l1;
@@ -269,7 +271,7 @@ Instr_List* compileAssignmentList(AsgList* asg_list) {
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
     while(assignmentList != NULL) {
-        l1 = append(l1, compileAssignment(assignmentList->assignment));
+        l1 = append(l1, compileAssignment(assignmentList->name,assignmentList->expression));
         assignmentList = assignmentList->next;
     }
 
@@ -284,10 +286,10 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
     while(declList != NULL) {
         switch(declList->type) {
             case E_ASSIGNMENT:
-                l1 = compileAssignment(declList->content.assignment);
+                l1 = compileAssignment(declList->content.name, declList->content.asg.expression);
                 break;
             case E_DECLARATION:
-                l1 = compileDeclaration(declList->content.declaration);
+                l1 = compileDeclaration(declList->content.name);
                 break;
         } 
 
@@ -406,6 +408,6 @@ int main(int argc, char** argv) {
     LABEL_COUNT = 0;
     Instr_List* l = compile(root);
     printListIntrs(l);
-    compileMips(l);
+    //compileMips(l);
     return 0;
 }
