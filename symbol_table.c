@@ -8,6 +8,7 @@ ItemsList* createItem(ItemsList* list, char* name, int type) {
 
     item->key = strdup(name);
     item->type = type;
+    
     node = mkList2(item, list);
 
     return node;

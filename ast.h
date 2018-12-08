@@ -61,14 +61,12 @@ struct _DeclarationList {
     E_DECLARATION
   } op;
 
+  char* name;
+
   union {
-    char* name;
+    struct _Expr* expression;
+  } asg;
 
-    union {
-      struct _Expr* expression;
-    } asg;
-
-  } content;
   
   struct _DeclarationList* next;
 };

@@ -64,7 +64,7 @@ int yyline = 1;
 "||" { return OR;   }
 "&&" { return AND;  }
 "!"  { return NOTOP;  }
-"==" { return IGU;  }
+"==" { return EQUAL;  }
 "!=" { return DIF;  }
 "<"  { return LES;	}
 "<=" { return LOQ;	}

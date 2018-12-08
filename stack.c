@@ -54,16 +54,17 @@ Instr* mkInstr(IKind kind, int n) {
     node->type = E_INT2;
     node->kind = kind;
     node->arg.argi = n;
+
     return node;
 }
 
 Instr* mkInstr2(IKind kind, char* name) {
     Instr* node = (Instr*) malloc(sizeof(Instr)); 
-    node->arg.name = (char*)malloc(sizeof(char) * strlen(name));
 
     node->type = E_NAME;
     node->kind = kind;
-    node->arg.name = name;
+    node->arg.name = strdup(name);
+
     return node;
 }
 
@@ -179,9 +180,9 @@ Instr_List* compileExpression(Expr* expr){
     }
 
     else if(expr->kind == E_VARIABLE) {
-        char* variable = (char*)malloc(sizeof(char) * strlen(expr->attr.arguments.variable));
-        
-        variable = expr->attr.arguments.variable;
+        printf("aquiiiii\n");
+        char* variable = expr->attr.arguments.variable;
+
         return mkList(mkInstr2(LOD, variable), NULL);
     }
         
@@ -199,7 +200,6 @@ Instr_List* compileExpression(Expr* expr){
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l1 = append(l1, mkList(mkInstr(MPI,0),NULL));
                 break;
-            //TODO ver como tratar de operadores logicos
             case DIV:
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l1 = append(l1, mkList(mkInstr(MPI,0),NULL));
@@ -274,8 +274,11 @@ Instr_List* compileAssignmentList(AsgList* asg_list) {
 
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
+    if(assignmentList != NULL) {
+        l1 = compileAssignment(assignmentList->name,assignmentList->expression);
+    }
     while(assignmentList != NULL) {
-        l1 = append(compileAssignment(assignmentList->name,assignmentList->expression),l1);
+        l1 = append(l1,compileAssignment(assignmentList->name,assignmentList->expression));
         assignmentList = assignmentList->next;
     }
 
@@ -289,11 +292,10 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
 
     switch(declList->type) {
             case E_ASSIGNMENT:
-                l1 = compileAssignment(declList->content.name, declList->content.asg.expression);
-                printf("here2\n");
+                l1 = compileAssignment(declList->name, declList->asg.expression);
                 break;
             case E_DECLARATION:
-                l1 = compileDeclaration(declList->content.name);
+                l1 = compileDeclaration(declList->name);
                 break;
     }
 
@@ -302,10 +304,10 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
     while(declList != NULL) {
         switch(declList->type) {
             case E_ASSIGNMENT:
-                l1 = append(l1,compileAssignment(declList->content.name, declList->content.asg.expression));
+                l1 = append(l1,compileAssignment(declList->name, declList->asg.expression));
                 break;
             case E_DECLARATION:
-                l1 = append(l1,compileDeclaration(declList->content.name));
+                l1 = append(l1,compileDeclaration(declList->name));
                 break;
         } 
 

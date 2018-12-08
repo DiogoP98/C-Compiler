@@ -262,6 +262,7 @@ list_var_int:
   VAR EQUAL expr {
     if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
     else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
+    
     $$ = ast_assignment($1, $3, NULL);
   }
 ;
@@ -364,6 +365,10 @@ expr:
     $$ = ast_operation(NOTOP,$2, NULL);
   }
   |
+  expr EQUAL expr {
+    $$ = ast_operation(EQUAL, $1, $3);
+  }
+  |
   expr IGU expr {
     $$ = ast_operation(IGU, $1, $3);
   }
@@ -416,6 +421,6 @@ num:
 %%
 
 void yyerror(const char* err) {
-  printf("Line %d: %s - '%s'\n", yyline, err, yytext);
+  printf("Line %d: %s - '%s'\n", yyline, err, strdup(yytext));
 }
 

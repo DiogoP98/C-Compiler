@@ -1,9 +1,12 @@
 int main() {
-    int a, b, c;
+    int a = 3, d;
 
-    b = a + 5;
+    b = 2;
+    
+    printf("%d", a);
 
-    printf("aqui %d %d", a, b);
-
-    scanf("%d %d", &b, &d);
+    if(2)
+        a = 2;
+    else
+        b = 3;
 }
