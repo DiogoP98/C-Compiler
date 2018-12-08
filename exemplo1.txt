@@ -3,6 +3,8 @@ int main() {
 
     b = 2;
     
+    int a = 0;
+    
     printf("%d", a);
 
     if(2)

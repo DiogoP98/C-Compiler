@@ -72,7 +72,7 @@ int yyline = 1;
 ">=" { return GOQ;  }
 
 \".*?[^\\]\" {
-    yylval.typesValue = yytext;
+    yylval.typesValue = strdup(yytext);
     return TYPES;
 }
 
