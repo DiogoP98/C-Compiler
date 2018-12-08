@@ -1,0 +1,1951 @@
+Grammar
+
+    0 $accept: program $end
+
+    1 program: INTD MAIN OPENPARENTHESIS CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    2 list: cmd list
+    3     | cmd
+
+    4 cmd: if_expr
+    5    | while_expr
+    6    | var_dec
+    7    | list_asg SEMICOLON
+    8    | printf
+    9    | scanf
+
+   10 printf: PRINT OPENPARENTHESIS string COMMA list_print CLOSEPARENTHESIS SEMICOLON
+   11       | PRINT OPENPARENTHESIS string CLOSEPARENTHESIS SEMICOLON
+
+   12 scanf: SCAN OPENPARENTHESIS string COMMA list_scan_var CLOSEPARENTHESIS SEMICOLON
+
+   13 string: TYPES
+
+   14 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd
+   15        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE cmd
+   16        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+   17        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE cmd
+   18        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+   19        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+   20 while_expr: WHILE OPENPARENTHESIS expr CLOSEPARENTHESIS cmd
+   21           | WHILE OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+   22 list_scan_var: '&' VAR COMMA list_scan_var
+   23              | '&' VAR
+
+   24 var_dec: INTD list_var_int SEMICOLON
+   25        | FLOATD list_var_float SEMICOLON
+
+   26 list_var_int: VAR
+   27             | VAR COMMA list_var_int
+   28             | VAR EQUAL expr COMMA list_var_int
+   29             | VAR EQUAL expr
+
+   30 list_var_float: VAR
+   31               | VAR COMMA list_var_float
+   32               | VAR EQUAL expr COMMA list_var_float
+   33               | VAR EQUAL expr
+
+   34 list_asg: VAR EQUAL expr COMMA list_asg
+   35         | VAR EQUAL expr
+
+   36 list_print: VAR COMMA list_print
+   37           | VAR
+
+   38 expr: num
+   39     | VAR
+   40     | OPENPARENTHESIS expr CLOSEPARENTHESIS
+   41     | expr PLUS expr
+   42     | expr SUB expr
+   43     | expr MUL expr
+   44     | expr DIV expr
+   45     | expr MOD expr
+   46     | expr OR expr
+   47     | expr AND expr
+   48     | NOTOP expr
+   49     | expr IGU expr
+   50     | expr DIF expr
+   51     | expr LES expr
+   52     | expr LOQ expr
+   53     | expr GRE expr
+   54     | expr GOQ expr
+
+   55 num: INT
+   56    | PLUS INT
+   57    | SUB INT
+   58    | FLOAT
+   59    | PLUS FLOAT
+   60    | SUB FLOAT
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'&' (38) 22 23
+error (256)
+MAIN (258) 1
+INT <intValue> (259) 55 56 57
+FLOAT <floatValue> (260) 58 59 60
+PLUS (261) 41 56 59
+SUB (262) 42 57 60
+MUL (263) 43
+DIV (264) 44
+OR (265) 46
+AND (266) 47
+NOTOP (267) 48
+IGU (268) 49
+DIF (269) 50
+LES (270) 51
+LOQ (271) 52
+GRE (272) 53
+GOQ (273) 54
+IF (274) 14 15 16 17 18 19
+ELSE (275) 15 17 18 19
+WHILE (276) 20 21
+INTD (277) 1 24
+FLOATD (278) 25
+SCAN (279) 12
+PRINT (280) 10 11
+VAR <stringValue> (281) 22 23 26 27 28 29 30 31 32 33 34 35 36 37 39
+SEMICOLON (282) 7 10 11 12 24 25
+EQUAL (283) 28 29 32 33 34 35
+OPENPARENTHESIS (284) 1 10 11 12 14 15 16 17 18 19 20 21 40
+CLOSEPARENTHESIS (285) 1 10 11 12 14 15 16 17 18 19 20 21 40
+OPENCURLYBRACKETS (286) 1 16 17 18 19 21
+CLOSECURLYBRACKETS (287) 1 16 17 18 19 21
+COMMA (288) 10 12 22 27 28 31 32 34 36
+TYPES <typesValue> (289) 13
+MOD (290) 45
+NO_ELSE (291)
+
+
+Nonterminals, with rules where they appear
+
+$accept (38)
+    on left: 0
+program (39)
+    on left: 1, on right: 0
+list <commandList> (40)
+    on left: 2 3, on right: 1 2 16 17 18 19 21
+cmd <cmdType> (41)
+    on left: 4 5 6 7 8 9, on right: 2 3 14 15 17 19 20
+printf <printf_exp> (42)
+    on left: 10 11, on right: 8
+scanf <scan_expr> (43)
+    on left: 12, on right: 9
+string <string_types> (44)
+    on left: 13, on right: 10 11 12
+if_expr <ifExpression> (45)
+    on left: 14 15 16 17 18 19, on right: 4
+while_expr <whileExpression> (46)
+    on left: 20 21, on right: 5
+list_scan_var <scan_list> (47)
+    on left: 22 23, on right: 12 22
+var_dec <varList> (48)
+    on left: 24 25, on right: 6
+list_var_int <list_decl> (49)
+    on left: 26 27 28 29, on right: 24 27 28
+list_var_float <list_decl> (50)
+    on left: 30 31 32 33, on right: 25 31 32
+list_asg <asg_list> (51)
+    on left: 34 35, on right: 7 34
+list_print <printList> (52)
+    on left: 36 37, on right: 10 36
+expr <exprValue> (53)
+    on left: 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54, on right:
+    14 15 16 17 18 19 20 21 28 29 32 33 34 35 40 41 42 43 44 45 46
+    47 48 49 50 51 52 53 54
+num <number> (54)
+    on left: 55 56 57 58 59 60, on right: 38
+
+
+State 0
+
+    0 $accept: . program $end
+
+    INTD  shift, and go to state 1
+
+    program  go to state 2
+
+
+State 1
+
+    1 program: INTD . MAIN OPENPARENTHESIS CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    MAIN  shift, and go to state 3
+
+
+State 2
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 4
+
+
+State 3
+
+    1 program: INTD MAIN . OPENPARENTHESIS CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    OPENPARENTHESIS  shift, and go to state 5
+
+
+State 4
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 5
+
+    1 program: INTD MAIN OPENPARENTHESIS . CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    CLOSEPARENTHESIS  shift, and go to state 6
+
+
+State 6
+
+    1 program: INTD MAIN OPENPARENTHESIS CLOSEPARENTHESIS . OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    OPENCURLYBRACKETS  shift, and go to state 7
+
+
+State 7
+
+    1 program: INTD MAIN OPENPARENTHESIS CLOSEPARENTHESIS OPENCURLYBRACKETS . list CLOSECURLYBRACKETS
+
+    IF      shift, and go to state 8
+    WHILE   shift, and go to state 9
+    INTD    shift, and go to state 10
+    FLOATD  shift, and go to state 11
+    SCAN    shift, and go to state 12
+    PRINT   shift, and go to state 13
+    VAR     shift, and go to state 14
+
+    list        go to state 15
+    cmd         go to state 16
+    printf      go to state 17
+    scanf       go to state 18
+    if_expr     go to state 19
+    while_expr  go to state 20
+    var_dec     go to state 21
+    list_asg    go to state 22
+
+
+State 8
+
+   14 if_expr: IF . OPENPARENTHESIS expr CLOSEPARENTHESIS cmd
+   15        | IF . OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE cmd
+   16        | IF . OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+   17        | IF . OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE cmd
+   18        | IF . OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+   19        | IF . OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    OPENPARENTHESIS  shift, and go to state 23
+
+
+State 9
+
+   20 while_expr: WHILE . OPENPARENTHESIS expr CLOSEPARENTHESIS cmd
+   21           | WHILE . OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    OPENPARENTHESIS  shift, and go to state 24
+
+
+State 10
+
+   24 var_dec: INTD . list_var_int SEMICOLON
+
+    VAR  shift, and go to state 25
+
+    list_var_int  go to state 26
+
+
+State 11
+
+   25 var_dec: FLOATD . list_var_float SEMICOLON
+
+    VAR  shift, and go to state 27
+
+    list_var_float  go to state 28
+
+
+State 12
+
+   12 scanf: SCAN . OPENPARENTHESIS string COMMA list_scan_var CLOSEPARENTHESIS SEMICOLON
+
+    OPENPARENTHESIS  shift, and go to state 29
+
+
+State 13
+
+   10 printf: PRINT . OPENPARENTHESIS string COMMA list_print CLOSEPARENTHESIS SEMICOLON
+   11       | PRINT . OPENPARENTHESIS string CLOSEPARENTHESIS SEMICOLON
+
+    OPENPARENTHESIS  shift, and go to state 30
+
+
+State 14
+
+   34 list_asg: VAR . EQUAL expr COMMA list_asg
+   35         | VAR . EQUAL expr
+
+    EQUAL  shift, and go to state 31
+
+
+State 15
+
+    1 program: INTD MAIN OPENPARENTHESIS CLOSEPARENTHESIS OPENCURLYBRACKETS list . CLOSECURLYBRACKETS
+
+    CLOSECURLYBRACKETS  shift, and go to state 32
+
+
+State 16
+
+    2 list: cmd . list
+    3     | cmd .
+
+    IF      shift, and go to state 8
+    WHILE   shift, and go to state 9
+    INTD    shift, and go to state 10
+    FLOATD  shift, and go to state 11
+    SCAN    shift, and go to state 12
+    PRINT   shift, and go to state 13
+    VAR     shift, and go to state 14
+
+    $default  reduce using rule 3 (list)
+
+    list        go to state 33
+    cmd         go to state 16
+    printf      go to state 17
+    scanf       go to state 18
+    if_expr     go to state 19
+    while_expr  go to state 20
+    var_dec     go to state 21
+    list_asg    go to state 22
+
+
+State 17
+
+    8 cmd: printf .
+
+    $default  reduce using rule 8 (cmd)
+
+
+State 18
+
+    9 cmd: scanf .
+
+    $default  reduce using rule 9 (cmd)
+
+
+State 19
+
+    4 cmd: if_expr .
+
+    $default  reduce using rule 4 (cmd)
+
+
+State 20
+
+    5 cmd: while_expr .
+
+    $default  reduce using rule 5 (cmd)
+
+
+State 21
+
+    6 cmd: var_dec .
+
+    $default  reduce using rule 6 (cmd)
+
+
+State 22
+
+    7 cmd: list_asg . SEMICOLON
+
+    SEMICOLON  shift, and go to state 34
+
+
+State 23
+
+   14 if_expr: IF OPENPARENTHESIS . expr CLOSEPARENTHESIS cmd
+   15        | IF OPENPARENTHESIS . expr CLOSEPARENTHESIS cmd ELSE cmd
+   16        | IF OPENPARENTHESIS . expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+   17        | IF OPENPARENTHESIS . expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE cmd
+   18        | IF OPENPARENTHESIS . expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+   19        | IF OPENPARENTHESIS . expr CLOSEPARENTHESIS cmd ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 42
+    num   go to state 43
+
+
+State 24
+
+   20 while_expr: WHILE OPENPARENTHESIS . expr CLOSEPARENTHESIS cmd
+   21           | WHILE OPENPARENTHESIS . expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 44
+    num   go to state 43
+
+
+State 25
+
+   26 list_var_int: VAR .
+   27             | VAR . COMMA list_var_int
+   28             | VAR . EQUAL expr COMMA list_var_int
+   29             | VAR . EQUAL expr
+
+    EQUAL  shift, and go to state 45
+    COMMA  shift, and go to state 46
+
+    $default  reduce using rule 26 (list_var_int)
+
+
+State 26
+
+   24 var_dec: INTD list_var_int . SEMICOLON
+
+    SEMICOLON  shift, and go to state 47
+
+
+State 27
+
+   30 list_var_float: VAR .
+   31               | VAR . COMMA list_var_float
+   32               | VAR . EQUAL expr COMMA list_var_float
+   33               | VAR . EQUAL expr
+
+    EQUAL  shift, and go to state 48
+    COMMA  shift, and go to state 49
+
+    $default  reduce using rule 30 (list_var_float)
+
+
+State 28
+
+   25 var_dec: FLOATD list_var_float . SEMICOLON
+
+    SEMICOLON  shift, and go to state 50
+
+
+State 29
+
+   12 scanf: SCAN OPENPARENTHESIS . string COMMA list_scan_var CLOSEPARENTHESIS SEMICOLON
+
+    TYPES  shift, and go to state 51
+
+    string  go to state 52
+
+
+State 30
+
+   10 printf: PRINT OPENPARENTHESIS . string COMMA list_print CLOSEPARENTHESIS SEMICOLON
+   11       | PRINT OPENPARENTHESIS . string CLOSEPARENTHESIS SEMICOLON
+
+    TYPES  shift, and go to state 51
+
+    string  go to state 53
+
+
+State 31
+
+   34 list_asg: VAR EQUAL . expr COMMA list_asg
+   35         | VAR EQUAL . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 54
+    num   go to state 43
+
+
+State 32
+
+    1 program: INTD MAIN OPENPARENTHESIS CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS .
+
+    $default  reduce using rule 1 (program)
+
+
+State 33
+
+    2 list: cmd list .
+
+    $default  reduce using rule 2 (list)
+
+
+State 34
+
+    7 cmd: list_asg SEMICOLON .
+
+    $default  reduce using rule 7 (cmd)
+
+
+State 35
+
+   55 num: INT .
+
+    $default  reduce using rule 55 (num)
+
+
+State 36
+
+   58 num: FLOAT .
+
+    $default  reduce using rule 58 (num)
+
+
+State 37
+
+   56 num: PLUS . INT
+   59    | PLUS . FLOAT
+
+    INT    shift, and go to state 55
+    FLOAT  shift, and go to state 56
+
+
+State 38
+
+   57 num: SUB . INT
+   60    | SUB . FLOAT
+
+    INT    shift, and go to state 57
+    FLOAT  shift, and go to state 58
+
+
+State 39
+
+   48 expr: NOTOP . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 59
+    num   go to state 43
+
+
+State 40
+
+   39 expr: VAR .
+
+    $default  reduce using rule 39 (expr)
+
+
+State 41
+
+   40 expr: OPENPARENTHESIS . expr CLOSEPARENTHESIS
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 60
+    num   go to state 43
+
+
+State 42
+
+   14 if_expr: IF OPENPARENTHESIS expr . CLOSEPARENTHESIS cmd
+   15        | IF OPENPARENTHESIS expr . CLOSEPARENTHESIS cmd ELSE cmd
+   16        | IF OPENPARENTHESIS expr . CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+   17        | IF OPENPARENTHESIS expr . CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE cmd
+   18        | IF OPENPARENTHESIS expr . CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+   19        | IF OPENPARENTHESIS expr . CLOSEPARENTHESIS cmd ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    PLUS              shift, and go to state 61
+    SUB               shift, and go to state 62
+    MUL               shift, and go to state 63
+    DIV               shift, and go to state 64
+    OR                shift, and go to state 65
+    AND               shift, and go to state 66
+    IGU               shift, and go to state 67
+    DIF               shift, and go to state 68
+    LES               shift, and go to state 69
+    LOQ               shift, and go to state 70
+    GRE               shift, and go to state 71
+    GOQ               shift, and go to state 72
+    CLOSEPARENTHESIS  shift, and go to state 73
+    MOD               shift, and go to state 74
+
+
+State 43
+
+   38 expr: num .
+
+    $default  reduce using rule 38 (expr)
+
+
+State 44
+
+   20 while_expr: WHILE OPENPARENTHESIS expr . CLOSEPARENTHESIS cmd
+   21           | WHILE OPENPARENTHESIS expr . CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    PLUS              shift, and go to state 61
+    SUB               shift, and go to state 62
+    MUL               shift, and go to state 63
+    DIV               shift, and go to state 64
+    OR                shift, and go to state 65
+    AND               shift, and go to state 66
+    IGU               shift, and go to state 67
+    DIF               shift, and go to state 68
+    LES               shift, and go to state 69
+    LOQ               shift, and go to state 70
+    GRE               shift, and go to state 71
+    GOQ               shift, and go to state 72
+    CLOSEPARENTHESIS  shift, and go to state 75
+    MOD               shift, and go to state 74
+
+
+State 45
+
+   28 list_var_int: VAR EQUAL . expr COMMA list_var_int
+   29             | VAR EQUAL . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 76
+    num   go to state 43
+
+
+State 46
+
+   27 list_var_int: VAR COMMA . list_var_int
+
+    VAR  shift, and go to state 25
+
+    list_var_int  go to state 77
+
+
+State 47
+
+   24 var_dec: INTD list_var_int SEMICOLON .
+
+    $default  reduce using rule 24 (var_dec)
+
+
+State 48
+
+   32 list_var_float: VAR EQUAL . expr COMMA list_var_float
+   33               | VAR EQUAL . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 78
+    num   go to state 43
+
+
+State 49
+
+   31 list_var_float: VAR COMMA . list_var_float
+
+    VAR  shift, and go to state 27
+
+    list_var_float  go to state 79
+
+
+State 50
+
+   25 var_dec: FLOATD list_var_float SEMICOLON .
+
+    $default  reduce using rule 25 (var_dec)
+
+
+State 51
+
+   13 string: TYPES .
+
+    $default  reduce using rule 13 (string)
+
+
+State 52
+
+   12 scanf: SCAN OPENPARENTHESIS string . COMMA list_scan_var CLOSEPARENTHESIS SEMICOLON
+
+    COMMA  shift, and go to state 80
+
+
+State 53
+
+   10 printf: PRINT OPENPARENTHESIS string . COMMA list_print CLOSEPARENTHESIS SEMICOLON
+   11       | PRINT OPENPARENTHESIS string . CLOSEPARENTHESIS SEMICOLON
+
+    CLOSEPARENTHESIS  shift, and go to state 81
+    COMMA             shift, and go to state 82
+
+
+State 54
+
+   34 list_asg: VAR EQUAL expr . COMMA list_asg
+   35         | VAR EQUAL expr .
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    PLUS   shift, and go to state 61
+    SUB    shift, and go to state 62
+    MUL    shift, and go to state 63
+    DIV    shift, and go to state 64
+    OR     shift, and go to state 65
+    AND    shift, and go to state 66
+    IGU    shift, and go to state 67
+    DIF    shift, and go to state 68
+    LES    shift, and go to state 69
+    LOQ    shift, and go to state 70
+    GRE    shift, and go to state 71
+    GOQ    shift, and go to state 72
+    COMMA  shift, and go to state 83
+    MOD    shift, and go to state 74
+
+    $default  reduce using rule 35 (list_asg)
+
+
+State 55
+
+   56 num: PLUS INT .
+
+    $default  reduce using rule 56 (num)
+
+
+State 56
+
+   59 num: PLUS FLOAT .
+
+    $default  reduce using rule 59 (num)
+
+
+State 57
+
+   57 num: SUB INT .
+
+    $default  reduce using rule 57 (num)
+
+
+State 58
+
+   60 num: SUB FLOAT .
+
+    $default  reduce using rule 60 (num)
+
+
+State 59
+
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   48     | NOTOP expr .
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    $default  reduce using rule 48 (expr)
+
+
+State 60
+
+   40 expr: OPENPARENTHESIS expr . CLOSEPARENTHESIS
+   41     | expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    PLUS              shift, and go to state 61
+    SUB               shift, and go to state 62
+    MUL               shift, and go to state 63
+    DIV               shift, and go to state 64
+    OR                shift, and go to state 65
+    AND               shift, and go to state 66
+    IGU               shift, and go to state 67
+    DIF               shift, and go to state 68
+    LES               shift, and go to state 69
+    LOQ               shift, and go to state 70
+    GRE               shift, and go to state 71
+    GOQ               shift, and go to state 72
+    CLOSEPARENTHESIS  shift, and go to state 84
+    MOD               shift, and go to state 74
+
+
+State 61
+
+   41 expr: expr PLUS . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 85
+    num   go to state 43
+
+
+State 62
+
+   42 expr: expr SUB . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 86
+    num   go to state 43
+
+
+State 63
+
+   43 expr: expr MUL . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 87
+    num   go to state 43
+
+
+State 64
+
+   44 expr: expr DIV . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 88
+    num   go to state 43
+
+
+State 65
+
+   46 expr: expr OR . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 89
+    num   go to state 43
+
+
+State 66
+
+   47 expr: expr AND . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 90
+    num   go to state 43
+
+
+State 67
+
+   49 expr: expr IGU . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 91
+    num   go to state 43
+
+
+State 68
+
+   50 expr: expr DIF . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 92
+    num   go to state 43
+
+
+State 69
+
+   51 expr: expr LES . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 93
+    num   go to state 43
+
+
+State 70
+
+   52 expr: expr LOQ . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 94
+    num   go to state 43
+
+
+State 71
+
+   53 expr: expr GRE . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 95
+    num   go to state 43
+
+
+State 72
+
+   54 expr: expr GOQ . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 96
+    num   go to state 43
+
+
+State 73
+
+   14 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS . cmd
+   15        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS . cmd ELSE cmd
+   16        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS . OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+   17        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS . OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE cmd
+   18        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS . OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+   19        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS . cmd ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    IF                 shift, and go to state 8
+    WHILE              shift, and go to state 9
+    INTD               shift, and go to state 10
+    FLOATD             shift, and go to state 11
+    SCAN               shift, and go to state 12
+    PRINT              shift, and go to state 13
+    VAR                shift, and go to state 14
+    OPENCURLYBRACKETS  shift, and go to state 97
+
+    cmd         go to state 98
+    printf      go to state 17
+    scanf       go to state 18
+    if_expr     go to state 19
+    while_expr  go to state 20
+    var_dec     go to state 21
+    list_asg    go to state 22
+
+
+State 74
+
+   45 expr: expr MOD . expr
+
+    INT              shift, and go to state 35
+    FLOAT            shift, and go to state 36
+    PLUS             shift, and go to state 37
+    SUB              shift, and go to state 38
+    NOTOP            shift, and go to state 39
+    VAR              shift, and go to state 40
+    OPENPARENTHESIS  shift, and go to state 41
+
+    expr  go to state 99
+    num   go to state 43
+
+
+State 75
+
+   20 while_expr: WHILE OPENPARENTHESIS expr CLOSEPARENTHESIS . cmd
+   21           | WHILE OPENPARENTHESIS expr CLOSEPARENTHESIS . OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    IF                 shift, and go to state 8
+    WHILE              shift, and go to state 9
+    INTD               shift, and go to state 10
+    FLOATD             shift, and go to state 11
+    SCAN               shift, and go to state 12
+    PRINT              shift, and go to state 13
+    VAR                shift, and go to state 14
+    OPENCURLYBRACKETS  shift, and go to state 100
+
+    cmd         go to state 101
+    printf      go to state 17
+    scanf       go to state 18
+    if_expr     go to state 19
+    while_expr  go to state 20
+    var_dec     go to state 21
+    list_asg    go to state 22
+
+
+State 76
+
+   28 list_var_int: VAR EQUAL expr . COMMA list_var_int
+   29             | VAR EQUAL expr .
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    PLUS   shift, and go to state 61
+    SUB    shift, and go to state 62
+    MUL    shift, and go to state 63
+    DIV    shift, and go to state 64
+    OR     shift, and go to state 65
+    AND    shift, and go to state 66
+    IGU    shift, and go to state 67
+    DIF    shift, and go to state 68
+    LES    shift, and go to state 69
+    LOQ    shift, and go to state 70
+    GRE    shift, and go to state 71
+    GOQ    shift, and go to state 72
+    COMMA  shift, and go to state 102
+    MOD    shift, and go to state 74
+
+    $default  reduce using rule 29 (list_var_int)
+
+
+State 77
+
+   27 list_var_int: VAR COMMA list_var_int .
+
+    $default  reduce using rule 27 (list_var_int)
+
+
+State 78
+
+   32 list_var_float: VAR EQUAL expr . COMMA list_var_float
+   33               | VAR EQUAL expr .
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    PLUS   shift, and go to state 61
+    SUB    shift, and go to state 62
+    MUL    shift, and go to state 63
+    DIV    shift, and go to state 64
+    OR     shift, and go to state 65
+    AND    shift, and go to state 66
+    IGU    shift, and go to state 67
+    DIF    shift, and go to state 68
+    LES    shift, and go to state 69
+    LOQ    shift, and go to state 70
+    GRE    shift, and go to state 71
+    GOQ    shift, and go to state 72
+    COMMA  shift, and go to state 103
+    MOD    shift, and go to state 74
+
+    $default  reduce using rule 33 (list_var_float)
+
+
+State 79
+
+   31 list_var_float: VAR COMMA list_var_float .
+
+    $default  reduce using rule 31 (list_var_float)
+
+
+State 80
+
+   12 scanf: SCAN OPENPARENTHESIS string COMMA . list_scan_var CLOSEPARENTHESIS SEMICOLON
+
+    '&'  shift, and go to state 104
+
+    list_scan_var  go to state 105
+
+
+State 81
+
+   11 printf: PRINT OPENPARENTHESIS string CLOSEPARENTHESIS . SEMICOLON
+
+    SEMICOLON  shift, and go to state 106
+
+
+State 82
+
+   10 printf: PRINT OPENPARENTHESIS string COMMA . list_print CLOSEPARENTHESIS SEMICOLON
+
+    VAR  shift, and go to state 107
+
+    list_print  go to state 108
+
+
+State 83
+
+   34 list_asg: VAR EQUAL expr COMMA . list_asg
+
+    VAR  shift, and go to state 14
+
+    list_asg  go to state 109
+
+
+State 84
+
+   40 expr: OPENPARENTHESIS expr CLOSEPARENTHESIS .
+
+    $default  reduce using rule 40 (expr)
+
+
+State 85
+
+   41 expr: expr . PLUS expr
+   41     | expr PLUS expr .
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    MUL  shift, and go to state 63
+    DIV  shift, and go to state 64
+    OR   shift, and go to state 65
+    AND  shift, and go to state 66
+    MOD  shift, and go to state 74
+
+    $default  reduce using rule 41 (expr)
+
+
+State 86
+
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   42     | expr SUB expr .
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    MUL  shift, and go to state 63
+    DIV  shift, and go to state 64
+    OR   shift, and go to state 65
+    AND  shift, and go to state 66
+    MOD  shift, and go to state 74
+
+    $default  reduce using rule 42 (expr)
+
+
+State 87
+
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   43     | expr MUL expr .
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    OR   shift, and go to state 65
+    AND  shift, and go to state 66
+
+    $default  reduce using rule 43 (expr)
+
+
+State 88
+
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   44     | expr DIV expr .
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    OR   shift, and go to state 65
+    AND  shift, and go to state 66
+
+    $default  reduce using rule 44 (expr)
+
+
+State 89
+
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   46     | expr OR expr .
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    $default  reduce using rule 46 (expr)
+
+
+State 90
+
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   47     | expr AND expr .
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    $default  reduce using rule 47 (expr)
+
+
+State 91
+
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   49     | expr IGU expr .
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    PLUS  shift, and go to state 61
+    SUB   shift, and go to state 62
+    MUL   shift, and go to state 63
+    DIV   shift, and go to state 64
+    OR    shift, and go to state 65
+    AND   shift, and go to state 66
+    MOD   shift, and go to state 74
+
+    $default  reduce using rule 49 (expr)
+
+
+State 92
+
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   50     | expr DIF expr .
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    PLUS  shift, and go to state 61
+    SUB   shift, and go to state 62
+    MUL   shift, and go to state 63
+    DIV   shift, and go to state 64
+    OR    shift, and go to state 65
+    AND   shift, and go to state 66
+    MOD   shift, and go to state 74
+
+    $default  reduce using rule 50 (expr)
+
+
+State 93
+
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   51     | expr LES expr .
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    PLUS  shift, and go to state 61
+    SUB   shift, and go to state 62
+    MUL   shift, and go to state 63
+    DIV   shift, and go to state 64
+    OR    shift, and go to state 65
+    AND   shift, and go to state 66
+    MOD   shift, and go to state 74
+
+    $default  reduce using rule 51 (expr)
+
+
+State 94
+
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   52     | expr LOQ expr .
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    PLUS  shift, and go to state 61
+    SUB   shift, and go to state 62
+    MUL   shift, and go to state 63
+    DIV   shift, and go to state 64
+    OR    shift, and go to state 65
+    AND   shift, and go to state 66
+    MOD   shift, and go to state 74
+
+    $default  reduce using rule 52 (expr)
+
+
+State 95
+
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   53     | expr GRE expr .
+   54     | expr . GOQ expr
+
+    PLUS  shift, and go to state 61
+    SUB   shift, and go to state 62
+    MUL   shift, and go to state 63
+    DIV   shift, and go to state 64
+    OR    shift, and go to state 65
+    AND   shift, and go to state 66
+    MOD   shift, and go to state 74
+
+    $default  reduce using rule 53 (expr)
+
+
+State 96
+
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+   54     | expr GOQ expr .
+
+    PLUS  shift, and go to state 61
+    SUB   shift, and go to state 62
+    MUL   shift, and go to state 63
+    DIV   shift, and go to state 64
+    OR    shift, and go to state 65
+    AND   shift, and go to state 66
+    MOD   shift, and go to state 74
+
+    $default  reduce using rule 54 (expr)
+
+
+State 97
+
+   16 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS . list CLOSECURLYBRACKETS
+   17        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS . list CLOSECURLYBRACKETS ELSE cmd
+   18        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS . list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    IF      shift, and go to state 8
+    WHILE   shift, and go to state 9
+    INTD    shift, and go to state 10
+    FLOATD  shift, and go to state 11
+    SCAN    shift, and go to state 12
+    PRINT   shift, and go to state 13
+    VAR     shift, and go to state 14
+
+    list        go to state 110
+    cmd         go to state 16
+    printf      go to state 17
+    scanf       go to state 18
+    if_expr     go to state 19
+    while_expr  go to state 20
+    var_dec     go to state 21
+    list_asg    go to state 22
+
+
+State 98
+
+   14 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd .
+   15        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd . ELSE cmd
+   19        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd . ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    ELSE  shift, and go to state 111
+
+    $default  reduce using rule 14 (if_expr)
+
+
+State 99
+
+   41 expr: expr . PLUS expr
+   42     | expr . SUB expr
+   43     | expr . MUL expr
+   44     | expr . DIV expr
+   45     | expr . MOD expr
+   45     | expr MOD expr .
+   46     | expr . OR expr
+   47     | expr . AND expr
+   49     | expr . IGU expr
+   50     | expr . DIF expr
+   51     | expr . LES expr
+   52     | expr . LOQ expr
+   53     | expr . GRE expr
+   54     | expr . GOQ expr
+
+    OR   shift, and go to state 65
+    AND  shift, and go to state 66
+
+    $default  reduce using rule 45 (expr)
+
+
+State 100
+
+   21 while_expr: WHILE OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS . list CLOSECURLYBRACKETS
+
+    IF      shift, and go to state 8
+    WHILE   shift, and go to state 9
+    INTD    shift, and go to state 10
+    FLOATD  shift, and go to state 11
+    SCAN    shift, and go to state 12
+    PRINT   shift, and go to state 13
+    VAR     shift, and go to state 14
+
+    list        go to state 112
+    cmd         go to state 16
+    printf      go to state 17
+    scanf       go to state 18
+    if_expr     go to state 19
+    while_expr  go to state 20
+    var_dec     go to state 21
+    list_asg    go to state 22
+
+
+State 101
+
+   20 while_expr: WHILE OPENPARENTHESIS expr CLOSEPARENTHESIS cmd .
+
+    $default  reduce using rule 20 (while_expr)
+
+
+State 102
+
+   28 list_var_int: VAR EQUAL expr COMMA . list_var_int
+
+    VAR  shift, and go to state 25
+
+    list_var_int  go to state 113
+
+
+State 103
+
+   32 list_var_float: VAR EQUAL expr COMMA . list_var_float
+
+    VAR  shift, and go to state 27
+
+    list_var_float  go to state 114
+
+
+State 104
+
+   22 list_scan_var: '&' . VAR COMMA list_scan_var
+   23              | '&' . VAR
+
+    VAR  shift, and go to state 115
+
+
+State 105
+
+   12 scanf: SCAN OPENPARENTHESIS string COMMA list_scan_var . CLOSEPARENTHESIS SEMICOLON
+
+    CLOSEPARENTHESIS  shift, and go to state 116
+
+
+State 106
+
+   11 printf: PRINT OPENPARENTHESIS string CLOSEPARENTHESIS SEMICOLON .
+
+    $default  reduce using rule 11 (printf)
+
+
+State 107
+
+   36 list_print: VAR . COMMA list_print
+   37           | VAR .
+
+    COMMA  shift, and go to state 117
+
+    $default  reduce using rule 37 (list_print)
+
+
+State 108
+
+   10 printf: PRINT OPENPARENTHESIS string COMMA list_print . CLOSEPARENTHESIS SEMICOLON
+
+    CLOSEPARENTHESIS  shift, and go to state 118
+
+
+State 109
+
+   34 list_asg: VAR EQUAL expr COMMA list_asg .
+
+    $default  reduce using rule 34 (list_asg)
+
+
+State 110
+
+   16 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list . CLOSECURLYBRACKETS
+   17        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list . CLOSECURLYBRACKETS ELSE cmd
+   18        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list . CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    CLOSECURLYBRACKETS  shift, and go to state 119
+
+
+State 111
+
+   15 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE . cmd
+   19        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE . OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    IF                 shift, and go to state 8
+    WHILE              shift, and go to state 9
+    INTD               shift, and go to state 10
+    FLOATD             shift, and go to state 11
+    SCAN               shift, and go to state 12
+    PRINT              shift, and go to state 13
+    VAR                shift, and go to state 14
+    OPENCURLYBRACKETS  shift, and go to state 120
+
+    cmd         go to state 121
+    printf      go to state 17
+    scanf       go to state 18
+    if_expr     go to state 19
+    while_expr  go to state 20
+    var_dec     go to state 21
+    list_asg    go to state 22
+
+
+State 112
+
+   21 while_expr: WHILE OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list . CLOSECURLYBRACKETS
+
+    CLOSECURLYBRACKETS  shift, and go to state 122
+
+
+State 113
+
+   28 list_var_int: VAR EQUAL expr COMMA list_var_int .
+
+    $default  reduce using rule 28 (list_var_int)
+
+
+State 114
+
+   32 list_var_float: VAR EQUAL expr COMMA list_var_float .
+
+    $default  reduce using rule 32 (list_var_float)
+
+
+State 115
+
+   22 list_scan_var: '&' VAR . COMMA list_scan_var
+   23              | '&' VAR .
+
+    COMMA  shift, and go to state 123
+
+    $default  reduce using rule 23 (list_scan_var)
+
+
+State 116
+
+   12 scanf: SCAN OPENPARENTHESIS string COMMA list_scan_var CLOSEPARENTHESIS . SEMICOLON
+
+    SEMICOLON  shift, and go to state 124
+
+
+State 117
+
+   36 list_print: VAR COMMA . list_print
+
+    VAR  shift, and go to state 107
+
+    list_print  go to state 125
+
+
+State 118
+
+   10 printf: PRINT OPENPARENTHESIS string COMMA list_print CLOSEPARENTHESIS . SEMICOLON
+
+    SEMICOLON  shift, and go to state 126
+
+
+State 119
+
+   16 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS .
+   17        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS . ELSE cmd
+   18        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS . ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    ELSE  shift, and go to state 127
+
+    $default  reduce using rule 16 (if_expr)
+
+
+State 120
+
+   19 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE OPENCURLYBRACKETS . list CLOSECURLYBRACKETS
+
+    IF      shift, and go to state 8
+    WHILE   shift, and go to state 9
+    INTD    shift, and go to state 10
+    FLOATD  shift, and go to state 11
+    SCAN    shift, and go to state 12
+    PRINT   shift, and go to state 13
+    VAR     shift, and go to state 14
+
+    list        go to state 128
+    cmd         go to state 16
+    printf      go to state 17
+    scanf       go to state 18
+    if_expr     go to state 19
+    while_expr  go to state 20
+    var_dec     go to state 21
+    list_asg    go to state 22
+
+
+State 121
+
+   15 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE cmd .
+
+    $default  reduce using rule 15 (if_expr)
+
+
+State 122
+
+   21 while_expr: WHILE OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS .
+
+    $default  reduce using rule 21 (while_expr)
+
+
+State 123
+
+   22 list_scan_var: '&' VAR COMMA . list_scan_var
+
+    '&'  shift, and go to state 104
+
+    list_scan_var  go to state 129
+
+
+State 124
+
+   12 scanf: SCAN OPENPARENTHESIS string COMMA list_scan_var CLOSEPARENTHESIS SEMICOLON .
+
+    $default  reduce using rule 12 (scanf)
+
+
+State 125
+
+   36 list_print: VAR COMMA list_print .
+
+    $default  reduce using rule 36 (list_print)
+
+
+State 126
+
+   10 printf: PRINT OPENPARENTHESIS string COMMA list_print CLOSEPARENTHESIS SEMICOLON .
+
+    $default  reduce using rule 10 (printf)
+
+
+State 127
+
+   17 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE . cmd
+   18        | IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE . OPENCURLYBRACKETS list CLOSECURLYBRACKETS
+
+    IF                 shift, and go to state 8
+    WHILE              shift, and go to state 9
+    INTD               shift, and go to state 10
+    FLOATD             shift, and go to state 11
+    SCAN               shift, and go to state 12
+    PRINT              shift, and go to state 13
+    VAR                shift, and go to state 14
+    OPENCURLYBRACKETS  shift, and go to state 130
+
+    cmd         go to state 131
+    printf      go to state 17
+    scanf       go to state 18
+    if_expr     go to state 19
+    while_expr  go to state 20
+    var_dec     go to state 21
+    list_asg    go to state 22
+
+
+State 128
+
+   19 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE OPENCURLYBRACKETS list . CLOSECURLYBRACKETS
+
+    CLOSECURLYBRACKETS  shift, and go to state 132
+
+
+State 129
+
+   22 list_scan_var: '&' VAR COMMA list_scan_var .
+
+    $default  reduce using rule 22 (list_scan_var)
+
+
+State 130
+
+   18 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS . list CLOSECURLYBRACKETS
+
+    IF      shift, and go to state 8
+    WHILE   shift, and go to state 9
+    INTD    shift, and go to state 10
+    FLOATD  shift, and go to state 11
+    SCAN    shift, and go to state 12
+    PRINT   shift, and go to state 13
+    VAR     shift, and go to state 14
+
+    list        go to state 133
+    cmd         go to state 16
+    printf      go to state 17
+    scanf       go to state 18
+    if_expr     go to state 19
+    while_expr  go to state 20
+    var_dec     go to state 21
+    list_asg    go to state 22
+
+
+State 131
+
+   17 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE cmd .
+
+    $default  reduce using rule 17 (if_expr)
+
+
+State 132
+
+   19 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS .
+
+    $default  reduce using rule 19 (if_expr)
+
+
+State 133
+
+   18 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list . CLOSECURLYBRACKETS
+
+    CLOSECURLYBRACKETS  shift, and go to state 134
+
+
+State 134
+
+   18 if_expr: IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS .
+
+    $default  reduce using rule 18 (if_expr)

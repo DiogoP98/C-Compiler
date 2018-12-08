@@ -207,7 +207,7 @@ Instr_List* compileExpression(Expr* expr){
             case MOD:
                 printf("%%:\n");
                 break;
-            case EQUAL:
+            case IGU:
                 printf("==:\n");
                 break;
             case DIF:
