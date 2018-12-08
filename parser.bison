@@ -417,6 +417,7 @@ num:
 %%
 
 void yyerror(const char* err) {
-  printf("Line %d: %s - '%s'\n", yyline, err, strdup(yytext));
+  fprintf(stderr, "Line %d: error: %s\n", yyline, err);
+  exit(1);
 }
 
