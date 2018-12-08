@@ -252,9 +252,12 @@ Instr_List* compileDeclaration(char* name) {
 
 Instr_List* compileAssignment(char* name, Expr* expression) {    
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
+
     l1 = mkList(mkInstr2(LDA, name),NULL);
     l1 = append(l1, compileExpression(expression));
     l1 = append(l1, mkList(mkInstr(STO, NULL),NULL));
+
+    printf("boassss\n");
 
     return l1;
 } 
@@ -275,10 +278,11 @@ Instr_List* compileAssignmentList(AsgList* asg_list) {
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
     if(assignmentList != NULL) {
-        l1 = compileAssignment(assignmentList->name,assignmentList->expression);
+        l1 = compileAssignment(assignmentList->name, assignmentList->expression);
     }
+    assignmentList = assignmentList->next;
     while(assignmentList != NULL) {
-        l1 = append(l1,compileAssignment(assignmentList->name,assignmentList->expression));
+        l1 = append(l1,compileAssignment(assignmentList->name, assignmentList->expression));
         assignmentList = assignmentList->next;
     }
 
@@ -294,9 +298,9 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
             case E_ASSIGNMENT:
                 l1 = compileAssignment(declList->name, declList->asg.expression);
                 break;
-            case E_DECLARATION:
+            /*case E_DECLARATION:
                 l1 = compileDeclaration(declList->name);
-                break;
+                break;*/
     }
 
     declList = declList->next;
@@ -306,10 +310,10 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
             case E_ASSIGNMENT:
                 l1 = append(l1,compileAssignment(declList->name, declList->asg.expression));
                 break;
-            case E_DECLARATION:
+            /*case E_DECLARATION:
                 l1 = append(l1,compileDeclaration(declList->name));
-                break;
-        } 
+                break;*/
+        }
 
         declList = declList->next;
     }
