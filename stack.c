@@ -131,15 +131,14 @@ Instr_List* compileExpression(Expr* expr){
     }
 
     if (expr->kind == E_NUM) {
-        NUMBER* n = expr->attr.arguments.number;
-        if(n->type == E_INTEGER)
-            return mkList(mkInstr(LDC, n->content.valuei), NULL);
+        if(expr->type == E_EXPR_INT)
+            return mkList(mkInstr(LDC, expr->attr.numberint), NULL);
         else
-            return mkList(mkInstr3(LDC, n->content.valuef), NULL);
+            return mkList(mkInstr3(LDC, expr->attr.numberfloat), NULL);
     }
 
     else if(expr->kind == E_VARIABLE) {
-        char* variable = expr->attr.arguments.variable;
+        char* variable = expr->attr.variable;
 
         return mkList(mkInstr2(LOD, variable), NULL);
     }
