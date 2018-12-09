@@ -318,6 +318,18 @@ Instr_List* compilePrintf(PRINTF_EXP* printf_expr){
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
     l1 = mkList(mkInstr2(WRI, printf_expr->string_of_types->types), NULL);
+    printfString[printCounts] = printf_expr->string_of_types->types;
+    
+    PrintVarsList* listPrint = printf_expr->vars;
+
+    while(listPrint != NULL) {
+        variablesPrint[printCounts][variablesPerPrint] = listPrint->name;
+        listPrint = listPrint->next;
+        variablesPerPrint++;
+    }
+
+    printCounts++;
+    variablesPerPrint = 0;
 
     return l1;
 }
@@ -845,6 +857,13 @@ int main(int argc, char** argv) {
     yyparse();
 
     LABEL_COUNT = 0;
+    printCounts = 0;
+    variablesPerPrint = 0;
+    printfString = (char**) malloc(MAXPRINTS * MAXPRINTS * sizeof(char));
+    variablesPrint = (char***) malloc(MAXPRINTS * sizeof(char**));
+
+    for(int i = 0; i < MAXPRINTS; i++) variablesPrint[i] = (char**) malloc(MAXPRINTS * MAXPRINTS * sizeof(char));
+
     Instr_List* l = compile(root);
     //printListIntrs(l);
     

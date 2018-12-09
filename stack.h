@@ -1,6 +1,7 @@
 #ifndef __stack_h__
 #define __stack_h__
 
+#define MAXPRINTS 50
 #include "ast.h"
 
 typedef enum {LDC, ADI, SBI, MPI, LOD, STO, FJP, GRT, UJP, LABEL, EQU, NEQ, LDA, IOR, NOT, WRI, SCANF} IKind;
@@ -24,7 +25,12 @@ typedef struct _Instr_List{
     struct _Instr_List* next;
 } Instr_List;
 
+char** printfString;
+char*** variablesPrint;
+
 unsigned int LABEL_COUNT;
+unsigned int printCounts;
+unsigned int variablesPerPrint;
 
 Instr* mkInstr(IKind kind, int n);
 Instr* mkInstr2(IKind kind, char* name);

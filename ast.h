@@ -132,19 +132,6 @@ struct _Expr {
   } attr;
 };
 
-struct _NUMBER {
-  enum { 
-    E_INTEGER,
-    E_FLOAT,
-  } type;
-
-  union {
-    int valuei;
-    float valuef;
-  } content;
-};
-
-
 typedef struct _CommandList CommandList;
 typedef struct _Command Command;
 typedef struct _IFexpression IFexpression;
