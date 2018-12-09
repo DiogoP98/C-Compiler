@@ -5,9 +5,7 @@
 #include <limits.h>
 #include "MIPS.h"
 
-
 int mipsLabel;
-
 
 Instr* mkInstr(IKind kind, int n) {
     Instr* node = (Instr*) malloc(sizeof(Instr)); 

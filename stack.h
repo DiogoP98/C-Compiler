@@ -35,6 +35,7 @@ char*** variablesPrint;
 unsigned int LABEL_COUNT;
 unsigned int printCounts;
 unsigned int variablesPerPrint;
+int mipsLabel;
 
 Instr* mkInstr(IKind kind, int n);
 Instr* mkInstr2(IKind kind, char* name);
