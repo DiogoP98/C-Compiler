@@ -4,83 +4,8 @@
 #include "parser.h"
 #include <limits.h>
 
-StackNode *stackRoot;
 
-StackNode* newNodeInt(int val) {
-    StackNode* stackNode = (StackNode*)malloc(sizeof(StackNode));
-
-    stackNode->type = INT;
-    stackNode->data.vali = val;
-    stackNode->next = NULL;
-    
-    return stackNode;
-}
-
-StackNode* newNodeFloat(float val) {
-    StackNode* stackNode = (StackNode*)malloc(sizeof(StackNode));
-
-    stackNode->type = FLOAT;
-    stackNode->data.valf = val;
-    stackNode->next = NULL;
-    
-    return stackNode;
-}
-
-int isEmpty(StackNode *root) {
-    return !root;
-}
-  
-void pushInt(StackNode** root, int data) {
-    StackNode* stackNode = newNodeInt(data);
-
-    stackNode->next = *root;
-    *root = stackNode;
-    
-    //printf("%d pushed to stack\n", data);
-}
-
-void pushFloat(StackNode** root, float data) {
-    StackNode* stackNode = newNodeFloat(data);
-
-    stackNode->next = *root;
-    *root = stackNode;
-    
-    //printf("%f pushed to stack\n", data);
-}
-  
-int popInt(StackNode** root) {
-    StackNode* temp = *root;
-
-    *root = (*root)->next;
-    int popped = temp->data.vali;
-    
-    free(temp);
-  
-    return popped;
-}
-
-float popFloat(StackNode** root) {
-    StackNode* temp = *root;
-
-    *root = (*root)->next;
-    float popped = temp->data.valf;
-    
-    free(temp);
-  
-    return popped;
-}
-  
-int peekType(StackNode* root) {
-    return root->type;
-}
-
-int peekInt(StackNode* root) {
-    return root->data.vali;
-}
-
-float peekFloat(StackNode* root) {
-    return root->data.valf;
-}
+int mipsLabel;
 
 
 Instr* mkInstr(IKind kind, int n) {
@@ -618,47 +543,119 @@ MipsInstr_list* compileMPI(){
 }
 
 MipsInstr_list* compileLOD(char *name){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
+    l1 = mkMipsList(mkMipsInstrE_I("la", "t0", name, 0), NULL);
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t1", "t0", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t1", "sp", 0), NULL));
+
+    return l1;
 }
 
 MipsInstr_list* compileSTO(){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "st", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "st", 4), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t0", "t1", 0), NULL));
+    
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(8), NULL));
+
+    return l1;
 }
 
-MipsInstr_list* compileFJP(char *label){
+MipsInstr_list* compileFJP(int label){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "t1", "", 0), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("beq", "t0", "t1", label), NULL));
+
+    return l1;
 }
 
 MipsInstr_list* compileGRT(){
 
 }
 
-MipsInstr_list* compileUJP(char *label){
-
+MipsInstr_list* compileUJP(int label){
+    return mkMipsList(mkMipsInstrE_J("j", label), NULL);
 }
 
-MipsInstr_list* compileLABEL(char *label){
-
+MipsInstr_list* compileLABEL(int label){
+    return mkMipsList(mkMipsInstrE_J("L", label), NULL);
 }
 
 MipsInstr_list* compileEQU(){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
+    
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("addu", "t2", "t0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("addui", "t2", "t2", 1), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
+
+    return l1;
 }
 
-MipsInstr_list* compileNEQ(){
 
+MipsInstr_list* compileNEQ(){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
+
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
+    
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("addu", "t2", "t0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("addui", "t2", "t2", 1), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
+
+    return l1;
 }
 
 MipsInstr_list* compileLDA(char *name){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
+    l1 = mkMipsList(mkMipsInstrE_I("la", "t0", name, 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t0", "sp", 0), NULL));
+
+    return l1;
 }
 
 MipsInstr_list* compileIOR(){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
+    
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("xor", "t2", "t0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
+
+    return l1;
 }
 
 MipsInstr_list* compileNOT(){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "t1", "", 0), NULL));
+    
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("nor", "t2", "t0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
+
+    return l1;
 }
 
 MipsInstr_list* compileWRI(char *name){
@@ -666,8 +663,20 @@ MipsInstr_list* compileWRI(char *name){
 }
 
 MipsInstr_list* compileSCANF(char *name){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
+    //if(checkExistence(name, SYMBOL_LIST))
+
+    l1 = mkMipsList(mkMipsInstrE_I("la", "t0", name, 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t0", "sp", 0), NULL));
+
+    return l1;
 }
+
+//li  $v0, 1           # service 1 is print integer
+//syscall
 
 
 MipsInstr_list* compilePCode(Instr* instr){
@@ -705,16 +714,16 @@ MipsInstr_list* compilePCode(Instr* instr){
             l1 = compileSTO();
             break;
         case FJP:
-            l1 = compileFJP(instr->arg.name);
+            l1 = compileFJP(instr->arg.argi);
             break;
         case GRT:
             l1 = compileGRT();
             break;
         case UJP:
-            l1 = compileUJP(instr->arg.name);
+            l1 = compileUJP(instr->arg.argi);
             break;
         case LABEL:
-            l1 = compileLABEL(instr->arg.name);
+            l1 = compileLABEL(instr->arg.argi);
             break;
         case EQU:
             l1 = compileEQU();
@@ -759,6 +768,43 @@ MipsInstr_list* compileInstrList(Instr_List* instrList){
     return l1;
 }
 
+void printMipsInstr(MipsInstr* instr) {
+    if (instr == NULL) {
+        yyerror("Null mips instruction!!");
+        return;
+    }
+
+    switch(instr->kind){
+        case E_R:
+            printf("%s %s %s %s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
+            break;
+        case E_I:
+            printf("%s %s %s %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1], instr->vars.IntInstr.val);
+            break;
+        case E_J:
+            printf("%s L%d\n", instr->Op, instr->vars.label);
+            break;
+        case E_FR:
+            printf("%s %s %s %s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
+            break;
+        case E_FI:
+            printf("%s %s %s %f\n", instr->Op, instr->vars.FloatInstr.addrs[0], instr->vars.FloatInstr.addrs[1], instr->vars.FloatInstr.val);
+            break;
+        default:
+            printf("Undefined mips instruction kind %d\n", instr->kind);
+    }
+}
+
+void printMipsInstrList(MipsInstr_list* list){
+    if(headMipsList(list) == NULL)
+        return;
+
+    printMipsInstr(headMipsList(list));
+    
+    if(tailMipsList(list) != NULL)
+        printMipsInstrList(tailMipsList(list));
+}
+
 
 int main(int argc, char** argv) {
     yyparse();
@@ -767,8 +813,9 @@ int main(int argc, char** argv) {
     Instr_List* l = compile(root);
     printListIntrs(l);
     
-    stackRoot = NULL;
+    mipsLabel = 0;
     MipsInstr_list* ml = compileInstrList(l);
+    printMipsInstrList(ml);
 
     return 0;
 }
