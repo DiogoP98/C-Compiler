@@ -167,7 +167,7 @@ MipsInstr_list* compileLOD(char *name){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
     l1 = mkMipsList(mkMipsInstrE_I("la", "t0", name, 0), NULL);
-    l1 = mkMipsList(mkMipsInstrE_I("lw", "t1", "t0", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "t0", 0), NULL));
     l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
 
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t1", "sp", 0), NULL));

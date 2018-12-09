@@ -3,5 +3,5 @@ int main() {
 
     scanf("%d %d", &a, &b);
 
-    int d;
+    int d = 2 + a;
 }
