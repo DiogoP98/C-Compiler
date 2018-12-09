@@ -2,11 +2,12 @@
 #define __stack_h__
 
 #define MAXPRINTS 50
+
 #include "ast.h"
 
 typedef enum {LDC, ADI, SBI, MPI, LOD, STO, FJP, GRT, UJP, LABEL, EQU, NEQ, LDA, IOR, NOT, WRI, SCANF} IKind;
 
-typedef struct _Instr{
+struct _Instr{
     enum {
         E_NAME,
         E_INT2,
@@ -18,12 +19,15 @@ typedef struct _Instr{
         float argf;
         int argi;
     } arg;
-} Instr;
+};
 
-typedef struct _Instr_List{
+struct _Instr_List{
     struct _Instr* instruction;
     struct _Instr_List* next;
-} Instr_List;
+};
+
+typedef struct _Instr_List Instr_List;
+typedef struct _Instr Instr;
 
 char** printfString;
 char*** variablesPrint;
@@ -49,43 +53,6 @@ Instr_List* compileAssignmentList(AsgList* asg_list);
 Instr_List* compileVarList(varList* list);
 Instr_List* compileWhile(WHILEexpression* while_expr);
 Instr_List* compileIf(IFexpression* if_expr);
-
-
-typedef struct _MipsInstr {
-    enum {
-        E_R,
-        E_I,
-        E_J,
-        E_FR,
-        E_FI,
-        E_SYSCALL
-    } kind;
-    
-    char Op[12];
-
-    union {
-        char addrs[3][3];
-        
-        struct {
-            char addrs[2][3];
-            int val;
-        } IntInstr;
-        
-        int label;
-
-        struct {
-            char addrs[2][3];
-            float val;
-        } FloatInstr;
-    } vars;
-} MipsInstr;
-
-typedef struct _MipsInstr_list {
-    struct _MipsInstr* instruction;
-    struct _MipsInstr_list* next;
-} MipsInstr_list;
-
-
 void printInstr(Instr* instr);
 void printListIntrs(Instr_List* list);
 

@@ -1,5 +1,5 @@
 
-OBJS=scanner.o parser.o ast.o stack.o symbol_table.o
+OBJS=scanner.o parser.o ast.o stack.o symbol_table.o MIPS.o
 INTERM=scanner.c parser.c parser.h 
 PROGRAM=./stack
 CFLAGS=-g
