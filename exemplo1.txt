@@ -1,9 +1,9 @@
 int main() {
     int a = 3, d;
 
-    b = 2;
-    
-    int a = 0;
+    scanf("%d %d", &a, &d);
+
+    int b = 2 + 3 * 4 + 5 + a;
     
     printf("%d", a);
 

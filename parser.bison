@@ -216,14 +216,12 @@ while_expr:
 
 list_scan_var:
   '&' VAR COMMA list_scan_var {
-    printf("aqui = %s\n", $2);
     if(checkExistence(strdup($2), SYMBOL_LIST) == -1) yyerror("Variable not declared!");
 
     $$ = ast_scanlist($2,$4);
   }
   |
   '&' VAR {
-    printf("aqui = %s\n", $2);
     if(checkExistence(strdup($2), SYMBOL_LIST) == -1) yyerror("Variable not declared!");
 
     $$ = ast_scanlist($2, NULL);
@@ -420,4 +418,3 @@ void yyerror(const char* err) {
   fprintf(stderr, "Line %d: error: %s\n", yyline, err);
   exit(1);
 }
-

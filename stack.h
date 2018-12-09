@@ -3,7 +3,7 @@
 
 #include "ast.h"
 
-typedef enum {LDC, ADI, SBI, MPI, LOD, STO, RDI, FJP, GRT, UJP, LABEL, EQU, NEQ, LDA, IOR, NOT, WRI, SCANF} IKind;
+typedef enum {LDC, ADI, SBI, MPI, LOD, STO, FJP, GRT, UJP, LABEL, EQU, NEQ, LDA, IOR, NOT, WRI, SCANF} IKind;
 
 typedef struct _Instr{
     enum {
@@ -46,8 +46,15 @@ Instr_List* compileIf(IFexpression* if_expr);
 
 
 
-typedef struct _StackNode { 
-    int data;
+typedef struct _StackNode {
+    enum {
+        S_INT,
+        S_FLOAT
+    } type;
+    union {
+        int vali;
+        float valf;
+    } data;
     struct _StackNode* next; 
 } StackNode;
 
@@ -67,27 +74,29 @@ typedef struct _MipsInstr {
         E_FI
     } kind;
     
-    enum {
-        ADD,
-        ADDI
-    } MipsKind;
+    char Op[6];
 
     union {
-        int addrs[3];
+        char addrs[3][3];
         
         struct {
-            int addrs[2];
+            char addrs[2][3];
             int val;
         } IntInstr;
         
-        char *label;
+        int label;
 
         struct {
-            int addrs[2];
+            char addrs[2][3];
             float val;
         } FloatInstr;
     } vars;
 } MipsInstr;
+
+typedef struct _MipsInstr_list {
+    struct _MipsInstr* instruction;
+    struct _MipsInstr_list* next;
+} MipsInstr_list;
 
 
 void printInstr(Instr* instr);
