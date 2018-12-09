@@ -115,16 +115,14 @@ struct _Expr {
   } kind;
 
   enum {
-    E_HAS,
-    E_HAS_NOT
-  } parenthesis;
+    E_EXPR_FLOAT,
+    E_EXPR_INT
+  } type;
 
   union {
-
-    union{
-      struct _NUMBER* number;
-      char* variable;
-    } arguments;
+    int numberint;
+    float numberfloat;
+    char* variable;
 
     struct { 
       int operator;
@@ -199,11 +197,10 @@ DeclarationList* ast_assignment(char* name, Expr* expression, DeclarationList* n
 AsgList* ast_assignmentList(char* name, Expr* expression, AsgList* next);
 
 //------- Expressions functions -------------
-NUMBER* ast_integer(int v);
-NUMBER* ast_float(float v);
-Expr* ast_number(NUMBER* m);
-Expr* ast_variable(char* v);
+Expr* ast_integer(int v);
+Expr* ast_float(float v);
+Expr* ast_variable_float(char* v);
+Expr* ast_variable_int(char* v);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
-Expr* ast_pexpr(Expr* expr);
 
 #endif

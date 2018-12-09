@@ -220,49 +220,45 @@ AsgList* ast_assignmentList(char* name, Expr* expression, AsgList* next) {
 }
 
 //------- Expressions functions -------------
-NUMBER* ast_integer(int v) {
-  NUMBER* node = (NUMBER*) malloc(sizeof(NUMBER));
-  node->content.valuei = v;
-  node->type = E_INTEGER;
-  return node;
-}
-
-NUMBER* ast_float(float v) {
-  NUMBER* node = (NUMBER*) malloc(sizeof(NUMBER));
-  node->content.valuef = v;
-  node->type = E_FLOAT;
-  return node;
-}
-
-Expr* ast_number(NUMBER* m) {
+Expr* ast_integer(int v) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
-  node->attr.arguments.number = m;
+  node->attr.numberint = v;
+  node->type = E_EXPR_INT;
   node->kind = E_NUM;
   return node;
 }
 
-Expr* ast_variable(char* v) {
+Expr* ast_float(float v) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
-  node->attr.arguments.variable = strdup(v);
+  node->attr.numberfloat = v;
+  node->type = E_EXPR_FLOAT;
+  node->kind = E_NUM;
+  return node;
+}
+
+Expr* ast_variable_int(char* v) {
+  Expr* node = (Expr*) malloc(sizeof(Expr));
+  node->attr.variable = strdup(v);
+  node->type = E_EXPR_INT;
+  node->kind = E_VARIABLE;
+  return node;
+}
+
+Expr* ast_variable_float(char* v) {
+  Expr* node = (Expr*) malloc(sizeof(Expr));
+  node->attr.variable = strdup(v);
+  node->type = E_EXPR_FLOAT;
   node->kind = E_VARIABLE;
   return node;
 }
 
 Expr* ast_operation(int operator, Expr* left, Expr* right) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
-  node->parenthesis = E_HAS_NOT;
   node->kind = E_OPERATION;
   node->attr.op.operator = operator;
   node->attr.op.left = left;
   node->attr.op.right = right;
+  node->type = left->type;
   return node;
 }
-
-Expr* ast_pexpr(Expr* expr) {
-  Expr* node = (Expr*) malloc(sizeof(Expr));
-  node = expr;
-  node->parenthesis = E_HAS;
-  return node;
-}
-
 

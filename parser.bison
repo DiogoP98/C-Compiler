@@ -68,7 +68,6 @@
   AsgList* asg_list;
   ScanDeclarationList* scan_list;
   Expr* exprValue;
-  NUMBER* number;
 }
 
 %type <intValue> INT
@@ -78,6 +77,7 @@
 %type <cmdType> cmd
 %type <commandList> list
 %type <exprValue> expr
+%type <exprValue> num
 %type <ifExpression> if_expr
 %type <whileExpression> while_expr
 %type <list_decl> list_var_int
@@ -88,7 +88,6 @@
 %type <scan_expr> scanf
 %type <varList> var_dec
 %type <string_types> string
-%type <number> num
 %type <asg_list> list_asg
 
 // Use "%code requires" to make declarations go
@@ -112,6 +111,9 @@ ItemsList* SYMBOL_LIST;
 
 int checkExistence(char* name, ItemsList* list);
 ItemsList* createItem(ItemsList* list, char* name, int type);
+
+void validate_expression_types(Expr* expr1, Expr* expr2);
+void validate_var(char* name, Expr* expr);
 }
 
 %%
@@ -241,25 +243,34 @@ var_dec:
 list_var_int:
   VAR {
     if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
-    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
     $$ = ast_declaration($1,NULL);
   }
   |
   VAR COMMA list_var_int {
     if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
-    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
     $$ = ast_declaration($1,$3);
   }
   |
   VAR EQUAL expr COMMA list_var_int{
     if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
-    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
+
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
+
+    if($3->type != 1) yyerror("Expression with wrong type!");
+
     $$ = ast_assignment($1, $3, $5);
   }
   |
   VAR EQUAL expr {
     if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
-    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
+
+    if($3->type != 1) yyerror("Expression with wrong type!");
 
     $$ = ast_assignment($1, $3, NULL);
   }
@@ -268,37 +279,47 @@ list_var_int:
 list_var_float:
   VAR {
     if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
-    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
     $$ = ast_declaration($1,NULL);
   }
   |
   VAR COMMA list_var_float {
     if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
-    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
     $$ = ast_declaration($1, $3);
   }
   |
   VAR EQUAL expr COMMA list_var_float{
     if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
-    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
+
+    if($3->type != 0) yyerror("Expression with wrong type!");
+
     $$ = ast_assignment($1, $3, $5);
   }
   |
   VAR EQUAL expr {
     if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
-    else SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
+
+    if($3->type != 0) yyerror("Expression with wrong type!");
+
     $$ = ast_assignment($1, $3, NULL);
   }
 ;
 
 list_asg: 
   VAR EQUAL expr COMMA list_asg{
-    if(checkExistence($1, SYMBOL_LIST) == -1) yyerror("Variable not declared!");
+    validate_var($1,$3);
     $$ = ast_assignmentList($1, $3, $5);
   }
   |
   VAR EQUAL expr {
-    if(checkExistence($1, SYMBOL_LIST) == -1) yyerror("Variable not declared!");
+    validate_var($1,$3);
     $$ = ast_assignmentList($1,$3, NULL);
   }
 ;
@@ -315,47 +336,49 @@ list_print:
 
     $$ = ast_printlist($1, NULL);
   }
+;
 
 expr: 
   num {
-    $$ = ast_number($1);
-  }
-  |
-  VAR {
-    if(checkExistence($1, SYMBOL_LIST) == -1) yyerror("Variable not declared!");
-
-    $$ = ast_variable($1);
+    $$ = $1;
   }
   |
   OPENPARENTHESIS expr CLOSEPARENTHESIS {
-    $$ = ast_pexpr($2);
+    $$ = $2;
   }
   |
   expr PLUS expr { 
+    validate_expression_types($1,$3);
     $$ = ast_operation(PLUS, $1, $3);
   }
   |
   expr SUB expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(SUB, $1, $3);
   }
   |
   expr MUL expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(MUL, $1, $3);
   } 
   |
   expr DIV expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(DIV, $1, $3);
   }
   |
   expr MOD expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(MOD, $1, $3);
   }
   |
   expr OR expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(OR, $1, $3);
   }
   |
   expr AND expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(AND, $1, $3);
   }
   |
@@ -364,26 +387,32 @@ expr:
   }
   |
   expr IGU expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(IGU, $1, $3);
   }
   |
   expr DIF expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(DIF, $1, $3);
   }
   |
   expr LES expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(LES, $1, $3);
   }
   |
   expr LOQ expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(LOQ, $1, $3);
   }
   |
   expr GRE expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(GRE, $1, $3);
   }
   |
   expr GOQ expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(GOQ, $1, $3);
   };
 
@@ -411,10 +440,33 @@ num:
   SUB FLOAT {
     $$ = ast_float(-$2);
   }
+  |
+  VAR {
+    int type = checkExistence($1, SYMBOL_LIST);
+
+    if(type == -1) yyerror("Variable not declared!");
+    else if(type == 0) $$ = ast_variable_float($1);
+    else $$ = ast_variable_int($1);
+
+  }
 ;
 %%
 
 void yyerror(const char* err) {
   fprintf(stderr, "Line %d: error: %s\n", yyline, err);
   exit(1);
+}
+
+void validate_expression_types(Expr* expr1, Expr* expr2) {
+  int type1 = expr1->type;
+  int type2 = expr2->type;
+
+  if(type1 != type2) yyerror("Operation between expression with different types!");
+}
+
+void validate_var(char* name, Expr* expr) {
+  int type = checkExistence(name, SYMBOL_LIST);
+
+  if (type == -1) yyerror("Variable not declared!");
+  else if(type != -1 && type != expr->type) yyerror("Expression with wrong type!");
 }
