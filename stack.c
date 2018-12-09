@@ -565,8 +565,8 @@ MipsInstr_list* compileLOD(char *name){
 MipsInstr_list* compileSTO(){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
-    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "st", 0), NULL);
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "st", 4), NULL));
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t0", "t1", 0), NULL));
     
     l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(8), NULL));
@@ -801,8 +801,12 @@ void printMipsInstr(MipsInstr* instr) {
         case E_I:
             if(!strcmp(instr->Op, "la"))
                 printf("%s $%s, %s\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1]);
-            if(!strcmp(instr->Op, "li"))
+            else if(!strcmp(instr->Op, "li"))
                 printf("%s $%s, %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.val);
+            else if(!strcmp(instr->Op, "sw") || !strcmp(instr->Op, "lw"))
+                printf("%s $%s, %d($%s)\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.val, instr->vars.IntInstr.addrs[1]);
+            else if(!strcmp(instr->Op, "beq"))
+                printf("%s $%s, $%s, L%d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1], instr->vars.IntInstr.val);
             else
                 printf("%s $%s, $%s, %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1], instr->vars.IntInstr.val);
             break;
