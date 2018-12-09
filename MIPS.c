@@ -377,7 +377,6 @@ MipsInstr_list* compilePCode(Instr* instr){
             l1 = compileWRI(instr->arg.name);
             break;
         case SCANF:
-            printf("here3\n");
             l1 = compileSCANF(instr->arg.name);
             break;
     }
