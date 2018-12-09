@@ -3,6 +3,9 @@ int main() {
 
     scanf("%d %d", &a, &d);
 
+    printf("%d %d", a, d);
+    printf("%d %d %d", a,d);
+
     int b = 2 + 3 * 4 + 5 + a;
 
     if(2)

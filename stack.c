@@ -852,6 +852,24 @@ void printMipsInstrList(MipsInstr_list* list){
         printMipsInstrList(tailMipsList(list));
 }
 
+void printfData(){
+    printf(".data\n");
+    ItemsList* vars = SYMBOL_LIST;
+
+    while(vars != NULL) {
+        printf("%s: .word\n", vars->item->key);
+        vars = vars->next;
+    }
+
+    for(int i = 0; i < printCounts; i++) {
+        printf("str%d: .asciiz %s\n", i+1, printfString[i]);
+    }
+
+    printf("\n\n"); 
+
+    printf(".text\n");
+}
+
 
 int main(int argc, char** argv) {
     yyparse();
@@ -869,6 +887,8 @@ int main(int argc, char** argv) {
     
     mipsLabel = 0;
     MipsInstr_list* ml = compileInstrList(l);
+
+    printfData();
     printMipsInstrList(ml);
 
     return 0;
