@@ -556,29 +556,65 @@ MipsInstr_list* compileLDCInt(int vali){
     l1 = mkMipsList(compileAlocateStack(-4), NULL);
 
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "t0", "", vali), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t0", "", "sp"), NULL));
-
-
-
-    l1 = mkList(mkInstr2(WRI, printf_expr->string_of_types->types), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t0", "sp", 0), NULL));
 
     return l1;
 }
 
 MipsInstr_list* compileLDCFloat(float valf){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
+    l1 = mkMipsList(compileAlocateStack(-4), NULL);
+
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_FI("l.s", "f0", "", valf), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_FI("s.s", "f0", "sp", 0), NULL));
+
+    return l1;
 }
 
 MipsInstr_list* compileADI(){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("add", "t2", "t0", "t1"), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
+
+    return l1;
 }
 
 MipsInstr_list* compileSBI(){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("sub", "t2", "t0", "t1"), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
+
+    return l1;
 }
 
 MipsInstr_list* compileMPI(){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("mul", "t2", "t0", "t1"), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
+
+    return l1;
 }
 
 MipsInstr_list* compileLOD(char *name){
@@ -717,7 +753,7 @@ MipsInstr_list* compileInstrList(Instr_List* instrList){
 
     while(instrList->next != NULL) { 
         instrList = instrList->next;
-        l1 = append(l1, compilePCode(instrList->instruction));
+        l1 = appendMipsList(l1, compilePCode(instrList->instruction));
     }
 
     return l1;
