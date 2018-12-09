@@ -4,8 +4,6 @@ int main() {
     scanf("%d %d", &a, &d);
 
     int b = 2 + 3 * 4 + 5 + a;
-    
-    printf("%d", a);
 
     if(2)
         a = 2;

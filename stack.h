@@ -45,36 +45,17 @@ Instr_List* compileWhile(WHILEexpression* while_expr);
 Instr_List* compileIf(IFexpression* if_expr);
 
 
-
-typedef struct _StackNode {
-    enum {
-        S_INT,
-        S_FLOAT
-    } type;
-    union {
-        int vali;
-        float valf;
-    } data;
-    struct _StackNode* next; 
-} StackNode;
-
-StackNode* newNode(int data);
-int isEmpty(StackNode *root);
-void push(StackNode** root, int data);
-int pop(StackNode** root);
-int peek(StackNode* root);
-
-
 typedef struct _MipsInstr {
     enum {
         E_R,
         E_I,
         E_J,
         E_FR,
-        E_FI
+        E_FI,
+        E_SYSCALL
     } kind;
     
-    char Op[6];
+    char Op[12];
 
     union {
         char addrs[3][3];

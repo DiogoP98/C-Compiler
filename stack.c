@@ -470,6 +470,15 @@ MipsInstr* mkMipsInstrE_FI(char op[6], char r1[3], char r2[3], float val) {
     return node;
 }
 
+MipsInstr* mkMipsInstrE_SYSCALL() {
+    MipsInstr* node = (MipsInstr*) malloc(sizeof(MipsInstr));
+
+    node->kind = E_SYSCALL;
+    strcpy(node->Op, "syscall");
+
+    return node;
+}
+
 MipsInstr* compileAlocateStack(int space){
     return mkMipsInstrE_I("addi", "sp", "sp", space);
 }
@@ -664,18 +673,30 @@ MipsInstr_list* compileWRI(char *name){
 MipsInstr_list* compileSCANF(char *name){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
-    //if(checkExistence(name, SYMBOL_LIST))
+    l1 = compileLDA(name);
 
-    l1 = mkMipsList(mkMipsInstrE_I("la", "t0", name, 0), NULL);
-    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
+    if(checkExistence(name, SYMBOL_LIST) == 0){
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 6), NULL));
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
 
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t0", "sp", 0), NULL));
+        l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
 
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "f0", "sp", 0), NULL));
+    }
+    else if(checkExistence(name, SYMBOL_LIST) == 1){
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 5), NULL));
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
+
+        l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
+
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "v0", "sp", 0), NULL));
+    }
+
+    l1 = appendMipsList(l1, compileLDA(name));
+    l1 = appendMipsList(l1, compileSTO());
+    
     return l1;
 }
-
-//li  $v0, 1           # service 1 is print integer
-//syscall
 
 
 MipsInstr_list* compilePCode(Instr* instr){
@@ -775,19 +796,30 @@ void printMipsInstr(MipsInstr* instr) {
 
     switch(instr->kind){
         case E_R:
-            printf("%s %s %s %s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
+            printf("%s $%s, $%s, $%s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
             break;
         case E_I:
-            printf("%s %s %s %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1], instr->vars.IntInstr.val);
+            if(!strcmp(instr->Op, "la"))
+                printf("%s $%s, %s\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1]);
+            if(!strcmp(instr->Op, "li"))
+                printf("%s $%s, %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.val);
+            else
+                printf("%s $%s, $%s, %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1], instr->vars.IntInstr.val);
             break;
         case E_J:
-            printf("%s L%d\n", instr->Op, instr->vars.label);
+            if(!strcmp(instr->Op, "L"))
+                printf("L%d:\n", instr->vars.label);
+            else
+                printf("%s L%d\n", instr->Op, instr->vars.label);
             break;
         case E_FR:
-            printf("%s %s %s %s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
+            printf("%s $%s, $%s, $%s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
             break;
         case E_FI:
-            printf("%s %s %s %f\n", instr->Op, instr->vars.FloatInstr.addrs[0], instr->vars.FloatInstr.addrs[1], instr->vars.FloatInstr.val);
+            printf("%s $%s, $%s, %f\n", instr->Op, instr->vars.FloatInstr.addrs[0], instr->vars.FloatInstr.addrs[1], instr->vars.FloatInstr.val);
+            break;
+        case E_SYSCALL:
+            printf("syscall\n");
             break;
         default:
             printf("Undefined mips instruction kind %d\n", instr->kind);
@@ -810,7 +842,7 @@ int main(int argc, char** argv) {
 
     LABEL_COUNT = 0;
     Instr_List* l = compile(root);
-    printListIntrs(l);
+    //printListIntrs(l);
     
     mipsLabel = 0;
     MipsInstr_list* ml = compileInstrList(l);
