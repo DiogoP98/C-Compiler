@@ -4,6 +4,7 @@
 #include "parser.h"
 
 MipsInstr* headMipsList(MipsInstr_list* l) {
+    printf("here3");
     return l->instruction;
 }
 
@@ -377,6 +378,7 @@ MipsInstr_list* compilePCode(Instr* instr){
             l1 = compileWRI(instr->arg.name);
             break;
         case SCANF:
+            printf("here3\n");
             l1 = compileSCANF(instr->arg.name);
             break;
     }
@@ -388,7 +390,7 @@ MipsInstr_list* compilePCode(Instr* instr){
 MipsInstr_list* compileInstrList(Instr_List* instrList){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
-    if(instrList->instruction == NULL) 
+    if(head(instrList) == NULL) 
         return NULL;
 
     l1 = compilePCode(instrList->instruction);
@@ -397,7 +399,7 @@ MipsInstr_list* compileInstrList(Instr_List* instrList){
         instrList = instrList->next;
         l1 = appendMipsList(l1, compilePCode(instrList->instruction));
     }
-
+    
     return l1;
 }
 
@@ -456,7 +458,7 @@ void printMipsInstrList(MipsInstr_list* list, FILE* file){
 void printfData(FILE* file){
     fprintf(file,".data\n");
     ItemsList* vars = SYMBOL_LIST;
-
+    
     while(vars != NULL) {
         fprintf(file,"%s: .word\n", vars->item->key);
         vars = vars->next;

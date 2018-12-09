@@ -416,7 +416,10 @@ int main(int argc, char** argv) {
     MipsInstr_list* ml = compileInstrList(l);
 
     printfData(f);
+
     printMipsInstrList(ml,f);
+
+    fclose(f);
 
     return 0;
 }
