@@ -305,7 +305,7 @@ MipsInstr_list* compileSCANF(char *name){
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "v0", "sp", 0), NULL));
     }
 
-    l1 = appendMipsList(l1, compileLDA(name));
+    //l1 = appendMipsList(l1, compileLDA(name));
     l1 = appendMipsList(l1, compileSTO());
     
     return l1;

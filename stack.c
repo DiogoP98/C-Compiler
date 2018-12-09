@@ -201,7 +201,7 @@ Instr_List* compileDeclaration(char* name) {
 
     l1 = mkList(mkInstr2(LDA, name),NULL);
 
-    return l1;
+    return NULL;
 }
 
 Instr_List* compileAssignment(char* name, Expr* expression) {    
@@ -410,7 +410,7 @@ int main(int argc, char** argv) {
     for(int i = 0; i < MAXPRINTS; i++) variablesPrint[i] = (char**) malloc(MAXPRINTS * MAXPRINTS * sizeof(char));
 
     Instr_List* l = compile(root);
-    //printListIntrs(l);
+    printListIntrs(l);
     
     mipsLabel = 0;
     MipsInstr_list* ml = compileInstrList(l);
