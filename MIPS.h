@@ -73,8 +73,8 @@ MipsInstr_list* compileWRI(char *name); //ESTE TAMBEM
 MipsInstr_list* compileSCANF(char *name);
 MipsInstr_list* compilePCode(Instr* instr);
 MipsInstr_list* compileInstrList(Instr_List* instrList);
-void printMipsInstr(MipsInstr* instr);
-void printMipsInstrList(MipsInstr_list* list);
-void printfData();
+void printMipsInstr(MipsInstr* instr, FILE* file);
+void printMipsInstrList(MipsInstr_list* list, FILE* file);
+void printfData(FILE* file);
 
 #endif

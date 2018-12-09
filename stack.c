@@ -398,6 +398,7 @@ Instr_List* compile(CommandList* list) {
 }
 
 int main(int argc, char** argv) {
+    FILE *f = fopen("MIPS.asm", "w");
     yyparse();
 
     LABEL_COUNT = 0;
@@ -414,8 +415,8 @@ int main(int argc, char** argv) {
     mipsLabel = 0;
     MipsInstr_list* ml = compileInstrList(l);
 
-    printfData();
-    printMipsInstrList(ml);
+    printfData(f);
+    printMipsInstrList(ml,f);
 
     return 0;
 }

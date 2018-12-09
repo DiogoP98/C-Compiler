@@ -401,7 +401,7 @@ MipsInstr_list* compileInstrList(Instr_List* instrList){
     return l1;
 }
 
-void printMipsInstr(MipsInstr* instr) {
+void printMipsInstr(MipsInstr* instr, FILE* file) {
     if (instr == NULL) {
         yyerror("Null mips instruction!!");
         return;
@@ -409,64 +409,64 @@ void printMipsInstr(MipsInstr* instr) {
 
     switch(instr->kind){
         case E_R:
-            printf("%s $%s, $%s, $%s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
+            fprintf(file,"%s $%s, $%s, $%s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
             break;
         case E_I:
             if(!strcmp(instr->Op, "la"))
-                printf("%s $%s, %s\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1]);
+                fprintf(file,"%s $%s, %s\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1]);
             else if(!strcmp(instr->Op, "li"))
-                printf("%s $%s, %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.val);
+                fprintf(file,"%s $%s, %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.val);
             else if(!strcmp(instr->Op, "sw") || !strcmp(instr->Op, "lw"))
-                printf("%s $%s, %d($%s)\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.val, instr->vars.IntInstr.addrs[1]);
+                fprintf(file,"%s $%s, %d($%s)\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.val, instr->vars.IntInstr.addrs[1]);
             else if(!strcmp(instr->Op, "beq"))
-                printf("%s $%s, $%s, L%d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1], instr->vars.IntInstr.val);
+                fprintf(file,"%s $%s, $%s, L%d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1], instr->vars.IntInstr.val);
             else
-                printf("%s $%s, $%s, %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1], instr->vars.IntInstr.val);
+                fprintf(file,"%s $%s, $%s, %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1], instr->vars.IntInstr.val);
             break;
         case E_J:
             if(!strcmp(instr->Op, "L"))
-                printf("L%d:\n", instr->vars.label);
+                fprintf(file,"L%d:\n", instr->vars.label);
             else
-                printf("%s L%d\n", instr->Op, instr->vars.label);
+                fprintf(file,"%s L%d\n", instr->Op, instr->vars.label);
             break;
         case E_FR:
-            printf("%s $%s, $%s, $%s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
+            fprintf(file,"%s $%s, $%s, $%s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
             break;
         case E_FI:
-            printf("%s $%s, $%s, %f\n", instr->Op, instr->vars.FloatInstr.addrs[0], instr->vars.FloatInstr.addrs[1], instr->vars.FloatInstr.val);
+            fprintf(file,"%s $%s, $%s, %f\n", instr->Op, instr->vars.FloatInstr.addrs[0], instr->vars.FloatInstr.addrs[1], instr->vars.FloatInstr.val);
             break;
         case E_SYSCALL:
-            printf("syscall\n");
+            fprintf(file,"syscall\n");
             break;
         default:
-            printf("Undefined mips instruction kind %d\n", instr->kind);
+            fprintf(file,"Undefined mips instruction kind %d\n", instr->kind);
     }
 }
 
-void printMipsInstrList(MipsInstr_list* list){
+void printMipsInstrList(MipsInstr_list* list, FILE* file){
     if(headMipsList(list) == NULL)
         return;
 
-    printMipsInstr(headMipsList(list));
+    printMipsInstr(headMipsList(list), file);
     
     if(tailMipsList(list) != NULL)
-        printMipsInstrList(tailMipsList(list));
+        printMipsInstrList(tailMipsList(list), file);
 }
 
-void printfData(){
-    printf(".data\n");
+void printfData(FILE* file){
+    fprintf(file,".data\n");
     ItemsList* vars = SYMBOL_LIST;
 
     while(vars != NULL) {
-        printf("%s: .word\n", vars->item->key);
+        fprintf(file,"%s: .word\n", vars->item->key);
         vars = vars->next;
     }
 
     for(int i = 0; i < printCounts; i++) {
-        printf("str%d: .asciiz %s\n", i+1, printfString[i]);
+        fprintf(file,"str%d: .asciiz %s\n", i+1, printfString[i]);
     }
 
-    printf("\n\n"); 
+    fprintf(file,"\n\n"); 
 
-    printf(".text\n");
+    fprintf(file, ".text\n");
 }
