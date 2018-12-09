@@ -4,7 +4,6 @@
 #include "parser.h"
 
 MipsInstr* headMipsList(MipsInstr_list* l) {
-    printf("here3");
     return l->instruction;
 }
 
@@ -390,8 +389,9 @@ MipsInstr_list* compilePCode(Instr* instr){
 MipsInstr_list* compileInstrList(Instr_List* instrList){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
-    if(head(instrList) == NULL) 
-        return NULL;
+    if(head(instrList) == NULL) {
+        return l1 = NULL;
+    }
 
     l1 = compilePCode(instrList->instruction);
 
@@ -399,7 +399,7 @@ MipsInstr_list* compileInstrList(Instr_List* instrList){
         instrList = instrList->next;
         l1 = appendMipsList(l1, compilePCode(instrList->instruction));
     }
-    
+
     return l1;
 }
 

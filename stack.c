@@ -250,9 +250,9 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
             case E_ASSIGNMENT:
                 l1 = compileAssignment(declList->name, declList->asg.expression);
                 break;
-            /*case E_DECLARATION:
+            case E_DECLARATION:
                 l1 = compileDeclaration(declList->name);
-                break;*/
+                break;
     }
 
     declList = declList->next;
@@ -262,9 +262,9 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
             case E_ASSIGNMENT:
                 l1 = append(l1,compileAssignment(declList->name, declList->asg.expression));
                 break;
-            /*case E_DECLARATION:
+            case E_DECLARATION:
                 l1 = append(l1,compileDeclaration(declList->name));
-                break;*/
+                break;
         }
 
         declList = declList->next;
