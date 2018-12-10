@@ -69,6 +69,9 @@ void printInstr(Instr* instr) {
                 case E_FLOAT2:
                     printf("LDC %f\n", instr->arg.argf);
                     break;
+                default:
+                    printf("LDC bad done");
+                    break;
             }
             break;
         case ADI:
@@ -244,7 +247,7 @@ Instr_List* compileDeclaration(char* name) {
 
     l1 = mkList(mkInstr2(LDA, name),NULL);
 
-    return NULL;
+    return l1;
 }
 
 Instr_List* compileAssignment(char* name, Expr* expression) {    
@@ -258,8 +261,6 @@ Instr_List* compileAssignment(char* name, Expr* expression) {
 } 
 
 Instr_List* compileVarList(varList* list) {
-    varList* varList = list;
-
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
     l1 = compileDeclarationList(list->list);
@@ -293,8 +294,8 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
             case E_ASSIGNMENT:
                 l1 = compileAssignment(declList->name, declList->asg.expression);
                 break;
-            case E_DECLARATION:
-                l1 = compileDeclaration(declList->name);
+            default:
+                printf("we cant compile a declaration\n");
                 break;
     }
 
@@ -305,8 +306,8 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
             case E_ASSIGNMENT:
                 l1 = append(l1,compileAssignment(declList->name, declList->asg.expression));
                 break;
-            case E_DECLARATION:
-                l1 = append(l1,compileDeclaration(declList->name));
+            default:
+                printf("we cant compile a declaration\n");
                 break;
         }
 
@@ -360,7 +361,7 @@ Instr_List* compilePrintf(PRINTF_EXP* printf_expr){
 
     char *name = (char *)malloc(sizeof(char)*6);
     strcpy(name, "str");
-    sprintf(name+3, "%d\0", printCounts+1);
+    sprintf(name+3, "%d", printCounts+1);
 
     l1 = mkList(mkInstr2(WRI, name), NULL);
     

@@ -379,6 +379,8 @@ MipsInstr_list* compilePCode(Instr* instr){
                 case E_FLOAT2:
                     l1 = compileLDCFloat(instr->arg.argf);
                     break;
+                default:
+                    l1 = NULL;
             }
             break;
         case ADI:
@@ -447,6 +449,8 @@ MipsInstr_list* compilePCode(Instr* instr){
         case SCANF:
             l1 = compileSCANF(instr->arg.name);
             break;
+        default:
+            l1 = NULL;
     }
 
     return l1;
