@@ -22,7 +22,7 @@ la $t0, b
 addi $sp, $sp, -4
 sw $t0, 0($sp)
 addi $sp, $sp, -4
-li $t0, 2
+li $t0, 5
 sw $t0, 0($sp)
 lw $t0, 0($sp)
 lw $t1, 4($sp)
@@ -32,7 +32,7 @@ la $t0, d
 addi $sp, $sp, -4
 sw $t0, 0($sp)
 addi $sp, $sp, -4
-li $t0, 2
+li $t0, 4
 sw $t0, 0($sp)
 lw $t0, 0($sp)
 lw $t1, 4($sp)
@@ -47,9 +47,8 @@ li $t0, 6
 sw $t0, 0($sp)
 lw $t0, 0($sp)
 lw $t1, 4($sp)
-addi $sp, $sp, 4
-slt $t0, $, $
-sw $t2, 0($sp)
+addi $sp, $sp, 8
+ble $t0, $t1, L0
 la $t0, d
 addi $sp, $sp, -4
 sw $t0, 0($sp)

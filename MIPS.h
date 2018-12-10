@@ -18,7 +18,7 @@ struct _MipsInstr {
     char Op[12];
 
     union {
-        char addrs[3][3];
+        char addrs[3][50];
         
         struct {
             char addrs[2][50];
@@ -60,12 +60,12 @@ MipsInstr_list* compileSBI();
 MipsInstr_list* compileMPI();
 MipsInstr_list* compileDVI();
 MipsInstr_list* compileMOD();
-MipsInstr_list* compileEQUc();
-MipsInstr_list* compileNEQc();
-MipsInstr_list* compileLESc();
-MipsInstr_list* compileLEQc();
-MipsInstr_list* compileGETc();
-MipsInstr_list* compileGEQc();
+MipsInstr_list* compileEQUc(int label);
+MipsInstr_list* compileNEQc(int label);
+MipsInstr_list* compileLESc(int label);
+MipsInstr_list* compileLEQc(int label);
+MipsInstr_list* compileGETc(int label);
+MipsInstr_list* compileGEQc(int label);
 MipsInstr_list* compileIOR();
 MipsInstr_list* compileAND();
 MipsInstr_list* compileNOT();
