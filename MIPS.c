@@ -163,6 +163,90 @@ MipsInstr_list* compileMPI(){
     return l1;
 }
 
+MipsInstr_list* compileDVI() {
+
+}
+
+MipsInstr_list* compileMOD() {
+
+}
+
+MipsInstr_list* compileEQUc() {
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
+
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
+    
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("addu", "t2", "t0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("addui", "t2", "t2", 1), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
+
+    return l1;
+}
+
+MipsInstr_list* compileNEQc() {
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
+
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
+    
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("addu", "t2", "t0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("addui", "t2", "t2", 1), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
+
+    return l1;
+}
+
+MipsInstr_list* compileLESc() {
+
+}
+
+MipsInstr_list* compileLEQc() {
+
+}
+
+MipsInstr_list* compileGETc() {
+
+}
+
+MipsInstr_list* compileGEQc() {
+
+}
+
+MipsInstr_list* compileIOR(){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
+
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
+    
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("xor", "t2", "t0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
+
+    return l1;
+}
+
+MipsInstr_list* compileAND() {
+
+}
+
+MipsInstr_list* compileNOT(){
+    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
+
+    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "t1", "", 0), NULL));
+    
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("nor", "t2", "t0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
+
+    return l1;
+}
+
 MipsInstr_list* compileLOD(char *name){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
@@ -199,47 +283,12 @@ MipsInstr_list* compileFJP(int label){
     return l1;
 }
 
-MipsInstr_list* compileGRT(){
-
-}
-
 MipsInstr_list* compileUJP(int label){
     return mkMipsList(mkMipsInstrE_J("j", label), NULL);
 }
 
 MipsInstr_list* compileLABEL(int label){
     return mkMipsList(mkMipsInstrE_J("L", label), NULL);
-}
-
-MipsInstr_list* compileEQU(){
-    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
-
-    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
-
-    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
-    
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("addu", "t2", "t0", "t1"), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("addui", "t2", "t2", 1), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
-
-    return l1;
-}
-
-
-MipsInstr_list* compileNEQ(){
-    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
-
-    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
-
-    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
-    
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("addu", "t2", "t0", "t1"), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("addui", "t2", "t2", 1), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
-
-    return l1;
 }
 
 MipsInstr_list* compileLDA(char *name){
@@ -249,32 +298,6 @@ MipsInstr_list* compileLDA(char *name){
     l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
 
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t0", "sp", 0), NULL));
-
-    return l1;
-}
-
-MipsInstr_list* compileIOR(){
-    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
-
-    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
-
-    l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
-    
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("xor", "t2", "t0", "t1"), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
-
-    return l1;
-}
-
-MipsInstr_list* compileNOT(){
-    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
-
-    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "t1", "", 0), NULL));
-    
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("nor", "t2", "t0", "t1"), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
 
     return l1;
 }
@@ -409,9 +432,6 @@ MipsInstr_list* compilePCode(Instr* instr){
             break;
         case FJP:
             l1 = compileFJP(instr->arg.argi);
-            break;
-        case GRT:
-            l1 = compileGRT();
             break;
         case UJP:
             l1 = compileUJP(instr->arg.argi);

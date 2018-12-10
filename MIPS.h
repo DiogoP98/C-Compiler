@@ -58,17 +58,23 @@ MipsInstr_list* compileLDCFloat(float valf);
 MipsInstr_list* compileADI();
 MipsInstr_list* compileSBI();
 MipsInstr_list* compileMPI();
+MipsInstr_list* compileDVI();
+MipsInstr_list* compileMOD();
+MipsInstr_list* compileEQUc();
+MipsInstr_list* compileNEQc();
+MipsInstr_list* compileLESc();
+MipsInstr_list* compileLEQc();
+MipsInstr_list* compileGETc();
+MipsInstr_list* compileGEQc();
+MipsInstr_list* compileIOR();
+MipsInstr_list* compileAND();
+MipsInstr_list* compileNOT();
 MipsInstr_list* compileLOD(char *name);
 MipsInstr_list* compileSTO();
 MipsInstr_list* compileFJP(int label);
-MipsInstr_list* compileGRT(); //FALTA FAZER ESTE
 MipsInstr_list* compileUJP(int label);
 MipsInstr_list* compileLABEL(int label);
-MipsInstr_list* compileEQU();
-MipsInstr_list* compileNEQ();
 MipsInstr_list* compileLDA(char *name);
-MipsInstr_list* compileIOR();
-MipsInstr_list* compileNOT();
 MipsInstr_list* compileWRI(char *name); //ESTE TAMBEM
 MipsInstr_list* compileSCANF(char *name);
 MipsInstr_list* compilePCode(Instr* instr);
