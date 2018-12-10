@@ -324,10 +324,10 @@ Instr_List* compileIf(IFexpression* if_expr) {
         l1 = compileExpression(if_expr->content.if_type.expr);
         l1 = append(l1, compile(if_expr->content.if_type.list));
         l1 = append(l1, mkList(mkInstr(LABEL, LABEL_COUNT), NULL));
+        LABEL_COUNT++;
     }
     else {
         l1 = compileExpression(if_expr->content.if_else_type.expr);
-        l1 = append(l1, mkList(mkInstr(FJP, LABEL_COUNT), NULL));
         l1 = append(l1, compile(if_expr->content.if_else_type.list));
         l1 = append(l1, mkList(mkInstr(UJP, LABEL_COUNT+1), NULL)); 
         l1 = append(l1, mkList(mkInstr(LABEL,LABEL_COUNT), NULL));
@@ -346,10 +346,10 @@ Instr_List* compileWhile(WHILEexpression* while_expr){
     l1 = mkList(mkInstr(LABEL, LABEL_COUNT), NULL);
     LABEL_COUNT++;
     l1 = append(l1, compileExpression(while_expr->expr));
-    l1 = append(l1, mkList(mkInstr(FJP, LABEL_COUNT), NULL));
     l1 = append(l1, compile(while_expr->list));
     l1 = append(l1, mkList(mkInstr(UJP, LABEL_COUNT-1), NULL));
     l1 = append(l1, mkList(mkInstr(LABEL, LABEL_COUNT), NULL));
+    LABEL_COUNT++;
 
     return l1;
 }
