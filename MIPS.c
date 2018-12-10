@@ -396,7 +396,7 @@ MipsInstr_list* compilePCode(Instr* instr){
         case MODULE: // %
             l1 = compileMOD();
             break;
-        case EQUc: // ==
+        case EQUJ: // ==
             l1 = compileEQUc();
             break;
         case NEQc: // !=
