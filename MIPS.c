@@ -553,8 +553,7 @@ void printfData(FILE* file){
     ItemsList* vars = SYMBOL_LIST;
     
     while(vars != NULL) {
-        if(vars->item->type == 1) fprintf(file,"%s: .word 0\n", vars->item->key);
-        else if(vars->item->type == 0) fprintf(file,"%s: .word 0.0\n", vars->item->key);
+        fprintf(file,"%s: .word 0\n", vars->item->key);
         vars = vars->next;
     }
 
