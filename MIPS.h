@@ -21,14 +21,14 @@ struct _MipsInstr {
         char addrs[3][3];
         
         struct {
-            char addrs[2][3];
+            char addrs[2][50];
             int val;
         } IntInstr;
         
         int label;
 
         struct {
-            char addrs[2][3];
+            char addrs[2][50];
             float val;
         } FloatInstr;
     } vars;

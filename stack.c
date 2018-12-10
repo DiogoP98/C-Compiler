@@ -295,7 +295,6 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
                 l1 = compileAssignment(declList->name, declList->asg.expression);
                 break;
             default:
-                printf("we cant compile a declaration\n");
                 break;
     }
 
@@ -307,7 +306,6 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
                 l1 = append(l1,compileAssignment(declList->name, declList->asg.expression));
                 break;
             default:
-                printf("we cant compile a declaration\n");
                 break;
         }
 
