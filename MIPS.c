@@ -314,8 +314,11 @@ MipsInstr_list* compileIOR(){
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "sp", 4), NULL));
 
     l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
-    
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("xor", "t2", "t0", "t1"), NULL));
+
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("sne", "t1", "t1", "zero"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("sne", "t2", "t2", "zero"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("or", "t2", "t2", "t1"), NULL));
+
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
 
     return l1;
