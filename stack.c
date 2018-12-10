@@ -80,6 +80,39 @@ void printInstr(Instr* instr) {
         case MPI:
             printf("MPI\n");
             break;
+        case DIVOP:
+            printf("DIV\n");
+            break;
+        case MODULE: // %
+            printf("MOD\n");
+            break;
+        case EQUc: // ==
+            printf("EQUc\n");
+            break;
+        case NEQc: // !=
+            printf("NEQc\n");
+            break;
+        case LESc: // <
+            printf("LESc\n");    
+            break;
+        case LEQc: // <=
+            printf("LEQc\n");
+            break;
+        case GETc: // >
+            printf("GETc\n");
+            break;
+        case GEQc: // >=
+            printf("GEQc\n");
+            break;
+        case IOR: // ||
+            printf("IOR\n");
+            break;
+        case AND: // &&
+            printf("AND\n");
+            break;
+        case NOT: // !
+            printf("NOT\n");
+            break;
         case STO:
             printf("STO\n");
             break;
@@ -156,7 +189,7 @@ Instr_List* compileExpression(Expr* expr){
                 break;
             case DIV:// /
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(DIV,0),NULL));
+                l1 = append(l1, mkList(mkInstr(DIVOP,0),NULL));
                 break;
             case MOD: // %
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
@@ -192,7 +225,7 @@ Instr_List* compileExpression(Expr* expr){
                 break;
             case AND: // &&
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(AND,0),NULL));
+                l1 = append(l1, mkList(mkInstr(ANDOP,0),NULL));
                 break;
             case NOTOP: // !
                 l1 = compileExpression(expr->attr.op.left);

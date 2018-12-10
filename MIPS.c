@@ -391,7 +391,7 @@ MipsInstr_list* compilePCode(Instr* instr){
         case MPI:
             l1 = compileMPI();
             break;
-        case DIV:
+        case DIVOP:
             l1 = compileDVI();
             break;
         case MODULE: // %
@@ -418,7 +418,7 @@ MipsInstr_list* compilePCode(Instr* instr){
         case IOR: // ||
             l1 = compileIOR();
             break;
-        case AND: // &&
+        case ANDOP: // &&
             l1 = compileAND();
             break;
         case NOT: // !
