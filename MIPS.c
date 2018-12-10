@@ -179,8 +179,7 @@ MipsInstr_list* compileEQUc() {
 
     l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
     
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("addu", "t2", "t0", "t1"), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("addui", "t2", "t2", 1), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("slt", "t2", "t0", "t1"), NULL));
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
 
     return l1;
@@ -195,7 +194,7 @@ MipsInstr_list* compileNEQc() {
     l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
     
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("addu", "t2", "t0", "t1"), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("addui", "t2", "t2", 1), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("addiu", "t2", "t2", 1), NULL));
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
 
     return l1;

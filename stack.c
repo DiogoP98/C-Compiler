@@ -369,8 +369,7 @@ Instr_List* compilePrintf(PRINTF_EXP* printf_expr){
 
     while(listPrint != NULL) {
         variablesPrint[printCounts][variablesPerPrint] = listPrint->name;
-        strcpy(name, listPrint->name);
-        l1 = append(l1, mkList(mkInstr2(WRI, name), NULL));
+        l1 = append(l1, mkList(mkInstr2(WRI, listPrint->name), NULL));
         listPrint = listPrint->next;
         variablesPerPrint++;
     }
