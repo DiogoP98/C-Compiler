@@ -8,6 +8,16 @@ b: .word
 la $t0, a
 addi $sp, $sp, -4
 sw $t0, 0($sp)
+addi $sp, $sp, -4
+li $t0, 3
+sw $t0, 0($sp)
+lw $t0, 0($sp)
+lw $t1, 4($sp)
+sw $t0, 0($t1)
+addi $sp, $sp, 8
+la $t0, b
+addi $sp, $sp, -4
+sw $t0, 0($sp)
 li $v0, 5
 syscall
 addi $sp, $sp, -4
@@ -16,7 +26,7 @@ lw $t0, 0($sp)
 lw $t1, 4($sp)
 sw $t0, 0($t1)
 addi $sp, $sp, 8
-la $t0, b
+la $t0, a
 addi $sp, $sp, -4
 sw $t0, 0($sp)
 li $v0, 5
@@ -46,3 +56,33 @@ lw $t0, 0($sp)
 lw $t1, 4($sp)
 sw $t0, 0($t1)
 addi $sp, $sp, 8
+addi $sp, $sp, -4
+li $t0, 0
+sw $t0, 0($sp)
+lw $t0, 0($sp)
+addi $sp, $sp, 4
+li $t1, 0
+beq $t0, $t1, L0
+la $t0, a
+addi $sp, $sp, -4
+sw $t0, 0($sp)
+addi $sp, $sp, -4
+li $t0, 3
+sw $t0, 0($sp)
+lw $t0, 0($sp)
+lw $t1, 4($sp)
+sw $t0, 0($t1)
+addi $sp, $sp, 8
+j L1
+L0:
+la $t0, b
+addi $sp, $sp, -4
+sw $t0, 0($sp)
+addi $sp, $sp, -4
+li $t0, 2
+sw $t0, 0($sp)
+lw $t0, 0($sp)
+lw $t1, 4($sp)
+sw $t0, 0($t1)
+addi $sp, $sp, 8
+L1:

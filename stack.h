@@ -5,7 +5,7 @@
 
 #include "ast.h"
 
-typedef enum {LDC, ADI, SBI, MPI, LOD, STO, FJP, GRT, UJP, LABEL, EQU, NEQ, LDA, IOR, NOT, WRI, SCANF} IKind;
+typedef enum {LDC, ADI, SBI, MPI, MOD, EQUc, NEQc, LESc, LEQc, GETc, GEQc, IOR, LOD, STO, FJP, GRT, UJP, LABEL, EQU, NEQ, LDA, IOR, NOT, WRI, SCANF} IKind;
 
 struct _Instr{
     enum {

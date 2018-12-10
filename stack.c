@@ -142,51 +142,61 @@ Instr_List* compileExpression(Expr* expr){
         
     else if (expr->kind == E_OPERATION) {
         switch (expr->attr.op.operator) {
-            case PLUS:
+            case PLUS: // +
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l1 = append(l1, mkList(mkInstr(ADI,0),NULL));
                 break;
-            case SUB:
+            case SUB:// -
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l1 = append(l1, mkList(mkInstr(SBI,0),NULL));
                 break;
-            case MUL:                
+            case MUL: // *              
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l1 = append(l1, mkList(mkInstr(MPI,0),NULL));
                 break;
-            case DIV:
+            case DIV:// /
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l1 = append(l1, mkList(mkInstr(MPI,0),NULL));
                 break;
-            case MOD:
-                printf("%%:\n");
+            case MOD: // %
+                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+                l1 = append(l1, mkList(mkInstr(MOD,0),NULL));
                 break;
-            case IGU:
-                printf("==:\n");
+            case IGU: // ==
+                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+                l1 = append(l1, mkList(mkInstr(EQUc,0),NULL));
                 break;
-            case DIF:
-                printf("!=:\n");
+            case DIF: // !=
+                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+                l1 = append(l1, mkList(mkInstr(NEQc,0),NULL));
                 break;
-            case LES:
-                printf("<:\n");
+            case LES: // <
+                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+                l1 = append(l1, mkList(mkInstr(LESc,0),NULL));
                 break;
-            case LOQ:
-                printf("<=:\n");
+            case LOQ: // <=
+                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+                l1 = append(l1, mkList(mkInstr(LEQc,0),NULL));
                 break;
-            case GRE:
-                printf(">:\n");
+            case GRE: // >
+                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+                l1 = append(l1, mkList(mkInstr(GETc,0),NULL));
                 break;
-            case GOQ:
-                printf(">=:\n");
+            case GOQ: // >=
+                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+                l1 = append(l1, mkList(mkInstr(GEQc,0),NULL));
                 break;
-            case OR:
-                printf("||:\n");
+            case OR: // ||
+                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+                l1 = append(l1, mkList(mkInstr(IOR,0),NULL));
                 break;
-            case AND:
-                printf("&&:\n");
+            case AND: // &&
+                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+                l1 = append(l1, mkList(mkInstr(AND,0),NULL));
                 break;
-            case NOTOP:
-                printf("!:\n");
+            case NOTOP: // !
+                l1 = compileExpression(expr->attr.op.left);
+                l1 = append(l1, mkList(mkInstr(NOT,0),NULL));
                 break;
             default:
                 printf("Undefined operation\n");
@@ -410,7 +420,7 @@ int main(int argc, char** argv) {
     for(int i = 0; i < MAXPRINTS; i++) variablesPrint[i] = (char**) malloc(MAXPRINTS * MAXPRINTS * sizeof(char));
 
     Instr_List* l = compile(root);
-    printListIntrs(l);
+    //printListIntrs(l);
     
     mipsLabel = 0;
     MipsInstr_list* ml = compileInstrList(l);
