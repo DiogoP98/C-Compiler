@@ -5,7 +5,8 @@ int main() {
 
     int d = 2 + a;
 
-    printf("Boas\n", a);
-
-    printf("%d", a);
+    if(d == 6)
+        d = 3;
+    else
+        d = 5;
 }
