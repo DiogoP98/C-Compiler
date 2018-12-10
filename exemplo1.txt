@@ -7,4 +7,6 @@ int main() {
         d = 5;
 
     printf("%d", d);
+    scanf("%d", &d);
+    printf("%d", d);
 }

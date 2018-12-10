@@ -561,6 +561,8 @@ void printfData(FILE* file){
         fprintf(file,"str%d: .asciiz %s\n", i+1, printfString[i]);
     }
 
+    fprintf(file, "newline: .asciiz \"\\n\" \n");
+
     fprintf(file,"\n\n"); 
 
     fprintf(file, ".text\n");
