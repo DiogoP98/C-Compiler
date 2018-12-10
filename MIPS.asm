@@ -38,17 +38,17 @@ lw $t0, 0($sp)
 lw $t1, 4($sp)
 sw $t0, 0($t1)
 addi $sp, $sp, 8
-la $t0, d
+la $t0, a
 lw $t1, 0($t0)
 addi $sp, $sp, -4
 sw $t1, 0($sp)
 addi $sp, $sp, -4
-li $t0, 6
+li $t0, 4
 sw $t0, 0($sp)
 lw $t0, 0($sp)
 lw $t1, 4($sp)
 addi $sp, $sp, 8
-ble $t0, $t1, L0
+bne $t0, $t1, L0
 la $t0, d
 addi $sp, $sp, -4
 sw $t0, 0($sp)

@@ -35,12 +35,12 @@
   TYPES
 
 // Operator associativity & precedence
+%left AND OR NOTOP
 %left IGU DIF LES LOQ GRE GOQ
 %left PLUS SUB
 %left MUL DIV MOD
 %left OPENPARENTHESIS CLOSEPARENTHESIS
 %left INT FLOAT
-%left AND OR NOTOP
 %left IF WHILE
 %nonassoc NO_ELSE
 %nonassoc ELSE
