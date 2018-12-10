@@ -108,10 +108,6 @@ lw $t1, 4($sp)
 addi $sp, $sp, 4
 slt $t2, $t0, $t1
 sw $t2, 0($sp)
-lw $t0, 0($sp)
-addi $sp, $sp, 4
-li $t1, 0
-beq $t0, $t1, L0
 la $t0, d
 addi $sp, $sp, -4
 sw $t0, 0($sp)
