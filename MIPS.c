@@ -285,21 +285,27 @@ MipsInstr_list* compileWRI(char *name){
     l1 = compileLDA(name);
 
     if(checkExistence(name, SYMBOL_LIST) == 0){
-        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 6), NULL));
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "a0", "sp", 0), NULL));
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 2), NULL));
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
 
-        l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
-
-        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "f0", "sp", 0), NULL));
+        l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
     }
     else if(checkExistence(name, SYMBOL_LIST) == 1){
-        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 5), NULL));
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "a0", "sp", 0), NULL));
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 1), NULL));
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
 
-        l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
-
-        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "v0", "sp", 0), NULL));
+        l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
     }
+    else {
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "a0", "sp", 0), NULL));
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 4), NULL));
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
+
+        l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
+    }
+
 
     return l1;
 }

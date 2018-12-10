@@ -1,9 +1,11 @@
 int main() {
-    int a, b;
-
+    int a = 3, b;
+    
     scanf("%d %d", &a, &b);
 
     int d = 2 + a;
 
-    printf("Boas\n");
+    printf("Boas\n", a);
+
+    printf("%d", a);
 }
