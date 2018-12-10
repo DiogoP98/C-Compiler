@@ -160,7 +160,7 @@ Instr_List* compileExpression(Expr* expr){
                 break;
             case MOD: // %
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(MOD,0),NULL));
+                l1 = append(l1, mkList(mkInstr(MODULE,0),NULL));
                 break;
             case IGU: // ==
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
@@ -420,14 +420,14 @@ int main(int argc, char** argv) {
     for(int i = 0; i < MAXPRINTS; i++) variablesPrint[i] = (char**) malloc(MAXPRINTS * MAXPRINTS * sizeof(char));
 
     Instr_List* l = compile(root);
-    //printListIntrs(l);
+    printListIntrs(l);
     
     mipsLabel = 0;
-    MipsInstr_list* ml = compileInstrList(l);
+    //MipsInstr_list* ml = compileInstrList(l);
 
-    printfData(f);
+    //printfData(f);
 
-    printMipsInstrList(ml,f);
+    //printMipsInstrList(ml,f);
 
     fclose(f);
 
