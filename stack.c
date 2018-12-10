@@ -433,6 +433,9 @@ int main(int argc, char** argv) {
     mipsLabel = 0;
     MipsInstr_list* ml = compileInstrList(l);
 
+    ml = appendMipsList(ml, mkMipsList(mkMipsInstrE_I("li", "v0", "", 10), NULL));
+    ml = appendMipsList(ml, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
+
     printfData(f);
 
     printMipsInstrList(ml,f);

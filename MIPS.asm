@@ -4,6 +4,7 @@ a: .word
 b: .word
 str1: .asciiz "Boas\n"
 str2: .asciiz "%d"
+str3: .asciiz "eheh"
 
 
 .text
@@ -62,12 +63,13 @@ la $t0, str1
 addi $sp, $sp, -4
 sw $t0, 0($sp)
 lw $a0, 0($sp)
-li $v0, 1
+li $v0, 4
 syscall
 addi $sp, $sp, 4
 la $t0, a
+lw $t1, 0($t0)
 addi $sp, $sp, -4
-sw $t0, 0($sp)
+sw $t1, 0($sp)
 lw $a0, 0($sp)
 li $v0, 1
 syscall
@@ -76,13 +78,23 @@ la $t0, str2
 addi $sp, $sp, -4
 sw $t0, 0($sp)
 lw $a0, 0($sp)
-li $v0, 1
+li $v0, 4
 syscall
 addi $sp, $sp, 4
 la $t0, a
+lw $t1, 0($t0)
 addi $sp, $sp, -4
-sw $t0, 0($sp)
+sw $t1, 0($sp)
 lw $a0, 0($sp)
 li $v0, 1
 syscall
 addi $sp, $sp, 4
+la $t0, str3
+addi $sp, $sp, -4
+sw $t0, 0($sp)
+lw $a0, 0($sp)
+li $v0, 4
+syscall
+addi $sp, $sp, 4
+li $v0, 10
+syscall
