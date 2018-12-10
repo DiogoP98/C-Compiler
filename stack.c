@@ -86,28 +86,28 @@ void printInstr(Instr* instr) {
         case MODULE: // %
             printf("MOD\n");
             break;
-        case EQUc: // ==
-            printf("EQUc\n");
+        case EQUJ: // ==
+            printf("EQUJ L%d\n", instr->arg.argi);
             break;
         case NEQc: // !=
-            printf("NEQc\n");
+            printf("NEQc L%d\n", instr->arg.argi);
             break;
         case LESc: // <
-            printf("LESc\n");    
+            printf("LESc L%d\n", instr->arg.argi);    
             break;
         case LEQc: // <=
-            printf("LEQc\n");
+            printf("LEQc L%d\n", instr->arg.argi);
             break;
         case GETc: // >
-            printf("GETc\n");
+            printf("GETc L%d\n", instr->arg.argi);
             break;
         case GEQc: // >=
-            printf("GEQc\n");
+            printf("GEQc L%d\n", instr->arg.argi);
             break;
         case IOR: // ||
             printf("IOR\n");
             break;
-        case AND: // &&
+        case ANDOP: // &&
             printf("AND\n");
             break;
         case NOT: // !
@@ -197,27 +197,27 @@ Instr_List* compileExpression(Expr* expr){
                 break;
             case IGU: // ==
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(EQUc,0),NULL));
+                l1 = append(l1, mkList(mkInstr(EQUJ,LABEL_COUNT),NULL));
                 break;
             case DIF: // !=
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(NEQc,0),NULL));
+                l1 = append(l1, mkList(mkInstr(NEQc,LABEL_COUNT),NULL));
                 break;
             case LES: // <
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(LESc,0),NULL));
+                l1 = append(l1, mkList(mkInstr(LESc,LABEL_COUNT),NULL));
                 break;
             case LOQ: // <=
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(LEQc,0),NULL));
+                l1 = append(l1, mkList(mkInstr(LEQc,LABEL_COUNT),NULL));
                 break;
             case GRE: // >
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(GETc,0),NULL));
+                l1 = append(l1, mkList(mkInstr(GETc,LABEL_COUNT),NULL));
                 break;
             case GOQ: // >=
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(GEQc,0),NULL));
+                l1 = append(l1, mkList(mkInstr(GEQc,LABEL_COUNT),NULL));
                 break;
             case OR: // ||
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
@@ -321,7 +321,6 @@ Instr_List* compileIf(IFexpression* if_expr) {
 
     if(if_expr->kind == E_IF_EXPR) {
         l1 = compileExpression(if_expr->content.if_type.expr);
-        l1 = append(l1, mkList(mkInstr(FJP, LABEL_COUNT), NULL));
         l1 = append(l1, compile(if_expr->content.if_type.list));
         l1 = append(l1, mkList(mkInstr(LABEL, LABEL_COUNT), NULL));
     }
