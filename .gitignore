@@ -1,6 +1,7 @@
 *.o
 stack
-printAbsTree
+printAbsTree.c
 scanner.c
 parser.c
 parser.h
+MIPS.asm
