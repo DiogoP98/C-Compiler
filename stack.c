@@ -156,7 +156,7 @@ Instr_List* compileExpression(Expr* expr){
                 break;
             case DIV:// /
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(MPI,0),NULL));
+                l1 = append(l1, mkList(mkInstr(DIV,0),NULL));
                 break;
             case MOD: // %
                 l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));

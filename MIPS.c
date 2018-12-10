@@ -368,6 +368,39 @@ MipsInstr_list* compilePCode(Instr* instr){
         case MPI:
             l1 = compileMPI();
             break;
+        case DIV:
+            l1 = compileDVI();
+            break;
+        case MODULE: // %
+            l1 = compileMOD();
+            break;
+        case EQUc: // ==
+            l1 = compileEQUc();
+            break;
+        case NEQc: // !=
+            l1 = compileNEQc();
+            break;
+        case LESc: // <
+            l1 = compileLESc();    
+            break;
+        case LEQc: // <=
+            l1 = compileLEQc();
+            break;
+        case GETc: // >
+            l1 = compileGETc();
+            break;
+        case GEQc: // >=
+            l1 = compileGEQc();
+            break;
+        case IOR: // ||
+            l1 = compileIOR();
+            break;
+        case AND: // &&
+            l1 = compileAND();
+            break;
+        case NOT: // !
+            l1 = compileNOT();
+            break;
         case LOD:
             l1 = compileLOD(instr->arg.name);
             break;
@@ -386,20 +419,8 @@ MipsInstr_list* compilePCode(Instr* instr){
         case LABEL:
             l1 = compileLABEL(instr->arg.argi);
             break;
-        case EQU:
-            l1 = compileEQU();
-            break;
-        case NEQ:
-            l1 = compileNEQ();
-            break;
         case LDA:
             l1 = compileLDA(instr->arg.name);
-            break;
-        case IOR:
-            l1 = compileIOR();
-            break;
-        case NOT:
-            l1 = compileNOT();
             break;
         case WRI:
             l1 = compileWRI(instr->arg.name);
@@ -487,7 +508,8 @@ void printfData(FILE* file){
     ItemsList* vars = SYMBOL_LIST;
     
     while(vars != NULL) {
-        fprintf(file,"%s: .word\n", vars->item->key);
+        if(vars->item->type == 1) fprintf(file,"%s: .word 0\n", vars->item->key);
+        else if(vars->item->type == 0) fprintf(file,"%s: .word 0.0\n", vars->item->key);
         vars = vars->next;
     }
 
