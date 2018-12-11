@@ -8,6 +8,7 @@
 struct _MipsInstr {
     enum {
         E_R,
+        E_T,
         E_I,
         E_J,
         E_FR,

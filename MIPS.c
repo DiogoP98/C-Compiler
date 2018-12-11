@@ -35,6 +35,17 @@ MipsInstr* mkMipsInstrE_M(char op[6], char *r1) {
     return node;
 }
 
+MipsInstr* mkMipsInstrE_T(char op[6], char r1[5], char r2[5]) {
+    MipsInstr* node = (MipsInstr*) malloc(sizeof(MipsInstr));
+
+    node->kind = E_T;
+    strcpy(node->Op, op);
+    strcpy(node->vars.IntInstr.addrs[0], r1);
+    strcpy(node->vars.IntInstr.addrs[1], r2);
+
+    return node;
+}
+
 MipsInstr* mkMipsInstrE_R(char op[6], char *r1, char *r2, char *r3) {
     MipsInstr* node = (MipsInstr*) malloc(sizeof(MipsInstr));
 
@@ -315,9 +326,9 @@ MipsInstr_list* compileNOT(){
 
 MipsInstr_list* compileLOD(char *name){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
-    printf("aqui");
-    l1 = mkMipsList(mkMipsInstrE_I("lw", "a0", name, 0), NULL);
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "a0", "sp", 0), NULL));
+     
+    l1 = mkMipsList(mkMipsInstrE_T("la", "t0", name), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "t0", 0), NULL));
     l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
 
     return l1;
@@ -326,7 +337,7 @@ MipsInstr_list* compileLOD(char *name){
 MipsInstr_list* compileLDA(char *name){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
-    l1 = mkMipsList(mkMipsInstrE_I("la", "a0", name, 0), NULL);
+    l1 = mkMipsList(mkMipsInstrE_T("la", "a0", name), NULL);
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "a0", "sp", 0), NULL));
     l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
 
@@ -355,17 +366,14 @@ MipsInstr_list* compileWRI(char *name){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
     if(checkExistence(name, SYMBOL_LIST) == 0){
-        l1 = compileLOD(name);
-        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "a0", "sp", 0), NULL));
+        l1 = mkMipsList(mkMipsInstrE_T("lw", "a0", name), NULL);
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 2), NULL));
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
 
         l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
     }
     else if(checkExistence(name, SYMBOL_LIST) == 1){
-        l1 = compileLOD(name);
-
-        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "a0", "sp", 0), NULL));
+        l1 = mkMipsList(mkMipsInstrE_T("lw", "a0", name), NULL);
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 1), NULL));
 
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
@@ -373,8 +381,7 @@ MipsInstr_list* compileWRI(char *name){
         l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
     }
     else {
-        l1 = compileLDA(name);
-        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("la", "a0", "sp", 0), NULL));
+        l1 = mkMipsList(mkMipsInstrE_T("la", "a0", name), NULL);
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 4), NULL));
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
 
@@ -538,9 +545,7 @@ void printMipsInstr(MipsInstr* instr, FILE* file) {
                 fprintf(file,"%s $%s, $%s, $%s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
             break;
         case E_I:
-            if(!strcmp(instr->Op, "la"))
-                fprintf(file,"%s $%s, %s\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1]);
-            else if(!strcmp(instr->Op, "li"))
+            if (!strcmp(instr->Op, "li"))
                 fprintf(file,"%s $%s, %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.val);
             else if(!strcmp(instr->Op, "sw") || !strcmp(instr->Op, "lw"))
                 fprintf(file,"%s $%s, %d($%s)\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.val, instr->vars.IntInstr.addrs[1]);
@@ -548,6 +553,9 @@ void printMipsInstr(MipsInstr* instr, FILE* file) {
                 fprintf(file,"%s $%s, $%s, L%d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1], instr->vars.IntInstr.val);
             else
                 fprintf(file,"%s $%s, $%s, %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1], instr->vars.IntInstr.val);
+            break;
+        case E_T:
+            fprintf(file,"%s $%s, %s\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1]);
             break;
         case E_J:
             if(!strcmp(instr->Op, "L"))

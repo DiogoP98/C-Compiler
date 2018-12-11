@@ -10,7 +10,7 @@ la $a0, a
 sw $a0, 0($sp)
 addi $sp, $sp, -4
 li $a0, 3
-sw $a0, -4($sp)
+sw $a0, 0($sp)
 addi $sp, $sp, -4
 addi $sp, $sp, 4
 lw $t0, 4($sp)
@@ -19,22 +19,16 @@ la $a0, b
 sw $a0, 0($sp)
 addi $sp, $sp, -4
 li $a0, 5
-sw $a0, -4($sp)
+sw $a0, 0($sp)
 addi $sp, $sp, -4
 addi $sp, $sp, 4
 lw $t0, 4($sp)
 sw $a0, 0($t0)
 la $a0, str1
-sw $a0, 0($sp)
-addi $sp, $sp, -4
-la $a0, sp
 li $v0, 4
 syscall
 addi $sp, $sp, 4
-lw $a0, 0($a)
-sw $a0, 0($sp)
-addi $sp, $sp, -4
-lw $a0, 0($sp)
+lw $a0, b
 li $v0, 1
 syscall
 addi $sp, $sp, 4
