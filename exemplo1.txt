@@ -1,12 +1,5 @@
 int main() {
-    int a = 3, b = 5, d = 4;
+    int a = 3, b = 5;
 
-    if(a == 8 || b == 5 || d==3)
-        printf("olaola");
-    else
-        printf("funciona?");
-    
-    printf("%d", d);
-    scanf("%d", &d);
-    printf("%d", d);
+    printf("%d", a);
 }
