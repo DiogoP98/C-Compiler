@@ -58,18 +58,18 @@ Command* assignment_declaration(AsgList* asg_list) {
 
 //------- IF expressions ----------------
 
-IFexpression* if_command(BoolExpr* bexpr, Command* cmd) {
+IFexpression* if_command(Expr* expr, Command* cmd) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   CommandList* list = (CommandList*) malloc(sizeof(CommandList));
   list->cmd = cmd;
   list->next = NULL;
   node->kind = E_IF_EXPR;
   node->content.if_type.list = list;
-  node->content.if_type.bexpr = bexpr;
+  node->content.if_type.expr = expr;
   return node;
 }
 
-IFexpression* if_command_else_command(BoolExpr* bexpr, Command* cmd, Command* else_cmd) {
+IFexpression* if_command_else_command(Expr* expr, Command* cmd, Command* else_cmd) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   CommandList* list = (CommandList*) malloc(sizeof(CommandList));
   CommandList* list2 = (CommandList*) malloc(sizeof(CommandList));
@@ -78,67 +78,67 @@ IFexpression* if_command_else_command(BoolExpr* bexpr, Command* cmd, Command* el
   list2->cmd = else_cmd;
   list2->next = NULL;
   node->kind = E_IF_ELSE;
-  node->content.if_else_type.bexpr = bexpr;
+  node->content.if_else_type.expr = expr;
   node->content.if_else_type.list = list;
   node->content.if_else_type.else_list = list2;
   return node;
 }
 
-IFexpression* if_commands(BoolExpr* bexpr, CommandList* list) {
+IFexpression* if_commands(Expr* expr, CommandList* list) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   node->kind = E_IF_EXPR;
   node->content.if_type.list = list;
-  node->content.if_type.bexpr = bexpr;
+  node->content.if_type.expr = expr;
   return node;
 }
 
-IFexpression* if_commands_else_command(BoolExpr* bexpr, CommandList* list, Command* else_cmd) {
+IFexpression* if_commands_else_command(Expr* expr, CommandList* list, Command* else_cmd) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   CommandList* list2 = (CommandList*) malloc(sizeof(CommandList));
   list2->cmd = else_cmd;
   list2->next = NULL;
   node->kind = E_IF_ELSE;
-  node->content.if_else_type.bexpr = bexpr;
+  node->content.if_else_type.expr = expr;
   node->content.if_else_type.list = list;
   node->content.if_else_type.else_list = list2;
   return node;
 }
 
-IFexpression* if_commands_else_commands(BoolExpr* bexpr, CommandList* list, CommandList* else_list) {
+IFexpression* if_commands_else_commands(Expr* expr, CommandList* list, CommandList* else_list) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   node->kind = E_IF_ELSE;
-  node->content.if_else_type.bexpr = bexpr;
+  node->content.if_else_type.expr = expr;
   node->content.if_else_type.list = list;
   node->content.if_else_type.else_list = else_list;
   return node;
 }
 
-IFexpression* if_command_else_commands(BoolExpr* bexpr, Command* cmd, CommandList* else_list) {
+IFexpression* if_command_else_commands(Expr* expr, Command* cmd, CommandList* else_list) {
   IFexpression* node = (IFexpression*) malloc(sizeof(IFexpression));
   CommandList* list = (CommandList*) malloc(sizeof(CommandList));
   list->cmd = cmd;
   list->next = NULL;
   node->kind = E_IF_ELSE;
-  node->content.if_else_type.bexpr = bexpr;
+  node->content.if_else_type.expr = expr;
   node->content.if_else_type.list = list;
   node->content.if_else_type.else_list = else_list;
   return node;
 }
 
 //------- WHILE expressions ----------------
-WHILEexpression* while_command(BoolExpr* bexpr, Command* cmd) {
+WHILEexpression* while_command(Expr* expr, Command* cmd) {
   WHILEexpression* node = (WHILEexpression*) malloc(sizeof(WHILEexpression));
   CommandList* list = (CommandList*) malloc(sizeof(CommandList));
   list->cmd = cmd;
   list->next = NULL;
-  node->bexpr = bexpr;
+  node->expr = expr;
   node->list = list;
   return node;
 }
 
-WHILEexpression* while_commands(BoolExpr* bexpr, CommandList* list) {
+WHILEexpression* while_commands(Expr* expr, CommandList* list) {
   WHILEexpression* node = (WHILEexpression*) malloc(sizeof(WHILEexpression));
-  node->bexpr = bexpr;
+  node->expr = expr;
   node->list = list;
   return node;
 }
@@ -151,10 +151,17 @@ TYPES_STR* ast_string_of_types(char* type) {
   return node;
 }
 
-PRINTF_EXP* ast_printf(TYPES_STR* types, DeclarationList* vars) {
+PRINTF_EXP* ast_printf(TYPES_STR* types, PrintVarsList* vars) {
   PRINTF_EXP* node = (PRINTF_EXP*) malloc(sizeof(PRINTF_EXP));
   node->string_of_types = types;
   node->vars = vars;
+  return node;
+}
+
+PrintVarsList* ast_printlist(char* var, PrintVarsList* next) {
+  PrintVarsList* node = (PrintVarsList*) malloc(sizeof(PrintVarsList));
+  node->name = strdup(var);
+  node->next = next;
   return node;
 }
 
@@ -165,9 +172,9 @@ SCANF_EXP* ast_scanf(TYPES_STR* types, ScanDeclarationList* vars) {
   return node;
 }
 
-ScanDeclarationList* ast_scanlist(DECL* var, ScanDeclarationList* next) {
+ScanDeclarationList* ast_scanlist(char* var, ScanDeclarationList* next) {
   ScanDeclarationList* node = (ScanDeclarationList*) malloc(sizeof(ScanDeclarationList));
-  node->declaration = var;
+  node->declaration = strdup(var);
   node->next = next;
   return node;
 }
@@ -181,111 +188,77 @@ varList* ast_varlist(int type, DeclarationList* next) {
 }
 
 
-DeclarationList* ast_declaration(DECL* decl, DeclarationList* next) {
+DeclarationList* ast_declaration(char* name, DeclarationList* next) {
   DeclarationList* node = (DeclarationList*) malloc(sizeof(DeclarationList));
+
   node->type = E_DECLARATION;
-  node->content.declaration = decl;
+  node->name = strdup(name);
   node->next = next;
+
   return node;
 }
 
-DeclarationList* ast_assignment(ASG* asg, DeclarationList* next) {
+DeclarationList* ast_assignment(char* name, Expr* expression, DeclarationList* next) {
   DeclarationList* node = (DeclarationList*) malloc(sizeof(DeclarationList));
+
   node->type = E_ASSIGNMENT;
-  node->content.assignment = asg;
+  node->name = strdup(name);
+  node->asg.expression = expression;
   node->next = next;
+
   return node;
 }
 
-DECL* var_declaration(char* s) {
-  DECL* node = (DECL*) malloc(sizeof(DECL));
-  node->name = strdup(s);
-  return node;
-}
-
-ASG* var_assignment(DECL* s, Expr* expr) {
-  ASG* node = (ASG*) malloc(sizeof(ASG));
-  node->name = s;
-  node->value = expr;
-  return node;
-}
-
-AsgList* ast_assignmentList(ASG* asg, AsgList* next) {
+AsgList* ast_assignmentList(char* name, Expr* expression, AsgList* next) {
   AsgList* node = (AsgList*) malloc(sizeof(AsgList));
-  node->assignment = asg;
+
+  node->name = strdup(name);
+  node->expression = expression;
   node->next = next;
+  
   return node;
 }
 
 //------- Expressions functions -------------
-NUMBER* ast_integer(int v) {
-  NUMBER* node = (NUMBER*) malloc(sizeof(NUMBER));
-  node->content.valuei = v;
-  node->type = E_INTEGER;
-  return node;
-}
-
-NUMBER* ast_float(float v) {
-  NUMBER* node = (NUMBER*) malloc(sizeof(NUMBER));
-  node->content.valuef = v;
-  node->type = E_FLOAT;
-  return node;
-}
-
-Expr* ast_number(NUMBER* m) {
+Expr* ast_integer(int v) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
-  node->attr.number = m;
+  node->attr.numberint = v;
+  node->type = E_EXPR_INT;
   node->kind = E_NUM;
+  return node;
+}
+
+Expr* ast_float(float v) {
+  Expr* node = (Expr*) malloc(sizeof(Expr));
+  node->attr.numberfloat = v;
+  node->type = E_EXPR_FLOAT;
+  node->kind = E_NUM;
+  return node;
+}
+
+Expr* ast_variable_int(char* v) {
+  Expr* node = (Expr*) malloc(sizeof(Expr));
+  node->attr.variable = strdup(v);
+  node->type = E_EXPR_INT;
+  node->kind = E_VARIABLE;
+  return node;
+}
+
+Expr* ast_variable_float(char* v) {
+  Expr* node = (Expr*) malloc(sizeof(Expr));
+  node->attr.variable = strdup(v);
+  node->type = E_EXPR_FLOAT;
+  node->kind = E_VARIABLE;
   return node;
 }
 
 Expr* ast_operation(int operator, Expr* left, Expr* right) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
-  node->parenthesis = E_HAS_NOT;
   node->kind = E_OPERATION;
   node->attr.op.operator = operator;
   node->attr.op.left = left;
   node->attr.op.right = right;
+  node->type = left->type;
   return node;
 }
-
-Expr* ast_pexpr(Expr* expr) {
-  Expr* node = (Expr*) malloc(sizeof(Expr));
-  node = expr;
-  node->parenthesis = E_HAS;
-  return node;
-}
-
-//------- Bool Expressions functions -------------
-BoolExpr* ast_pbexpr(BoolExpr* bexpr) {
-  BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
-  node = bexpr;
-  return node;
-}
-
-BoolExpr* ast_boolOperation(int operator, BoolExpr* bleft, BoolExpr* bright) {
-  BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
-  node->kind = E_RELOP;
-  node->attr_bool.relop.operator = operator;
-  node->attr_bool.relop.bleft = bleft;
-  node->attr_bool.relop.bright = bright;
-  return node;
-}
-
-BoolExpr* ast_boolOperation2(int operator, Expr* left, Expr* right) {
-  BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
-  node->kind = E_EXPR;
-  node->attr_bool.relop.operator = operator;
-  node->attr_bool.rel_expr.left = left;
-  node->attr_bool.rel_expr.right = right;
-  return node;
-}
-
-BoolExpr* ast_singleExpr(Expr* expr) {
-  BoolExpr* node = (BoolExpr*) malloc(sizeof(BoolExpr));
-  node->kind = E_BOOL;
-  node->attr_bool.single_expr.expr = expr;
-  return node;
-}
-
 

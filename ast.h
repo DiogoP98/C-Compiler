@@ -36,12 +36,12 @@ struct _IFexpression {
 
   union {
     struct {
-      struct _BoolExpr* bexpr;
+      struct _Expr* expr;
       struct _CommandList* list;
     } if_type;
     
     struct {
-      struct _BoolExpr* bexpr;
+      struct _Expr* expr;
       struct _CommandList* list;
       struct _CommandList* else_list;
     } if_else_type;
@@ -49,26 +49,31 @@ struct _IFexpression {
 };
 
 struct _WHILEexpression {
-  struct _BoolExpr* bexpr;
+  struct _Expr* expr;
   struct _CommandList* list;
 };
 
 struct _DeclarationList {
+  int type;
+
   enum {
     E_ASSIGNMENT,
     E_DECLARATION
-  } type;
+  } op;
+
+  char* name;
 
   union {
-    struct _ASG* assignment;
-    struct _DECL* declaration;
-  } content;
+    struct _Expr* expression;
+  } asg;
+
   
   struct _DeclarationList* next;
 };
 
 struct _AsgList {
-  struct _ASG* assignment;
+  char* name;
+  struct _Expr* expression;
   struct _AsgList* next;
 };
 
@@ -77,28 +82,24 @@ struct _VarList {
   struct _DeclarationList* list;
 };
 
-struct _ScanDeclarationList {
-  struct _DECL* declaration;
-  struct _ScanDeclarationList* next;
-};
-
-struct _DECL {
-  char* name;
-};
-
-struct _ASG {
-  struct _DECL* name;
-  struct _Expr* value;
-};
-
 struct _PRINTF_EXP {
   struct _TYPES* string_of_types;
-  struct _DeclarationList* vars;
+  struct _PrintVarsList* vars;
+};
+
+struct _PrintVarsList {
+  char* name;
+  struct _PrintVarsList* next;
 };
 
 struct _SCANF_EXP {
   struct _TYPES* string_of_types;
   struct _ScanDeclarationList* vars;
+};
+
+struct _ScanDeclarationList {
+  char* declaration;
+  struct _ScanDeclarationList* next;
 };
 
 struct _TYPES {
@@ -109,76 +110,37 @@ struct _TYPES {
 struct _Expr {
   enum { 
     E_OPERATION,
+    E_VARIABLE,
     E_NUM,
   } kind;
 
   enum {
-    E_HAS,
-    E_HAS_NOT
-  } parenthesis;
-
-  union {
-    struct _NUMBER* number;
-    struct { 
-      int operator; // PLUS, MINUS, etc 
-      struct _Expr* left;
-      struct _Expr* right;
-    } op; // for binary expressions
-  } attr;
-};
-
-struct _BoolExpr {
-  enum { 
-    E_BOOL,
-    E_RELOP,
-    E_EXPR
-  } kind;
-
-  union {
-    struct { 
-      int operator;
-      struct _BoolExpr* bleft;
-      struct _BoolExpr* bright;
-    } relop;
-    
-    struct {
-      int operator;
-      struct _Expr* right;
-      struct _Expr* left;
-    } rel_expr; // for binary expressions
-
-    struct {
-      struct _Expr* expr;
-    } single_expr;
-
-  } attr_bool;
-};
-
-struct _NUMBER {
-  enum { 
-    E_INTEGER,
-    E_FLOAT,
+    E_EXPR_FLOAT,
+    E_EXPR_INT
   } type;
 
   union {
-    int valuei;
-    float valuef;
-  } content;
-};
+    int numberint;
+    float numberfloat;
+    char* variable;
 
+    struct { 
+      int operator;
+      struct _Expr* left;
+      struct _Expr* right;
+    } op;
+  } attr;
+};
 
 typedef struct _CommandList CommandList;
 typedef struct _Command Command;
 typedef struct _IFexpression IFexpression;
 typedef struct _WHILEexpression WHILEexpression;
 typedef struct _DeclarationList DeclarationList;
-typedef struct _ASG ASG;
-typedef struct _DECL DECL;
 typedef struct _PRINTF_EXP PRINTF_EXP;
+typedef struct _PrintVarsList PrintVarsList;
 typedef struct _SCANF_EXP SCANF_EXP;
 typedef struct _Expr Expr; 
-typedef struct _BoolExpr BoolExpr;
-typedef struct _BoolExprList BoolExprList;
 typedef struct _ScanDeclarationList ScanDeclarationList;
 typedef struct _VarList varList;
 typedef struct _TYPES TYPES_STR;
@@ -197,43 +159,35 @@ Command* scanf_declaration(SCANF_EXP* scannext);
 Command* assignment_declaration(AsgList* asg_list);
 
 //------- IF expressions ----------------
-IFexpression* if_command(BoolExpr* bexpr, Command* cmd);
-IFexpression* if_command_else_command(BoolExpr* bexpr, Command* cmd, Command* else_cmd);
-IFexpression* if_commands(BoolExpr* bexpr, CommandList* list);
-IFexpression* if_commands_else_command(BoolExpr* bexpr, CommandList* list, Command* else_cmd);
-IFexpression* if_commands_else_commands(BoolExpr* bexpr, CommandList* list, CommandList* else_list);
-IFexpression* if_command_else_commands(BoolExpr* bexpr, Command* cmd, CommandList* else_list);
+IFexpression* if_command(Expr* expr, Command* cmd);
+IFexpression* if_command_else_command(Expr* expr, Command* cmd, Command* else_cmd);
+IFexpression* if_commands(Expr* expr, CommandList* list);
+IFexpression* if_commands_else_command(Expr* expr, CommandList* list, Command* else_cmd);
+IFexpression* if_commands_else_commands(Expr* expr, CommandList* list, CommandList* else_list);
+IFexpression* if_command_else_commands(Expr* expr, Command* cmd, CommandList* else_list);
 
 //------- WHILE expressions ----------------
-WHILEexpression* while_command(BoolExpr* bexpr, Command* cmd);
-WHILEexpression* while_commands(BoolExpr* bexpr, CommandList* list);
+WHILEexpression* while_command(Expr* expr, Command* cmd);
+WHILEexpression* while_commands(Expr* expr, CommandList* list);
 
 //------- INPUT/OUTPUT expressions ----------------
 TYPES_STR* ast_string_of_types(char* type);
-PRINTF_EXP* ast_printf(TYPES_STR* types, DeclarationList* vars);
+PRINTF_EXP* ast_printf(TYPES_STR* types, PrintVarsList* vars);
 SCANF_EXP* ast_scanf(TYPES_STR* type, ScanDeclarationList* vars);
-ScanDeclarationList* ast_scanlist(DECL* var, ScanDeclarationList* next);
+ScanDeclarationList* ast_scanlist(char* var, ScanDeclarationList* next);
+PrintVarsList* ast_printlist(char* var, PrintVarsList* next);
 
 //------- Declarations/Assignments expressions ----------------
 varList* ast_varlist(int type, DeclarationList* next);
-DeclarationList* ast_declaration(DECL* decl, DeclarationList* next);
-DeclarationList* ast_assignment(ASG* asg, DeclarationList* next);
-AsgList* ast_assignmentList(ASG* asg, AsgList* next);
-DECL* var_declaration(char* s);
-ASG* var_assignment(DECL* s, Expr* expr);
+DeclarationList* ast_declaration(char* name, DeclarationList* next);
+DeclarationList* ast_assignment(char* name, Expr* expression, DeclarationList* next);
+AsgList* ast_assignmentList(char* name, Expr* expression, AsgList* next);
 
 //------- Expressions functions -------------
-NUMBER* ast_integer(int v);
-NUMBER* ast_float(float v);
-Expr* ast_number(NUMBER* m);
+Expr* ast_integer(int v);
+Expr* ast_float(float v);
+Expr* ast_variable_float(char* v);
+Expr* ast_variable_int(char* v);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
-Expr* ast_pexpr(Expr* expr);
-
-//------- Bool Expressions functions -------------
-BoolExpr* ast_bool(NUMBER* v);
-BoolExpr* ast_pbexpr(BoolExpr* bexpr);
-BoolExpr* ast_boolOperation(int operator, BoolExpr* left, BoolExpr* right);
-BoolExpr* ast_boolOperation2(int operator, Expr* left, Expr* right);
-BoolExpr* ast_singleExpr(Expr* expr);
 
 #endif

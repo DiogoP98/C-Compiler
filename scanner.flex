@@ -63,7 +63,7 @@ int yyline = 1;
 "%"  { return MOD;  }
 "||" { return OR;   }
 "&&" { return AND;  }
-"!"  { return NOT;  }
+"!"  { return NOTOP;  }
 "==" { return IGU;  }
 "!=" { return DIF;  }
 "<"  { return LES;	}
@@ -72,12 +72,12 @@ int yyline = 1;
 ">=" { return GOQ;  }
 
 \".*?[^\\]\" {
-    yylval.typesValue = yytext;
+    yylval.typesValue = strdup(yytext);
     return TYPES;
 }
 
 [a-zA-Z_][a-zA-Z0-9]* { 
-    yylval.stringValue = yytext;
+    yylval.stringValue = strdup(yytext);
     return VAR;
 }
 

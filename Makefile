@@ -1,9 +1,9 @@
 
-OBJS=scanner.o parser.o ast.o stack.o
+OBJS=scanner.o parser.o ast.o stack.o symbol_table.o MIPS.o
 INTERM=scanner.c parser.c parser.h 
 PROGRAM=./stack
-CFLAGS=-g
-LDFLAGS=-fsanitize=address -lm
+CFLAGS=-g -Wall
+ASAN_FLAGS = -fsanitize=address
 
 all: $(PROGRAM)
 

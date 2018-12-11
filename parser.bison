@@ -9,7 +9,7 @@
   DIV
   OR
   AND
-  NOT
+  NOTOP
   IGU
   DIF
   LES
@@ -35,16 +35,15 @@
   TYPES
 
 // Operator associativity & precedence
+%left AND OR NOTOP
 %left IGU DIF LES LOQ GRE GOQ
 %left PLUS SUB
 %left MUL DIV MOD
 %left OPENPARENTHESIS CLOSEPARENTHESIS
 %left INT FLOAT
-%left AND OR NOT
 %left IF WHILE
 %nonassoc NO_ELSE
 %nonassoc ELSE
-%expect 1
 
 
 // Root-level grammar symbol
@@ -61,17 +60,14 @@
   IFexpression* ifExpression;
   WHILEexpression* whileExpression;
   PRINTF_EXP* printf_exp;
+  PrintVarsList* printList;
   SCANF_EXP* scan_expr;
   TYPES_STR* string_types;
   varList* varList;
   DeclarationList* list_decl;
   AsgList* asg_list;
   ScanDeclarationList* scan_list;
-  ASG* assignment;
-  DECL* declaration;
   Expr* exprValue;
-  BoolExpr* boolExpr;
-  NUMBER* number;
 }
 
 %type <intValue> INT
@@ -81,33 +77,43 @@
 %type <cmdType> cmd
 %type <commandList> list
 %type <exprValue> expr
-%type <boolExpr> bexpr
+%type <exprValue> num
 %type <ifExpression> if_expr
 %type <whileExpression> while_expr
-%type <list_decl> list_var
+%type <list_decl> list_var_int
+%type <list_decl> list_var_float
 %type <scan_list> list_scan_var
-%type <assignment> atr
-%type <declaration> decl
 %type <printf_exp> printf
+%type <printList> list_print
 %type <scan_expr> scanf
 %type <varList> var_dec
 %type <string_types> string
-%type <number> num
 %type <asg_list> list_asg
 
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
 %code requires {
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
+#include "symbol_table.h"
 
 extern int yylex();
 extern int yyline;
 extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
+
+
 CommandList* root;
+ItemsList* SYMBOL_LIST;
+
+int checkExistence(char* name, ItemsList* list);
+ItemsList* createItem(ItemsList* list, char* name, int type);
+
+void validate_expression_types(Expr* expr1, Expr* expr2);
+void validate_var(char* name, Expr* expr);
 }
 
 %%
@@ -153,7 +159,7 @@ cmd:
 
 
 printf:
-  PRINT OPENPARENTHESIS string COMMA list_var CLOSEPARENTHESIS SEMICOLON{
+  PRINT OPENPARENTHESIS string COMMA list_print CLOSEPARENTHESIS SEMICOLON{
     $$ = ast_printf($3,$5);
   }
   |
@@ -175,175 +181,240 @@ string:
   ;
 
 if_expr:
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd %prec NO_ELSE {
+  IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd %prec NO_ELSE {
     $$ = if_command($3, $5);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd ELSE cmd {
+  IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE cmd {
     $$ = if_command_else_command($3, $5, $7);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list %prec NO_ELSE CLOSECURLYBRACKETS {
+  IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list %prec NO_ELSE CLOSECURLYBRACKETS {
     $$ = if_commands($3,$6);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE cmd {
+  IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE cmd {
     $$ = if_commands_else_command($3, $6, $9);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
+  IF OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
     $$ = if_commands_else_commands($3, $6, $10);
   }
   |
-  IF OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
+  IF OPENPARENTHESIS expr CLOSEPARENTHESIS cmd ELSE OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
     $$ = if_command_else_commands($3, $5, $8);
   }
   ;
 
 while_expr:
-  WHILE OPENPARENTHESIS bexpr CLOSEPARENTHESIS cmd{
+  WHILE OPENPARENTHESIS expr CLOSEPARENTHESIS cmd{
     $$ = while_command($3, $5);
   }
   |
-  WHILE OPENPARENTHESIS bexpr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
+  WHILE OPENPARENTHESIS expr CLOSEPARENTHESIS OPENCURLYBRACKETS list CLOSECURLYBRACKETS {
     $$ = while_commands($3, $6);
   } 
   ;
 
-atr:
-  decl EQUAL expr {
-    $$ = var_assignment($1,$3);
-  }
-  ;
-
-decl:
-  VAR {
-    $$ = var_declaration($1);
-  }
-;
-
 list_scan_var:
-  '&' decl COMMA list_scan_var {
+  '&' VAR COMMA list_scan_var {
+    if(checkExistence(strdup($2), SYMBOL_LIST) == -1) yyerror("Variable not declared!");
+
     $$ = ast_scanlist($2,$4);
   }
   |
-  '&' decl {
-    $$ = ast_scanlist($2,NULL);
+  '&' VAR {
+    if(checkExistence(strdup($2), SYMBOL_LIST) == -1) yyerror("Variable not declared!");
+
+    $$ = ast_scanlist($2, NULL);
   }
 ;
 
 var_dec: 
-  INTD list_var SEMICOLON{
+  INTD list_var_int SEMICOLON{
     $$ = ast_varlist(INTD, $2);
   }
   |
-  FLOATD list_var SEMICOLON{
+  FLOATD list_var_float SEMICOLON{
     $$ = ast_varlist(FLOATD, $2);
   }
 ;
 
-list_var:
-  decl {
-    $$ = ast_declaration($1, NULL);
+list_var_int:
+  VAR {
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
+    $$ = ast_declaration($1,NULL);
   }
   |
-  decl COMMA list_var {
+  VAR COMMA list_var_int {
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
+    $$ = ast_declaration($1,$3);
+  }
+  |
+  VAR EQUAL expr COMMA list_var_int{
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
+
+    if($3->type != 1) yyerror("Expression with wrong type!");
+
+    $$ = ast_assignment($1, $3, $5);
+  }
+  |
+  VAR EQUAL expr {
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 1);
+
+    if($3->type != 1) yyerror("Expression with wrong type!");
+
+    $$ = ast_assignment($1, $3, NULL);
+  }
+;
+
+list_var_float:
+  VAR {
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
+    $$ = ast_declaration($1,NULL);
+  }
+  |
+  VAR COMMA list_var_float {
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
     $$ = ast_declaration($1, $3);
   }
   |
-  atr COMMA list_var{
-    $$ = ast_assignment($1, $3);
+  VAR EQUAL expr COMMA list_var_float{
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
+
+    if($3->type != 0) yyerror("Expression with wrong type!");
+
+    $$ = ast_assignment($1, $3, $5);
   }
   |
-  atr {
-    $$ = ast_assignment($1, NULL);
+  VAR EQUAL expr {
+    if(checkExistence($1, SYMBOL_LIST) != -1) yyerror("Variable already declared!");
+    
+    SYMBOL_LIST = createItem(SYMBOL_LIST, $1, 0);
+
+    if($3->type != 0) yyerror("Expression with wrong type!");
+
+    $$ = ast_assignment($1, $3, NULL);
   }
 ;
 
 list_asg: 
-  atr COMMA list_asg{
-    $$ = ast_assignmentList($1, $3);
+  VAR EQUAL expr COMMA list_asg{
+    validate_var($1,$3);
+    $$ = ast_assignmentList($1, $3, $5);
   }
   |
-  atr {
-    $$ = ast_assignmentList($1, NULL);
+  VAR EQUAL expr {
+    validate_var($1,$3);
+    $$ = ast_assignmentList($1,$3, NULL);
+  }
+;
+
+list_print:
+  VAR COMMA list_print {
+    if(checkExistence($1, SYMBOL_LIST) == -1) yyerror("Variable not declared!");
+
+    $$ = ast_printlist($1, $3);
+  }
+  |
+  VAR {
+    if(checkExistence($1, SYMBOL_LIST) == -1) yyerror("Variable not declared!");
+
+    $$ = ast_printlist($1, NULL);
   }
 ;
 
 expr: 
   num {
-    $$ = ast_number($1);
+    $$ = $1;
   }
   |
   OPENPARENTHESIS expr CLOSEPARENTHESIS {
-    $$ = ast_pexpr($2);
+    $$ = $2;
   }
   |
   expr PLUS expr { 
+    validate_expression_types($1,$3);
     $$ = ast_operation(PLUS, $1, $3);
   }
   |
   expr SUB expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(SUB, $1, $3);
   }
   |
   expr MUL expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(MUL, $1, $3);
   } 
   |
   expr DIV expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(DIV, $1, $3);
   }
   |
   expr MOD expr {
+    validate_expression_types($1,$3);
     $$ = ast_operation(MOD, $1, $3);
-  };
-  
-bexpr:
-  expr {
-    $$ = ast_singleExpr($1);
   }
   |
-  OPENPARENTHESIS bexpr CLOSEPARENTHESIS {
-    $$ = ast_pbexpr($2);
+  expr OR expr {
+    validate_expression_types($1,$3);
+    $$ = ast_operation(OR, $1, $3);
   }
   |
-  bexpr OR bexpr {
-    $$ = ast_boolOperation(OR, $1, $3);
+  expr AND expr {
+    validate_expression_types($1,$3);
+    $$ = ast_operation(AND, $1, $3);
   }
   |
-  bexpr AND bexpr {
-    $$ = ast_boolOperation(AND, $1, $3);
-  }
-  |
-  NOT bexpr {
-    $$ = ast_boolOperation(NOT,$2, NULL);
+  NOTOP expr {
+    $$ = ast_operation(NOTOP,$2, NULL);
   }
   |
   expr IGU expr {
-    $$ = ast_boolOperation2(IGU, $1, $3);
+    validate_expression_types($1,$3);
+    $$ = ast_operation(IGU, $1, $3);
   }
   |
   expr DIF expr {
-    $$ = ast_boolOperation2(DIF, $1, $3);
+    validate_expression_types($1,$3);
+    $$ = ast_operation(DIF, $1, $3);
   }
   |
   expr LES expr {
-    $$ = ast_boolOperation2(LES, $1, $3);
+    validate_expression_types($1,$3);
+    $$ = ast_operation(LES, $1, $3);
   }
   |
   expr LOQ expr {
-    $$ = ast_boolOperation2(LOQ, $1, $3);
+    validate_expression_types($1,$3);
+    $$ = ast_operation(LOQ, $1, $3);
   }
   |
   expr GRE expr {
-    $$ = ast_boolOperation2(GRE, $1, $3);
+    validate_expression_types($1,$3);
+    $$ = ast_operation(GRE, $1, $3);
   }
   |
   expr GOQ expr {
-    $$ = ast_boolOperation2(GOQ, $1, $3);
-  }
-  ;
+    validate_expression_types($1,$3);
+    $$ = ast_operation(GOQ, $1, $3);
+  };
 
 num: 
   INT {
@@ -369,10 +440,33 @@ num:
   SUB FLOAT {
     $$ = ast_float(-$2);
   }
+  |
+  VAR {
+    int type = checkExistence($1, SYMBOL_LIST);
+
+    if(type == -1) yyerror("Variable not declared!");
+    else if(type == 0) $$ = ast_variable_float($1);
+    else $$ = ast_variable_int($1);
+
+  }
 ;
 %%
 
 void yyerror(const char* err) {
-  printf("Line %d: %s - '%s'\n", yyline, err, yytext  );
+  fprintf(stderr, "Line %d: error: %s\n", yyline, err);
+  exit(1);
 }
 
+void validate_expression_types(Expr* expr1, Expr* expr2) {
+  int type1 = expr1->type;
+  int type2 = expr2->type;
+
+  if(type1 != type2) yyerror("Operation between expression with different types!");
+}
+
+void validate_var(char* name, Expr* expr) {
+  int type = checkExistence(name, SYMBOL_LIST);
+
+  if (type == -1) yyerror("Variable not declared!");
+  else if(type != -1 && type != expr->type) yyerror("Expression with wrong type!");
+}

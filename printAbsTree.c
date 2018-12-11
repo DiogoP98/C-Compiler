@@ -3,9 +3,6 @@
 
 void printExpr(Expr* expr, int spaces);
 void printNumber(NUMBER* n, int spaces);
-void printBoolExpr(BoolExpr* expr, int spaces);
-void printDeclaration(DECL* decl, int spaces);
-void printAssignment(ASG* asg, int spaces);
 void printvarList (varList* list, int spaces);
 void printDeclarationList(DeclarationList* declList, int spaces);
 void printCommand(Command* cmd, int spaces);
@@ -27,7 +24,7 @@ void printExpr(Expr* expr, int spaces) {
   }
   
   else if (expr->kind == E_NUM)
-    printNumber(expr->attr.number, spaces+1);
+    printNumber(expr->attr.arguments.number, spaces+1);
 
   else if (expr->kind == E_OPERATION) {
     switch (expr->attr.op.operator) {
@@ -45,6 +42,33 @@ void printExpr(Expr* expr, int spaces) {
         break;
       case MOD:
         printf("%%:\n");
+        break;
+        case EQUAL:
+        printf("==:\n");
+        break;
+      case DIF:
+        printf("!=:\n");
+        break;
+      case LES:
+        printf("<:\n");
+        break;
+      case LOQ:
+        printf("<=:\n");
+        break;
+      case GRE:
+        printf(">:\n");
+        break;
+      case GOQ:
+        printf(">=:\n");
+        break;
+      case OR:
+        printf("||:\n");
+        break;
+      case AND:
+        printf("&&:\n");
+        break;
+      case NOTOP:
+        printf("!:\n");
         break;
     }
     printExpr(expr->attr.op.left, spaces+1);
@@ -66,67 +90,6 @@ void printNumber(NUMBER* n, int spaces) {
   
   else 
     printf("%f\n", n->content.valuef);
-}
-
-void printBoolExpr(BoolExpr* expr, int spaces) {
-  for(int i = 0; i < spaces; i++)
-    printf(" ");
-  
-  if (expr == NULL){
-    yyerror("Null bool expression!!");
-    return;
-  }
-  
-  else if (expr->kind == E_BOOL)
-    printExpr(expr->attr_bool.single_expr.expr, spaces+1);
-
-  else if (expr->kind == E_RELOP) {
-    switch (expr->attr_bool.relop.operator) {
-      case OR:
-        printf("||:\n");
-        break;
-      case AND:
-        printf("&&:\n");
-        break;
-      case NOT:
-        printf("!:\n");
-        break;
-      default:
-        printf("Undefined\n");
-    }
-    if(expr->attr_bool.relop.bleft != NULL)
-      printBoolExpr(expr->attr_bool.relop.bleft, spaces+1);
-    if(expr->attr_bool.relop.bright != NULL)
-      printBoolExpr(expr->attr_bool.relop.bright, spaces+1);
-  }
-
-  else if(expr->kind == E_EXPR) {
-    switch (expr->attr_bool.relop.operator) {
-      case EQUAL:
-        printf("==:\n");
-        break;
-      case DIF:
-        printf("!=:\n");
-        break;
-      case LES:
-        printf("<:\n");
-        break;
-      case LOQ:
-        printf("<=:\n");
-        break;
-      case GRE:
-        printf(">:\n");
-        break;
-      case GOQ:
-        printf(">=:\n");
-        break;
-    }
-
-    if(expr->attr_bool.rel_expr.left != NULL)
-      printExpr(expr->attr_bool.rel_expr.left, spaces+1);
-    if(expr->attr_bool.rel_expr.right != NULL)
-      printExpr(expr->attr_bool.rel_expr.right, spaces+1);
-  }
 }
 
 void printDeclaration(DECL* decl, int spaces) {
@@ -266,7 +229,7 @@ void printIf(IFexpression* ifExpr, int spaces) {
     switch (ifExpr->kind) {
       case E_IF_EXPR:
         printf("IF:\n");
-        printBoolExpr(ifExpr->content.if_type.bexpr, spaces+1);
+        printExpr(ifExpr->content.if_type.expr, spaces+1);
         cmdList = ifExpr->content.if_type.list;
         while(cmdList != NULL){
           printCommand(cmdList->cmd, spaces + 1);
@@ -275,7 +238,7 @@ void printIf(IFexpression* ifExpr, int spaces) {
         break;
       case E_IF_ELSE:
         printf("IF:\n");
-        printBoolExpr(ifExpr->content.if_else_type.bexpr, spaces+1);
+        printExpr(ifExpr->content.if_else_type.expr, spaces+1);
         cmdList = ifExpr->content.if_else_type.list;
         while(cmdList != NULL){
           printCommand(cmdList->cmd, spaces + 1);
@@ -307,7 +270,7 @@ void printWhile(WHILEexpression* whileExpr, int spaces) {
 
   printf("WHILE:\n");
 
-  printBoolExpr(whileExpr->bexpr, spaces + 1);
+  printExpr(whileExpr->expr, spaces + 1);
 
   CommandList* cmdList = whileExpr->list;
   while(cmdList != NULL){
