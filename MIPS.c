@@ -80,7 +80,7 @@ MipsInstr* mkMipsInstrE_J(char op[6], int label) {
     return node;
 }
 
-MipsInstr* mkMipsInstrE_BEQZ(char op[6], char r1[3], char r2[3]) {
+MipsInstr* mkMipsInstrE_BEQZ(char op[6], char* r1, char* r2) {
     MipsInstr* node = (MipsInstr*) malloc(sizeof(MipsInstr));
 
     node->kind = E_BEQZ;
@@ -208,7 +208,7 @@ MipsInstr_list* compileEQUc() {
 
     l1 = mkMipsList(compileAlocateStack(4), NULL);
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 4), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("seq", "a0", "a0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("seq", "a0", "a0", "t0"), NULL));
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "a0", "sp", 4), NULL));
 
     return l1;
@@ -219,7 +219,7 @@ MipsInstr_list* compileNEQc() {
 
     l1 = mkMipsList(compileAlocateStack(4), NULL);
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 4), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("sne", "a0", "a0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("sne", "a0", "a0", "t0"), NULL));
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "a0", "sp", 4), NULL));
     
     return l1;
@@ -230,7 +230,7 @@ MipsInstr_list* compileLESc() {
 
     l1 = mkMipsList(compileAlocateStack(4), NULL);
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 4), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("slt", "a0", "a0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("slt", "a0", "a0", "t0"), NULL));
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "a0", "sp", 4), NULL));
     
     return l1;
@@ -241,7 +241,7 @@ MipsInstr_list* compileLEQc() {
 
     l1 = mkMipsList(compileAlocateStack(4), NULL);
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 4), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("sle", "a0", "a0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("sle", "a0", "a0", "t0"), NULL));
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "a0", "sp", 4), NULL));
     
     return l1;
@@ -252,7 +252,7 @@ MipsInstr_list* compileGETc() {
 
     l1 = mkMipsList(compileAlocateStack(4), NULL);
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 4), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("sgt", "a0", "a0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("sgt", "a0", "a0", "t0"), NULL));
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "a0", "sp", 4), NULL));
     
     return l1;
@@ -263,7 +263,7 @@ MipsInstr_list* compileGEQc() {
 
     l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
     l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 4), NULL);
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("sge", "a0", "a0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("sge", "a0", "a0", "t0"), NULL));
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "a0", "sp", 4), NULL));
     
     return l1;
@@ -278,6 +278,9 @@ MipsInstr_list* compileBEQZ(int label) {
     sprintf(str2, "%d", label);
 
     char* str3 = (char*) malloc(1 + strlen(str1) + strlen(str2));
+
+    strcpy(str3,str1);
+    strcat(str3,str2);
 
     l1 = mkMipsList(compileAlocateStack(4), NULL);
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL));
@@ -316,9 +319,9 @@ MipsInstr_list* compileNOT(){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
     l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "t1", "", 0), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "t0", "", 0), NULL));
     
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("nor", "t2", "t0", "t1"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("nor", "t2", "t0", "t0"), NULL));
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
 
     return l1;
@@ -327,8 +330,8 @@ MipsInstr_list* compileNOT(){
 MipsInstr_list* compileLOD(char *name){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
      
-    l1 = mkMipsList(mkMipsInstrE_T("la", "t0", name), NULL);
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t1", "t0", 0), NULL));
+    l1 = mkMipsList(mkMipsInstrE_T("lw", "t0", name), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t0", "sp", 0), NULL));
     l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
 
     return l1;
@@ -465,6 +468,7 @@ MipsInstr_list* compilePCode(Instr* instr){
             break;
         case BEQZ:
             l1 = compileBEQZ(instr->arg.argi);
+            break;
         case IOR: // ||
             l1 = compileIOR();
             break;
@@ -529,10 +533,7 @@ void printMipsInstr(MipsInstr* instr, FILE* file) {
 
     switch(instr->kind){
         case E_R:
-            if(instr->Op[0] == 's')
-                fprintf(file,"%s $%s, $%s, %s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
-            else
-                fprintf(file,"%s $%s, $%s, $%s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
+            fprintf(file,"%s $%s, $%s, $%s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);
             break;
         case E_I:
             if (!strcmp(instr->Op, "li"))
@@ -554,7 +555,7 @@ void printMipsInstr(MipsInstr* instr, FILE* file) {
                 fprintf(file,"%s L%d\n", instr->Op, instr->vars.label);
             break;
         case E_BEQZ:
-            fprintf(file,"%s $%s, $%s\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[0]);
+            fprintf(file,"%s $%s, %s\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1]);
             break;
         case E_FR:
             fprintf(file,"%s $%s, $%s, $%s\n", instr->Op, instr->vars.addrs[0], instr->vars.addrs[1], instr->vars.addrs[2]);

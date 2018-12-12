@@ -108,7 +108,8 @@ void printInstr(Instr* instr) {
             printf("GEQc\n");
             break;
         case BEQZ:
-            printf("BEQZ L%d", instr->arg.argi);
+            printf("BEQZ L%d\n", instr->arg.argi);
+            break;
         case IOR: // ||
             printf("IOR\n");
             break;
