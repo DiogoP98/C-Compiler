@@ -522,8 +522,6 @@ void printMipsInstr(MipsInstr* instr, FILE* file) {
         case E_I:
             if (!strcmp(instr->Op, "li"))
                 fprintf(file,"%s $%s, %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.val);
-            else if(!strcmp(instr->Op, "not"))
-                fprintf(file,"%s $%s, $%s\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1]);
             else if(!strcmp(instr->Op, "sw") || !strcmp(instr->Op, "lw"))
                 fprintf(file,"%s $%s, %d($%s)\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.val, instr->vars.IntInstr.addrs[1]);
             else if(!strcmp(instr->Op, "beq"))
