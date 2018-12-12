@@ -196,8 +196,7 @@ MipsInstr_list* compileMOD() {
 
     l1 = mkMipsList(compileAlocateStack(4), NULL);
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 4), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("div", "a0", "t0", "a0"), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_M("mfhi", "a0"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("rem", "a0", "t0", "a0"), NULL));
     l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "a0", "sp", 4), NULL));
 
     return l1;
