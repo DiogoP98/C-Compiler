@@ -1,17 +1,15 @@
 int main() {
     int a = 10;
-    int b = 5;
+    int b = 5 + a;
 
-    while(a > 1) {
-        if(b == 3)
+    while(b > 8) {
+        if(b == a)
             a = 0;
-        else
-            a = 20;
 
-        printf("%d", a);
-        a = a - 1;
+        printf("%d %d", a, b);
         b = b - 1;
     }
 
-    printf("%d", a);
+    scanf("%d %d", &a, &b);
+    printf("%d %d", a, b);
 }
