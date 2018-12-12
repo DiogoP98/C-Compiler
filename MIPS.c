@@ -369,24 +369,22 @@ MipsInstr_list* compileWRI(char *name){
         l1 = mkMipsList(mkMipsInstrE_T("lw", "a0", name), NULL);
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 2), NULL));
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
-
-        l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
     }
     else if(checkExistence(name, SYMBOL_LIST) == 1){
         l1 = mkMipsList(mkMipsInstrE_T("lw", "a0", name), NULL);
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 1), NULL));
 
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
-
-        l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
     }
     else {
         l1 = mkMipsList(mkMipsInstrE_T("la", "a0", name), NULL);
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 4), NULL));
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
-
-        l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(4), NULL));
     }
+
+    l1 = appendMipsList(l1,mkMipsList(mkMipsInstrE_T("la", "a0", "tab"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 4), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
 
     return l1;
 }
@@ -394,27 +392,18 @@ MipsInstr_list* compileWRI(char *name){
 MipsInstr_list* compileSCANF(char *name){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
-    l1 = compileLDA(name);
-
     if(checkExistence(name, SYMBOL_LIST) == 0){
-        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 6), NULL));
+        l1 = mkMipsList(mkMipsInstrE_I("li", "v0", "", 6), NULL);
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
 
-        l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
-
-        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "f0", "sp", 0), NULL));
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_T("sw", "v0", name), NULL));
     }
     else if(checkExistence(name, SYMBOL_LIST) == 1){
-        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "v0", "", 5), NULL));
+        l1 = mkMipsList(mkMipsInstrE_I("li", "v0", "", 5), NULL);
         l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_SYSCALL(), NULL));
 
-        l1 = appendMipsList(l1, mkMipsList(compileAlocateStack(-4), NULL));
-
-        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "v0", "sp", 0), NULL));
+        l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_T("sw", "v0", name), NULL));
     }
-
-    //l1 = appendMipsList(l1, compileLDA(name));
-    l1 = appendMipsList(l1, compileSTO());
     
     return l1;
 }
@@ -427,7 +416,7 @@ MipsInstr_list* compilePCode(Instr* instr){
         printf("compiling null p-code instruction\n");
         return NULL;
     }
-
+    
     switch(instr->kind) {
         case LDC:
             switch(instr->type) {
@@ -508,6 +497,7 @@ MipsInstr_list* compilePCode(Instr* instr){
             break;
         default:
             l1 = NULL;
+            break;
     }
 
     return l1;
@@ -603,7 +593,7 @@ void printfData(FILE* file){
         fprintf(file,"str%d: .asciiz %s\n", i+1, printfString[i]);
     }
 
-    fprintf(file, "newline: .asciiz \"\\n\" \n");
+    fprintf(file, "tab: .asciiz \"\\t\" \n");
 
     fprintf(file,"\n\n"); 
 

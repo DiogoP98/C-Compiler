@@ -234,6 +234,8 @@ Instr_List* compileDeclaration(char* name) {
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
     l1 = mkList(mkInstr2(LDA, name),NULL);
+    l1 = append(l1, mkList(mkInstr(LDC, 0), NULL));
+    l1 = append(l1, mkList(mkInstr(STO, 0),NULL));
 
     return l1;
 }
@@ -282,6 +284,9 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
             case E_ASSIGNMENT:
                 l1 = compileAssignment(declList->name, declList->asg.expression);
                 break;
+            case E_DECLARATION:
+                l1 = compileDeclaration(declList->name);
+                break;
             default:
                 break;
     }
@@ -292,6 +297,9 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
         switch(declList->type) {
             case E_ASSIGNMENT:
                 l1 = append(l1,compileAssignment(declList->name, declList->asg.expression));
+                break;
+            case E_DECLARATION:
+                l1 = append(l1,compileDeclaration(declList->name));
                 break;
             default:
                 break;
