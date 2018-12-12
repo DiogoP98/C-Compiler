@@ -318,15 +318,17 @@ Instr_List* compileIf(IFexpression* if_expr) {
     if(if_expr->kind == E_IF_EXPR) {
         int if_label = LABEL_COUNT;
 
+        LABEL_COUNT++;
         l1 = compileExpression(if_expr->content.if_type.expr);
         l1 = append(l1, mkList(mkInstr(BEQZ,if_label), NULL));
         l1 = append(l1, compile(if_expr->content.if_type.list));
         l1 = append(l1, mkList(mkInstr(LABEL, if_label), NULL));
-        LABEL_COUNT++;
     }
     else {
         int else_init = LABEL_COUNT;
         int else_label = LABEL_COUNT+1;
+
+        LABEL_COUNT+=2;
         l1 = compileExpression(if_expr->content.if_else_type.expr);
         l1 = append(l1, mkList(mkInstr(BEQZ,else_init), NULL));
         l1 = append(l1, compile(if_expr->content.if_else_type.list));
@@ -334,8 +336,6 @@ Instr_List* compileIf(IFexpression* if_expr) {
         l1 = append(l1, mkList(mkInstr(LABEL,else_init), NULL));
         l1 = append(l1, compile(if_expr->content.if_else_type.else_list));
         l1 = append(l1, mkList(mkInstr(LABEL,else_label), NULL));
-
-        LABEL_COUNT+= 2;
     }
 
     return l1;
@@ -347,14 +347,14 @@ Instr_List* compileWhile(WHILEexpression* while_expr){
     int while_in = LABEL_COUNT;
     int while_out = LABEL_COUNT+1;
 
+    LABEL_COUNT += 2;
+
     l1 = mkList(mkInstr(LABEL, while_in), NULL);
     l1 = append(l1, compileExpression(while_expr->expr));
     l1 = append(l1, mkList(mkInstr(BEQZ,while_out), NULL));
     l1 = append(l1, compile(while_expr->list));
     l1 = append(l1, mkList(mkInstr(UJP, while_in), NULL));
     l1 = append(l1, mkList(mkInstr(LABEL, while_out), NULL));
-
-    LABEL_COUNT+= 2;
 
     return l1;
 }
