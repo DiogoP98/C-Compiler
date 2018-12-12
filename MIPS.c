@@ -314,17 +314,6 @@ MipsInstr_list* compileAND() {
     return l1;
 }
 
-MipsInstr_list* compileNOT(){
-    MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
-
-    l1 = mkMipsList(compileAlocateStack(4), NULL);
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 4), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("not", "a0", "t0",0), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "a0", "sp", 4), NULL));
-
-    return l1;
-}
-
 MipsInstr_list* compileLOD(char *name){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
      
@@ -472,9 +461,6 @@ MipsInstr_list* compilePCode(Instr* instr){
             break;
         case ANDOP: // &&
             l1 = compileAND();
-            break;
-        case NOT: // !
-            l1 = compileNOT();
             break;
         case LOD:
             l1 = compileLOD(instr->arg.name);

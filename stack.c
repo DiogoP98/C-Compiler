@@ -116,9 +116,6 @@ void printInstr(Instr* instr) {
         case ANDOP: // &&
             printf("AND\n");
             break;
-        case NOT: // !
-            printf("NOT\n");
-            break;
         case STO:
             printf("STO\n");
             break;
@@ -177,10 +174,8 @@ Instr_List* compileExpression(Expr* expr){
     }
         
     else if (expr->kind == E_OPERATION) {
-        if(expr->attr.op.operator != NOTOP)
-            l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-        else
-            l1 = compileExpression(expr->attr.op.left);
+        l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+        
 
         switch (expr->attr.op.operator) {
             case PLUS: // +
@@ -221,9 +216,6 @@ Instr_List* compileExpression(Expr* expr){
                 break;
             case AND: // &&
                 l1 = append(l1, mkList(mkInstr(ANDOP,0),NULL));
-                break;
-            case NOTOP: // !
-                l1 = append(l1, mkList(mkInstr(NOT,0),NULL));
                 break;
             default:
                 printf("Undefined operation\n");

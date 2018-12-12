@@ -74,7 +74,6 @@ MipsInstr_list* compileGEQc();
 MipsInstr_list* compileBEQZ(int label);
 MipsInstr_list* compileIOR();
 MipsInstr_list* compileAND();
-MipsInstr_list* compileNOT();
 MipsInstr_list* compileLOD(char *name);
 MipsInstr_list* compileSTO();
 MipsInstr_list* compileUJP(int label);

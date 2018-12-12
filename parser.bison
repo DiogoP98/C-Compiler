@@ -9,7 +9,6 @@
   DIV
   OR
   AND
-  NOTOP
   IGU
   DIF
   LES
@@ -36,7 +35,6 @@
 
 // Operator associativity & precedence
 %left AND OR
-%left NOTOP
 %left IGU DIF LES LOQ GRE GOQ
 %left PLUS SUB
 %left MUL DIV MOD
@@ -381,10 +379,6 @@ expr:
   expr AND expr {
     validate_expression_types($1,$3);
     $$ = ast_operation(AND, $1, $3);
-  }
-  |
-  NOTOP expr {
-    $$ = ast_operation(NOTOP,$2, NULL);
   }
   |
   expr IGU expr {
