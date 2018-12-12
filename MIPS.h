@@ -8,27 +8,30 @@
 struct _MipsInstr {
     enum {
         E_R,
+        E_T,
         E_I,
         E_J,
         E_FR,
         E_FI,
+        E_BEQZ,
+        E_M,
         E_SYSCALL
     } kind;
     
     char Op[12];
 
     union {
-        char addrs[3][50];
+        char addrs[5][50];
         
         struct {
-            char addrs[2][50];
+            char addrs[5][50];
             int val;
         } IntInstr;
         
         int label;
 
         struct {
-            char addrs[2][50];
+            char addrs[5][50];
             float val;
         } FloatInstr;
     } vars;
@@ -46,11 +49,13 @@ MipsInstr* headMipsList(MipsInstr_list* l);
 MipsInstr_list* tailMipsList(MipsInstr_list* l);
 MipsInstr_list* mkMipsList(MipsInstr* code, MipsInstr_list* l);
 MipsInstr_list* appendMipsList(MipsInstr_list* l1, MipsInstr_list* l2);
+MipsInstr* mkMipsInstrE_M(char op[6], char *r1);
 MipsInstr* mkMipsInstrE_R(char op[6], char r1[3], char r2[3], char r3[3]);
 MipsInstr* mkMipsInstrE_I(char op[6], char r1[3], char r2[3], int val);
 MipsInstr* mkMipsInstrE_J(char op[6], int label);
 MipsInstr* mkMipsInstrE_FR(char op[6], char r1[3], char r2[3], char r3[3]);
 MipsInstr* mkMipsInstrE_FI(char op[6], char r1[3], char r2[3], float val);
+MipsInstr* mkMipsInstrE_BEQZ(char op[6], char r1[3], char r2[3]);
 MipsInstr* mkMipsInstrE_SYSCALL();
 MipsInstr* compileAlocateStack(int space);
 MipsInstr_list* compileLDCInt(int vali);
@@ -60,18 +65,17 @@ MipsInstr_list* compileSBI();
 MipsInstr_list* compileMPI();
 MipsInstr_list* compileDVI();
 MipsInstr_list* compileMOD();
-MipsInstr_list* compileEQUc(int label);
-MipsInstr_list* compileNEQc(int label);
-MipsInstr_list* compileLESc(int label);
-MipsInstr_list* compileLEQc(int label);
-MipsInstr_list* compileGETc(int label);
-MipsInstr_list* compileGEQc(int label);
+MipsInstr_list* compileEQUc();
+MipsInstr_list* compileNEQc();
+MipsInstr_list* compileLESc();
+MipsInstr_list* compileLEQc();
+MipsInstr_list* compileGETc();
+MipsInstr_list* compileGEQc();
+MipsInstr_list* compileBEQZ(int label);
 MipsInstr_list* compileIOR();
 MipsInstr_list* compileAND();
-MipsInstr_list* compileNOT();
 MipsInstr_list* compileLOD(char *name);
 MipsInstr_list* compileSTO();
-MipsInstr_list* compileFJP(int label);
 MipsInstr_list* compileUJP(int label);
 MipsInstr_list* compileLABEL(int label);
 MipsInstr_list* compileLDA(char *name);

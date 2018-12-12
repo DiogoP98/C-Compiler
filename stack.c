@@ -90,31 +90,31 @@ void printInstr(Instr* instr) {
             printf("MOD\n");
             break;
         case EQUJ: // ==
-            printf("EQUJ L%d\n", instr->arg.argi);
+            printf("EQUJ\n");
             break;
         case NEQc: // !=
-            printf("NEQc L%d\n", instr->arg.argi);
+            printf("NEQc\n");
             break;
         case LESc: // <
-            printf("LESc L%d\n", instr->arg.argi);    
+            printf("LESc\n");    
             break;
         case LEQc: // <=
-            printf("LEQc L%d\n", instr->arg.argi);
+            printf("LEQc\n");
             break;
         case GETc: // >
-            printf("GETc L%d\n", instr->arg.argi);
+            printf("GETc\n");
             break;
         case GEQc: // >=
-            printf("GEQc L%d\n", instr->arg.argi);
+            printf("GEQc\n");
+            break;
+        case BEQZ:
+            printf("BEQZ L%d\n", instr->arg.argi);
             break;
         case IOR: // ||
             printf("IOR\n");
             break;
         case ANDOP: // &&
             printf("AND\n");
-            break;
-        case NOT: // !
-            printf("NOT\n");
             break;
         case STO:
             printf("STO\n");
@@ -127,9 +127,6 @@ void printInstr(Instr* instr) {
             break;
         case LABEL:
             printf("LABEL L%d\n", instr->arg.argi);
-            break;
-        case FJP: 
-            printf("FJP L%d\n", instr->arg.argi);
             break;
         case UJP:
             printf("UJP L%d\n", instr->arg.argi);
@@ -177,62 +174,48 @@ Instr_List* compileExpression(Expr* expr){
     }
         
     else if (expr->kind == E_OPERATION) {
+        l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+        
+
         switch (expr->attr.op.operator) {
             case PLUS: // +
-                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l1 = append(l1, mkList(mkInstr(ADI,0),NULL));
                 break;
             case SUB:// -
-                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l1 = append(l1, mkList(mkInstr(SBI,0),NULL));
                 break;
             case MUL: // *              
-                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l1 = append(l1, mkList(mkInstr(MPI,0),NULL));
                 break;
             case DIV:// /
-                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l1 = append(l1, mkList(mkInstr(DIVOP,0),NULL));
                 break;
             case MOD: // %
-                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l1 = append(l1, mkList(mkInstr(MODULE,0),NULL));
                 break;
             case IGU: // ==
-                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(EQUJ,LABEL_COUNT),NULL));
+                l1 = append(l1, mkList(mkInstr(EQUJ,0),NULL));
                 break;
             case DIF: // !=
-                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(NEQc,LABEL_COUNT),NULL));
+                l1 = append(l1, mkList(mkInstr(NEQc,0),NULL));
                 break;
             case LES: // <
-                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(LESc,LABEL_COUNT),NULL));
+                l1 = append(l1, mkList(mkInstr(LESc,0),NULL));
                 break;
             case LOQ: // <=
-                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(LEQc,LABEL_COUNT),NULL));
+                l1 = append(l1, mkList(mkInstr(LEQc,0),NULL));
                 break;
             case GRE: // >
-                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(GETc,LABEL_COUNT),NULL));
+                l1 = append(l1, mkList(mkInstr(GETc,0),NULL));
                 break;
             case GOQ: // >=
-                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
-                l1 = append(l1, mkList(mkInstr(GEQc,LABEL_COUNT),NULL));
+                l1 = append(l1, mkList(mkInstr(GEQc,0),NULL));
                 break;
             case OR: // ||
-                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l1 = append(l1, mkList(mkInstr(IOR,0),NULL));
                 break;
             case AND: // &&
-                l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
                 l1 = append(l1, mkList(mkInstr(ANDOP,0),NULL));
-                break;
-            case NOTOP: // !
-                l1 = compileExpression(expr->attr.op.left);
-                l1 = append(l1, mkList(mkInstr(NOT,0),NULL));
                 break;
             default:
                 printf("Undefined operation\n");
@@ -246,6 +229,8 @@ Instr_List* compileDeclaration(char* name) {
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
     l1 = mkList(mkInstr2(LDA, name),NULL);
+    l1 = append(l1, mkList(mkInstr(LDC, 0), NULL));
+    l1 = append(l1, mkList(mkInstr(STO, 0),NULL));
 
     return l1;
 }
@@ -294,6 +279,9 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
             case E_ASSIGNMENT:
                 l1 = compileAssignment(declList->name, declList->asg.expression);
                 break;
+            case E_DECLARATION:
+                l1 = compileDeclaration(declList->name);
+                break;
             default:
                 break;
     }
@@ -304,6 +292,9 @@ Instr_List* compileDeclarationList(DeclarationList* decl_list) {
         switch(declList->type) {
             case E_ASSIGNMENT:
                 l1 = append(l1,compileAssignment(declList->name, declList->asg.expression));
+                break;
+            case E_DECLARATION:
+                l1 = append(l1,compileDeclaration(declList->name));
                 break;
             default:
                 break;
@@ -319,20 +310,26 @@ Instr_List* compileIf(IFexpression* if_expr) {
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
     if(if_expr->kind == E_IF_EXPR) {
-        l1 = compileExpression(if_expr->content.if_type.expr);
-        l1 = append(l1, compile(if_expr->content.if_type.list));
-        l1 = append(l1, mkList(mkInstr(LABEL, LABEL_COUNT), NULL));
+        int if_label = LABEL_COUNT;
+
         LABEL_COUNT++;
+        l1 = compileExpression(if_expr->content.if_type.expr);
+        l1 = append(l1, mkList(mkInstr(BEQZ,if_label), NULL));
+        l1 = append(l1, compile(if_expr->content.if_type.list));
+        l1 = append(l1, mkList(mkInstr(LABEL, if_label), NULL));
     }
     else {
+        int else_init = LABEL_COUNT;
+        int else_label = LABEL_COUNT+1;
+
+        LABEL_COUNT+=2;
         l1 = compileExpression(if_expr->content.if_else_type.expr);
+        l1 = append(l1, mkList(mkInstr(BEQZ,else_init), NULL));
         l1 = append(l1, compile(if_expr->content.if_else_type.list));
-        l1 = append(l1, mkList(mkInstr(UJP, LABEL_COUNT+1), NULL)); 
-        l1 = append(l1, mkList(mkInstr(LABEL,LABEL_COUNT), NULL));
-        LABEL_COUNT++;
+        l1 = append(l1, mkList(mkInstr(UJP, else_label), NULL)); 
+        l1 = append(l1, mkList(mkInstr(LABEL,else_init), NULL));
         l1 = append(l1, compile(if_expr->content.if_else_type.else_list));
-        l1 = append(l1, mkList(mkInstr(LABEL,LABEL_COUNT), NULL));
-        LABEL_COUNT++;
+        l1 = append(l1, mkList(mkInstr(LABEL,else_label), NULL));
     }
 
     return l1;
@@ -341,13 +338,17 @@ Instr_List* compileIf(IFexpression* if_expr) {
 Instr_List* compileWhile(WHILEexpression* while_expr){
     Instr_List* l1 = (Instr_List*)malloc(sizeof(Instr_List));
 
-    l1 = mkList(mkInstr(LABEL, LABEL_COUNT), NULL);
-    LABEL_COUNT++;
+    int while_in = LABEL_COUNT;
+    int while_out = LABEL_COUNT+1;
+
+    LABEL_COUNT += 2;
+
+    l1 = mkList(mkInstr(LABEL, while_in), NULL);
     l1 = append(l1, compileExpression(while_expr->expr));
+    l1 = append(l1, mkList(mkInstr(BEQZ,while_out), NULL));
     l1 = append(l1, compile(while_expr->list));
-    l1 = append(l1, mkList(mkInstr(UJP, LABEL_COUNT-1), NULL));
-    l1 = append(l1, mkList(mkInstr(LABEL, LABEL_COUNT), NULL));
-    LABEL_COUNT++;
+    l1 = append(l1, mkList(mkInstr(UJP, while_in), NULL));
+    l1 = append(l1, mkList(mkInstr(LABEL, while_out), NULL));
 
     return l1;
 }

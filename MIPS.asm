@@ -1,149 +1,133 @@
 .data
-a: .word 0
 b: .word 0
-d: .word 0
-str1: .asciiz "olaola"
-str2: .asciiz "funciona?"
-str3: .asciiz "%d"
-str4: .asciiz "%d"
+a: .word 0
+str1: .asciiz "%d %d"
+str2: .asciiz "%d %d"
 newline: .asciiz "\n" 
 
 
 .text
-la $t0, a
+la $a0, a
+sw $a0, 0($sp)
 addi $sp, $sp, -4
-sw $t0, 0($sp)
+li $a0, 10
+sw $a0, 0($sp)
 addi $sp, $sp, -4
-li $t0, 3
-sw $t0, 0($sp)
-lw $t0, 0($sp)
-lw $t1, 4($sp)
-sw $t0, 0($t1)
-addi $sp, $sp, 8
-la $t0, b
-addi $sp, $sp, -4
-sw $t0, 0($sp)
-addi $sp, $sp, -4
-li $t0, 5
-sw $t0, 0($sp)
-lw $t0, 0($sp)
-lw $t1, 4($sp)
-sw $t0, 0($t1)
-addi $sp, $sp, 8
-la $t0, d
-addi $sp, $sp, -4
-sw $t0, 0($sp)
-addi $sp, $sp, -4
-li $t0, 4
-sw $t0, 0($sp)
-lw $t0, 0($sp)
-lw $t1, 4($sp)
-sw $t0, 0($t1)
-addi $sp, $sp, 8
-la $t0, a
-lw $t1, 0($t0)
-addi $sp, $sp, -4
-sw $t1, 0($sp)
-addi $sp, $sp, -4
-li $t0, 8
-sw $t0, 0($sp)
-lw $t0, 0($sp)
-lw $t1, 4($sp)
-addi $sp, $sp, 8
-bne $t0, $t1, L0
-la $t0, b
-lw $t1, 0($t0)
-addi $sp, $sp, -4
-sw $t1, 0($sp)
-addi $sp, $sp, -4
-li $t0, 5
-sw $t0, 0($sp)
-lw $t0, 0($sp)
-lw $t1, 4($sp)
-addi $sp, $sp, 8
-bne $t0, $t1, L0
-lw $t0, 0($sp)
-lw $t1, 4($sp)
 addi $sp, $sp, 4
-sne $t1, $t1, $zero
-sne $t2, $t2, $zero
-or $t2, $t2, $t1
-sw $t2, 0($sp)
-la $t0, d
-lw $t1, 0($t0)
+lw $t0, 4($sp)
+sw $a0, 0($t0)
+la $a0, b
+sw $a0, 0($sp)
 addi $sp, $sp, -4
-sw $t1, 0($sp)
+li $a0, 5
+sw $a0, 0($sp)
 addi $sp, $sp, -4
-li $t0, 3
-sw $t0, 0($sp)
-lw $t0, 0($sp)
-lw $t1, 4($sp)
-addi $sp, $sp, 8
-bne $t0, $t1, L0
-lw $t0, 0($sp)
-lw $t1, 4($sp)
+lw $a0, a
+sw $a0, 0($sp)
+addi $sp, $sp, -4
 addi $sp, $sp, 4
-sne $t1, $t1, $zero
-sne $t2, $t2, $zero
-or $t2, $t2, $t1
-sw $t2, 0($sp)
-la $t0, str1
-addi $sp, $sp, -4
-sw $t0, 0($sp)
-lw $a0, 0($sp)
-li $v0, 4
-syscall
+lw $t0, 4($sp)
+add $a0, $t0, $a0
+sw $a0, 4($sp)
 addi $sp, $sp, 4
-j L1
+lw $t0, 4($sp)
+sw $a0, 0($t0)
 L0:
-la $t0, str2
+lw $a0, b
+sw $a0, 0($sp)
 addi $sp, $sp, -4
-sw $t0, 0($sp)
-lw $a0, 0($sp)
+li $a0, 8
+sw $a0, 0($sp)
+addi $sp, $sp, -4
+addi $sp, $sp, 4
+lw $t0, 4($sp)
+sgt $a0, $t0, $a0
+sw $a0, 4($sp)
+addi $sp, $sp, 4
+lw $t0, 0($sp)
+beqz $t0, L1
+lw $a0, b
+sw $a0, 0($sp)
+addi $sp, $sp, -4
+lw $a0, a
+sw $a0, 0($sp)
+addi $sp, $sp, -4
+addi $sp, $sp, 4
+lw $t0, 4($sp)
+seq $a0, $a0, $t0
+sw $a0, 4($sp)
+addi $sp, $sp, 4
+lw $t0, 0($sp)
+beqz $t0, L2
+la $a0, a
+sw $a0, 0($sp)
+addi $sp, $sp, -4
+li $a0, 0
+sw $a0, 0($sp)
+addi $sp, $sp, -4
+addi $sp, $sp, 4
+lw $t0, 4($sp)
+sw $a0, 0($t0)
+L2:
+la $a0, str1
 li $v0, 4
 syscall
-addi $sp, $sp, 4
-L1:
-la $t0, str3
-addi $sp, $sp, -4
-sw $t0, 0($sp)
-lw $a0, 0($sp)
+la $a0, newline
 li $v0, 4
 syscall
-addi $sp, $sp, 4
-la $t0, d
-lw $t1, 0($t0)
-addi $sp, $sp, -4
-sw $t1, 0($sp)
-lw $a0, 0($sp)
+lw $a0, a
 li $v0, 1
 syscall
-addi $sp, $sp, 4
-la $t0, d
+la $a0, newline
+li $v0, 4
+syscall
+lw $a0, b
+li $v0, 1
+syscall
+la $a0, newline
+li $v0, 4
+syscall
+la $a0, b
+sw $a0, 0($sp)
 addi $sp, $sp, -4
-sw $t0, 0($sp)
+lw $a0, b
+sw $a0, 0($sp)
+addi $sp, $sp, -4
+li $a0, 1
+sw $a0, 0($sp)
+addi $sp, $sp, -4
+addi $sp, $sp, 4
+lw $t0, 4($sp)
+sub $a0, $t0, $a0
+sw $a0, 4($sp)
+addi $sp, $sp, 4
+lw $t0, 4($sp)
+sw $a0, 0($t0)
+j L0
+L1:
 li $v0, 5
 syscall
-addi $sp, $sp, -4
-sw $v0, 0($sp)
-lw $t0, 0($sp)
-lw $t1, 4($sp)
-sw $t0, 0($t1)
-addi $sp, $sp, 8
-la $t0, str4
-addi $sp, $sp, -4
-sw $t0, 0($sp)
-lw $a0, 0($sp)
+sw $v0, a
+li $v0, 5
+syscall
+sw $v0, b
+la $a0, str2
 li $v0, 4
 syscall
-addi $sp, $sp, 4
-la $t0, d
-lw $t1, 0($t0)
-addi $sp, $sp, -4
-sw $t1, 0($sp)
-lw $a0, 0($sp)
+la $a0, newline
+li $v0, 4
+syscall
+lw $a0, a
 li $v0, 1
 syscall
-addi $sp, $sp, 4
+la $a0, newline
+li $v0, 4
+syscall
+lw $a0, b
+li $v0, 1
+syscall
+la $a0, newline
+li $v0, 4
+syscall
 li $v0, 10
 syscall

@@ -29,17 +29,6 @@ int checkExistence(char* name, ItemsList* list) {
     return -1;
 }
 
-void printTable(ItemsList* list) {
-    DataItem *item = list->item;
-
-    //printf("aqui = %s\n", item->key);
-    //while(item != NULL){
-        //printf("ola - %s\n", item->key);
-        //list = list->next;
-        //item = list->item;
-    //}
-}
-
 DataItem* head2(ItemsList* l) {
     if(l == NULL)
         return NULL;
