@@ -35,7 +35,8 @@
   TYPES
 
 // Operator associativity & precedence
-%left AND OR NOTOP
+%left AND OR
+%left NOTOP
 %left IGU DIF LES LOQ GRE GOQ
 %left PLUS SUB
 %left MUL DIV MOD

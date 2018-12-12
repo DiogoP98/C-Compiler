@@ -177,7 +177,10 @@ Instr_List* compileExpression(Expr* expr){
     }
         
     else if (expr->kind == E_OPERATION) {
-        l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+        if(expr->attr.op.operator != NOTOP)
+            l1 = append(compileExpression(expr->attr.op.left), compileExpression(expr->attr.op.right));
+        else
+            l1 = compileExpression(expr->attr.op.left);
 
         switch (expr->attr.op.operator) {
             case PLUS: // +
@@ -220,7 +223,6 @@ Instr_List* compileExpression(Expr* expr){
                 l1 = append(l1, mkList(mkInstr(ANDOP,0),NULL));
                 break;
             case NOTOP: // !
-                l1 = compileExpression(expr->attr.op.left);
                 l1 = append(l1, mkList(mkInstr(NOT,0),NULL));
                 break;
             default:

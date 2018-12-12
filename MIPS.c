@@ -317,11 +317,10 @@ MipsInstr_list* compileAND() {
 MipsInstr_list* compileNOT(){
     MipsInstr_list* l1 = (MipsInstr_list*)malloc(sizeof(MipsInstr_list));
 
-    l1 = mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 0), NULL);
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("li", "t0", "", 0), NULL));
-    
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("nor", "t2", "t0", "t0"), NULL));
-    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "t2", "sp", 0), NULL));
+    l1 = mkMipsList(compileAlocateStack(4), NULL);
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("lw", "t0", "sp", 4), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_R("nor", "a0", "t0", "t0"), NULL));
+    l1 = appendMipsList(l1, mkMipsList(mkMipsInstrE_I("sw", "a0", "sp", 4), NULL));
 
     return l1;
 }
@@ -537,6 +536,8 @@ void printMipsInstr(MipsInstr* instr, FILE* file) {
         case E_I:
             if (!strcmp(instr->Op, "li"))
                 fprintf(file,"%s $%s, %d\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.val);
+            else if(!strcmp(instr->Op, "not"))
+                fprintf(file,"%s $%s, $%s\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.addrs[1]);
             else if(!strcmp(instr->Op, "sw") || !strcmp(instr->Op, "lw"))
                 fprintf(file,"%s $%s, %d($%s)\n", instr->Op, instr->vars.IntInstr.addrs[0], instr->vars.IntInstr.val, instr->vars.IntInstr.addrs[1]);
             else if(!strcmp(instr->Op, "beq"))
